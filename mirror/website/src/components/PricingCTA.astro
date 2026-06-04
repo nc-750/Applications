@@ -1,0 +1,33 @@
+---
+import { PRICING } from "../config.ts";
+import Button from "./Button.astro";
+---
+
+<section class="border-t border-(--nc-line)">
+  <div class="nc-shell py-20 pb-28">
+    <div class="max-w-2xl">
+      <h2 class="nc-heading-2 mb-6">One-time purchase</h2>
+
+      <!-- Price -->
+      <div class="mb-4">
+        <span class="nc-readout">{PRICING.proPriceRange}</span>
+        <p class="nc-text-base nc-text-secondary mt-2">{PRICING.proPriceLabel}</p>
+      </div>
+
+      <!-- Subtext -->
+      <p class="nc-text-sm nc-text-muted mb-8 max-w-prose">
+        Pro unlocks deeper interviews with richer synthesis. Free tier remains free forever — not a trial that expires. Upgrade when you want the full picture.
+      </p>
+
+      <!-- CTA -->
+      <div class="flex items-start gap-3 max-sm:flex-col">
+        <Button variant="primary" size="md" href={PRICING.lemonSqueezyUrl} external>
+          Buy Mirror Pro
+        </Button>
+        <a href="/#compare" class="nc-text-sm nc-text-muted underline underline-offset-2 hover:text-[--nc-ink-2]">
+          Compare Free vs Pro &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+---
+import MarketingLayout from "../components/MarketingLayout.astro";
+import DownloadLinks from "../components/DownloadLinks.astro";
+---
+
+<MarketingLayout title="Download — Mirror" currentPath="/download">
+  <div class="nc-shell">
+    <div class="text-center mb-14 max-w-2xl mx-auto">
+      <h1 class="nc-heading-1 mb-4">Download Mirror</h1>
+      <p class="nc-text-base nc-text-secondary">
+        Free and open source. Available as a desktop app for Windows, macOS, and Linux,
+        or install the PWA in any modern browser.
+      </p>
+    </div>
+
+    <DownloadLinks />
+
+    <!-- System requirements -->
+    <div class="nc-panel mt-16 mx-auto max-w-2xl">
+      <h2 class="nc-heading-4 mb-3">System requirements</h2>
+      <div class="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+        <div>
+          <h3 class="nc-text-sm nc-font-semibold mb-1">Desktop</h3>
+          <ul class="nc-text-sm nc-text-secondary flex flex-col gap-1 list-none p-0">
+            <li>Windows 10+ &middot; macOS 11+ &middot; Linux (glibc 2.31+)</li>
+            <li>~100 MB disk space</li>
+            <li>Internet connection (for LLM API calls, or local model)</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="nc-text-sm nc-font-semibold mb-1">PWA</h3>
+          <ul class="nc-text-sm nc-text-secondary flex flex-col gap-1 list-none p-0">
+            <li>Chrome, Firefox, Safari, Edge (latest 2 versions)</li>
+            <li>Installable on desktop and mobile</li>
+            <li>Works offline via service worker</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</MarketingLayout>

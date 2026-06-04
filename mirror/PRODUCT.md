@@ -15,7 +15,7 @@ Both are intelligent adults who want honesty, not flattery. They open the app al
 
 ## Product Purpose
 
-Persona is a private, local-first AI-powered tool that conducts a structured career interview and produces two outputs: a private self-knowledge document (Insight) and a shareable professional website (Profile). All data and API keys stay on the device. The product succeeds when a user walks away with a clearer, more honest picture of who they are professionally — one they feel ready to talk about.
+Mirror is a private, local-first AI-powered tool that conducts a structured career interview and produces two outputs: a private self-knowledge document (Insight) and a shareable professional website (Profile). All data and API keys stay on the device. The product succeeds when a user walks away with a clearer, more honest picture of who they are professionally — one they feel ready to talk about.
 
 ## Brand Personality
 
@@ -27,7 +27,7 @@ The voice is direct and unhurried. It respects the user's intelligence and doesn
 
 - **Generic SaaS aesthetics**: indigo-gradient heroes, big-number metrics, floating-card grids, glowing CTAs. The product should feel nothing like a VC-funded dashboard.
 - **Overly corporate / formal**: navy blues, rigid grid layouts, "professional" in the suit-and-tie sense. This is personal, not institutional.
-- **Social media / LinkedIn vibes**: performative, engagement-optimized, public-first. Persona is the opposite: private, inward-facing, honest.
+- **Social media / LinkedIn vibes**: performative, engagement-optimized, public-first. Mirror is the opposite: private, inward-facing, honest.
 
 ## Design Principles
 
