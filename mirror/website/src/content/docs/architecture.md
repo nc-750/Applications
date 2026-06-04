@@ -1,10 +1,10 @@
 ---
 title: "Architecture"
-description: "How Mirror works under the hood — for contributors and curious users"
+description: "How Mirror works under the hood — for curious and privacy-minded users"
 order: 4
 ---
 
-How Mirror works under the hood. Written for contributors and curious users.
+How Mirror works under the hood. Written for the curious and the privacy-minded.
 
 ---
 

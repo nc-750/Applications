@@ -55,7 +55,7 @@ Yes, but each device is independent. Mirror doesn't sync between devices. Export
 
 This is the core privacy model. Mirror has no server, so it can't proxy your requests. Your device talks directly to the AI provider. You pay the provider directly (most offer free credits for new accounts), and you control which provider sees your data.
 
-This also means Mirror can be free and open source — there's no server cost to cover.
+It also means there's no server cost to cover, so the Free tier can stay free forever.
 
 ---
 
@@ -65,9 +65,9 @@ $29–49, one-time. No subscription. One license key activates on multiple devic
 
 ---
 
-## Can I contribute?
+## Is Mirror open source?
 
-Yes. Mirror is open source on [GitHub](https://github.com/vendinois/mirror). See the [Architecture overview](/docs/architecture) for how everything fits together, and the [Development guide](https://github.com/vendinois/mirror/blob/main/docs/development.md) for setup instructions.
+Not at the moment. Mirror is closed-source for now — that may change in the future. Either way, the [Architecture overview](/docs/architecture) explains exactly how it works under the hood, and the [Privacy page](/docs/privacy) details precisely what data stays on your device and what is sent to your AI provider.
 
 ---
 

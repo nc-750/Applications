@@ -26,19 +26,6 @@ const { title, description, currentSlug = "" } = Astro.props;
         <div class="nc-prose">
           <slot />
         </div>
-
-        <!-- Edit link -->
-        <hr class="nc-divider nc-divider--subtle mt-12" />
-        <div class="mt-6">
-          <a
-            href={`https://github.com/vendinois/mirror/edit/main/website/src/content/docs/${currentSlug}.md`}
-            class="nc-text-sm nc-text-muted no-underline hover:text-[--nc-ink-2]"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Edit this page on GitHub &rarr;
-          </a>
-        </div>
       </main>
     </div>
   </div>

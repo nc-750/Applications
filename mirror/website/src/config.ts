@@ -7,22 +7,37 @@ export const SITE = {
   title: "Mirror",
   tagline: "Your career, understood honestly.",
   description:
-    "Mirror interviews you with AI, finds patterns you missed, and produces a private insight document and a polished public profile. Nothing leaves your device.",
+    "Mirror interviews you with AI, finds patterns you missed, and produces a private insight document and a polished public profile. Your data stays yours — local-first, with a fully offline option.",
   url: "https://mirror.nc750.com",
   author: "Alex Vendinois",
   version: "0.1.0",
 };
 
+// Pricing is HYPOTHESIS-stage — validate willingness to pay before committing.
+// See mirror/PRICING.md (full spec) and mirror/MEASUREMENT.md (Approach E).
 export const PRICING = {
-  proPriceRange: "$29–49",
-  proPriceLabel: "One-time purchase. No subscription. No recurring fees.",
-  // TODO: Replace with your real LemonSqueezy checkout variant ID from your store dashboard
-  lemonSqueezyUrl: "https://vendinois.lemonsqueezy.com/checkout/buy/REPLACE_ME",
-  freeLabel: "Free forever.",
+  free: {
+    price: "$0",
+    label: "Free forever. No account, no card.",
+  },
+  jobSeeker: {
+    price: "$9–15 / mo", // HYPOTHESIS — validate
+    label: "Cancel anytime — we'll even remind you to cancel once you've landed.",
+    // TODO: Replace with your real LemonSqueezy subscription checkout URL
+    checkoutUrl: "https://vendinois.lemonsqueezy.com/checkout/buy/REPLACE_ME",
+  },
+  coach: {
+    price: "Per seat",
+    label: "For coaches, outplacement firms, and career centers. Volume pricing, billed annually.",
+    // TODO: Replace with your real Coach checkout or contact route
+    contactUrl: "mailto:hello@nc750.com?subject=Mirror%20Coach%20plan",
+  },
 };
 
 export const DOWNLOAD = {
-  githubReleases: "https://github.com/vendinois/mirror/releases",
+  // Mirror is not open source — there is no public GitHub releases page.
+  // TODO: Replace with the real desktop binary host (CDN / S3 / your own release endpoint).
+  desktopUrl: "https://mirror.nc750.com/releases", // REPLACE_ME with real download host
   pwaUrl: "https://mirror.nc750.com/app",
   platforms: ["Windows", "macOS", "Linux"] as const,
 };
@@ -46,8 +61,7 @@ export const FOOTER_LINK_GROUPS = [
     title: "App",
     links: [
       { label: "Download", href: "/download" },
-      { label: "Free vs Pro", href: "/#compare" },
-      { label: "GitHub", href: "https://github.com/vendinois/mirror" },
+      { label: "Compare plans", href: "/#compare" },
     ],
   },
 ];
@@ -81,7 +95,7 @@ export const HOW_IT_WORKS_STEPS = [
     step: 2,
     title: "Get interviewed",
     description:
-      "An AI interviewer, powered by your choice of model, asks structured questions about your career. Conversational, not a form. 2–3 questions free, 5–8 with Pro.",
+      "A conversational AI interviewer goes deep on your career — no rigid question limit. Included with Job Seeker, or run it on your own AI key. (Free gives you a first read from one file, without the interview.)",
   },
   {
     step: 3,
@@ -91,50 +105,53 @@ export const HOW_IT_WORKS_STEPS = [
   },
 ];
 
+// Free vs Job Seeker. Note: interview DEPTH is never throttled — the interview is
+// simply present (Job Seeker / BYOK) or absent (Free). Paid sells features, not a
+// de-crippled core. See mirror/PRICING.md.
 export const COMPARISON_FEATURES = [
   {
-    feature: "Interview depth",
-    free: "2–3 questions, surface",
-    pro: "5–8 questions, deep excavation across two layers",
+    feature: "Starting point",
+    free: "One file (CV, export, or notes)",
+    jobSeeker: "Your files + a full AI interview",
   },
   {
-    feature: '"How I Work Best"',
-    free: "2 concise statements",
-    pro: "3–4 nuanced statements, cross-referenced",
+    feature: "AI interview",
+    free: "Not included",
+    jobSeeker: "Full depth — conversational, no question limit",
   },
   {
-    feature: "Strengths & skills",
-    free: "Identified with source",
-    pro: "Richer evidence, cross-referenced across experiences",
+    feature: "Persona depth",
+    free: "Basic — from your one file",
+    jobSeeker: "Deep — excavated across your whole story",
   },
   {
-    feature: "Growth areas",
-    free: "Identified",
-    pro: "Detailed with context and growth notes",
+    feature: "Private Insight",
+    free: "Full document (from a basic persona)",
+    jobSeeker: "Full document (from a deep persona)",
   },
   {
-    feature: "Hidden assets",
-    free: "Identified",
-    pro: "Analyzed in depth, transferable skills mapped",
+    feature: "Public Profile",
+    free: "Full document",
+    jobSeeker: "Full document + theme editor",
   },
   {
-    feature: "Personality dimensions",
-    free: "Core traits (0–10 scales)",
-    pro: "Extended profile with nuanced analysis",
+    feature: "Mock interview practice",
+    free: "—",
+    jobSeeker: "Included",
   },
   {
-    feature: "Ready-to-use text",
-    free: "Standard (CV summary, interview pitch, LinkedIn About)",
-    pro: "Extended with variations and tailored phrasing",
+    feature: "Saved personas",
+    free: "One",
+    jobSeeker: "Multiple",
   },
   {
-    feature: "Insight document",
-    free: "Full private insight",
-    pro: "Full private insight (richer)",
+    feature: "AI provider",
+    free: "Hosted — zero setup",
+    jobSeeker: "Hosted zero setup, or bring your own key",
   },
   {
-    feature: "Profile document",
-    free: "Full public profile",
-    pro: "Full public profile (richer)",
+    feature: "Account / card",
+    free: "None",
+    jobSeeker: "Subscription via payment processor; no in-app account",
   },
 ];

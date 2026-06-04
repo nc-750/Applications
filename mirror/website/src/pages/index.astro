@@ -20,9 +20,9 @@ const jsonLd = JSON.stringify({
     description: SITE.description,
     offers: {
         "@type": "Offer",
-        price: "29",
+        price: "9",
         priceCurrency: "USD",
-        description: PRICING.proPriceLabel,
+        description: PRICING.jobSeeker.label,
     },
     author: {
         "@type": "Person",
@@ -53,13 +53,13 @@ const jsonLd = JSON.stringify({
                             <Button
                                 variant="accent"
                                 size="md"
-                                href={DOWNLOAD.githubReleases}
+                                href={DOWNLOAD.desktopUrl}
                                 external
                             >
                                 Download Mirror
                             </Button>
                             <Button variant="ghost" size="md" href="#compare">
-                                Compare Free &amp; Pro
+                                Compare plans
                             </Button>
                         </div>
                         <p class="nc-caption--accent text-center">
@@ -161,29 +161,29 @@ const jsonLd = JSON.stringify({
                 <!-- Pricing CTA -->
                 <div class="nc-cell nc-cell--dark">
                     <span class="nc-label nc-label--accent block mb-2">
-                        Pro license
+                        Job Seeker
                     </span>
                     <div class="mb-3">
                         <span class="nc-lcd nc-lcd--lg">
-                            {PRICING.proPriceRange}
+                            {PRICING.jobSeeker.price}
                         </span>
                     </div>
                     <p class="nc-text-sm nc-text-secondary mb-5">
-                        {PRICING.proPriceLabel}
+                        {PRICING.jobSeeker.label}
                     </p>
                     <Button
                         variant="accent"
                         size="sm"
-                        href={PRICING.lemonSqueezyUrl}
+                        href={PRICING.jobSeeker.checkoutUrl}
                         external
                     >
-                        Buy Mirror Pro
+                        Start Job Seeker
                     </Button>
                 </div>
 
                 <!-- Comparison table -->
                 <div id="compare" class="nc-cell col-span-full">
-                    <h3 class="nc-heading-4 mb-4">Free vs Pro</h3>
+                    <h3 class="nc-heading-4 mb-4">Free vs Job Seeker</h3>
                     <div class="overflow-x-auto">
                         <table class="nc-table">
                             <thead>
@@ -191,7 +191,7 @@ const jsonLd = JSON.stringify({
                                     <th>Feature</th>
                                     <th class="text-center">Free</th>
                                     <th class="text-center nc-text--accent">
-                                        Pro
+                                        Job Seeker
                                     </th>
                                 </tr>
                             </thead>
@@ -206,7 +206,7 @@ const jsonLd = JSON.stringify({
                                                 {row.free}
                                             </td>
                                             <td class="text-center nc-text-secondary">
-                                                {row.pro}
+                                                {row.jobSeeker}
                                             </td>
                                         </tr>
                                     ))
@@ -214,6 +214,12 @@ const jsonLd = JSON.stringify({
                             </tbody>
                         </table>
                     </div>
+                    <p class="nc-caption mt-4">
+                        Interview depth is never throttled — bring your own AI key on any
+                        plan, or run a fully local model, and your data never touches our
+                        relay. Coaching a team? See the
+                        <a href="#coach" class="nc-text--accent">Coach plan</a>.
+                    </p>
                 </div>
 
                 <!-- Desktop app CTA -->
@@ -226,7 +232,7 @@ const jsonLd = JSON.stringify({
                     <Button
                         variant="primary"
                         size="sm"
-                        href={DOWNLOAD.githubReleases}
+                        href={DOWNLOAD.desktopUrl}
                         external
                     >
                         Download
@@ -250,13 +256,16 @@ const jsonLd = JSON.stringify({
                     </Button>
                 </div>
 
-                <!-- License info -->
-                <div class="nc-cell">
+                <!-- Coach / honesty info -->
+                <div id="coach" class="nc-cell">
                     <span class="nc-label block mb-2">
-                        One license to rule them all
+                        Honest by default
                     </span>
                     <p class="nc-caption mb-3">
-                        Pro license valid for all devices. Unlimited.
+                        Job Seeker is monthly — cancel the moment you've landed, and the
+                        app will even remind you. Coaching a team?
+                        <a href={PRICING.coach.contactUrl} class="nc-text--accent">Talk to us</a>
+                        about the Coach plan.
                     </p>
                     <div class="nc-barcode mt-5" aria-hidden="true"></div>
                 </div>

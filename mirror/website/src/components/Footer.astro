@@ -13,7 +13,6 @@ export interface LinkGroup {
 
 export interface Props {
   groups?: LinkGroup[];
-  githubUrl?: string;
 }
 
 const {
@@ -31,12 +30,10 @@ const {
       title: "App",
       links: [
         { label: "Download", href: "/download" },
-        { label: "Free vs Pro", href: "/#compare" },
-        { label: "GitHub", href: "https://github.com/vendinois/mirror" },
+        { label: "Compare plans", href: "/#compare" },
       ],
     },
   ],
-  githubUrl = "https://github.com/vendinois/mirror",
 } = Astro.props;
 ---
 
@@ -76,7 +73,7 @@ const {
     <hr class="nc-divider nc-divider--subtle mb-6" />
     <div class="flex justify-between max-sm:flex-col max-sm:gap-6">
       <p class="nc-text-xs nc-text-muted">
-        Built by <a href={githubUrl} class="nc-text-secondary no-underline hover:text-[--nc-ink]" target="_blank" rel="noopener noreferrer">Alex Vendinois</a>. Open source. No tracking.
+        Built by Alex Vendinois. No account. No tracking.
       </p>
       <p class="nc-partno">Mirror v0.1.0</p>
     </div>

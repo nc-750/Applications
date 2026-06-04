@@ -1,0 +1,140 @@
+# The NC-750 Ethos — Binding Product Constraints
+
+This document is the **compliance charter** for the NC-750 universe. Every product —
+every `NODE-XX` (software), `UNIT-XX` (hardware), and `CORE-XX` (infrastructure) —
+MUST satisfy these constraints to carry the NC-750 name. `BRAND.md` is the *why*
+(philosophy, voice, naming). This file is the *what you may and may not ship*.
+
+The brand's promise is **integrity, not absolutism**. The point of these rules is
+that NC-750's claims are *literally true* — a privacy posture you can verify in a
+network tab, not a slogan. A product that breaks one of these constraints does not
+get a brand exception; it gets fixed, or it ships without the NC-750 mark.
+
+Language: **MUST / MUST NOT** are hard requirements. **SHOULD** is a strong default
+that needs a written, honest reason to deviate.
+
+---
+
+## 1. Content & Data Ownership
+
+- **C1.1** User content (anything the user authors, uploads, or generates — documents,
+  answers, personas, outputs) MUST be local-first and MUST NOT be written to an
+  NC-750-owned server.
+- **C1.2** User content MUST NEVER be sold, shared for advertising, or used to train
+  any model.
+- **C1.3** A **fully local path** (nothing leaves the device) MUST exist for the
+  product's core function. If the core function is impossible offline, the product
+  MUST say so plainly and name exactly where data goes.
+- **C1.4** When content must be transmitted (e.g., an AI request), it MUST go *only*
+  to the destination the user is on for that request, and the product MUST document —
+  in plain words — precisely what is sent and to whom (see `mirror/.../privacy.md`
+  as the reference standard).
+- **C1.5** The user MUST be able to export and hard-delete all of their data locally,
+  with no remote copy left behind.
+
+## 2. Telemetry & Measurement
+
+- **C2.1** No product may collect data **about a person**. Measurement is about the
+  *product*, never the individual.
+- **C2.2** Any client-side telemetry MUST be **opt-in and off by default**, with a
+  plain-words explanation of every field sent.
+- **C2.3** Telemetry MUST be **anonymous and aggregate**. It MUST NOT carry a
+  persistent unique identifier, precise timestamps usable for fingerprinting, or any
+  user content. Prefer stateless events; a per-session ephemeral ID is the maximum.
+- **C2.4** **No third-party analytics SaaS.** No Google Analytics, Mixpanel-cloud, or
+  similar. Analytics MUST be first-party or self-hosted (e.g., Plausible, Umami,
+  Aptabase, self-hosted).
+- **C2.5** IP addresses MUST be stripped or dropped at ingestion; they are
+  quasi-identifiers.
+- **C2.6** The full telemetry schema MUST be **published** to users.
+- **C2.7** **Counting your own infrastructure is allowed.** Downloads (CDN logs),
+  billing events (payment processor), and license validations are operational data
+  the project legitimately owns — provided they are counted in aggregate and not
+  joined back to a person or their content.
+- **C2.8** A stable install/device ID used for *licensing* or a *local* feature
+  (e.g., a cancel reminder) MUST stay on-device or with the payment processor only.
+  It MUST NOT enter any telemetry stream.
+
+## 3. AI & Third-Party Processing
+
+- **C3.1** **BYOK MUST always be available** — the user can supply their own key and
+  send content straight to their chosen provider.
+- **C3.2** A **fully local model option** (e.g., Ollama / LM Studio) MUST be supported
+  wherever technically feasible.
+- **C3.3** An NC-750-hosted relay is permitted **only** if it is stateless and
+  content-free by design: it forwards the request and retains no content, no logs of
+  bodies, and strips IP. Its source SHOULD be open for auditability.
+- **C3.4** Any default hosted processing MUST be backed by a Data Processing Agreement
+  with the upstream provider, with **no-training** and **bounded (ideally zero)
+  retention** of inputs confirmed in writing, before it ships.
+- **C3.5** Content Security Policy MUST pin `connect-src` to the known endpoints; a
+  permissive `https:` clause is a temporary measure only, never the shipped default.
+
+## 4. Identity & Accounts
+
+- **C4.1** The product MUST be fully usable **without creating an account**.
+- **C4.2** If recurring billing exists, the billing identity MUST live with the
+  **payment processor**, not inside the app. The app validates a license/key; it does
+  not hold user accounts. Copy MUST say this honestly ("no account in the app; your
+  subscription is managed by our payment processor").
+- **C4.3** Secrets (API keys, tokens) MUST be stored in the OS-native credential store
+  on desktop; never in plaintext on disk.
+
+## 5. Monetization & Honesty
+
+- **C5.1** **No dark patterns.** No fake urgency, no hidden cancellation, no
+  manipulative defaults, no confirm-shaming.
+- **C5.2** Where a product's value is time-bounded (e.g., a job hunt), the product
+  SHOULD actively help the user **stop paying when done** (e.g., a local cancel
+  reminder). Honesty here is treated as an acquisition strategy, not a loss.
+- **C5.3** Paid tiers MUST gate **additional features**, not artificially cripple the
+  core. In particular, a tier MUST NOT throttle something the user already pays for
+  out of their own pocket (e.g., BYOK inference depth).
+- **C5.4** Free tiers MUST be honestly labeled (free *forever* vs *trial*) and MUST be
+  genuinely functional, not bait.
+- **C5.5** Marketing claims MUST be **literally true**. No absolute ("nothing ever
+  leaves your device") that the implementation contradicts. State the per-path truth.
+
+## 6. Organizational / Channel Sales
+
+- **C6.1** When a product is sold to an organization that distributes it to individuals
+  (coaches, schools, employers), the **end-user experience and privacy MUST be
+  identical** to the direct consumer version.
+- **C6.2** The organizational buyer MAY see **seat utilization** (e.g., activations).
+  The buyer MUST NEVER see an individual's content, persona, or results. This boundary
+  is the line between a channel and surveillance; crossing it forfeits the brand.
+
+## 7. Claims & Terminology Discipline
+
+- **C7.1** Cryptographic terms of art ("zero-knowledge", "end-to-end encrypted",
+  "anonymous") MUST NOT be used unless the property is literally implemented.
+- **C7.2** Documentation MUST match the shipped reality. If an AI-generated or
+  aspirational claim (e.g., "open source") is not yet true, it MUST NOT appear in
+  user-facing copy.
+- **C7.3** The product SHOULD over-disclose: publish what is sent, where, and why.
+  Transparency is a brand asset, not a liability.
+
+## 8. Visual & Naming Surface
+
+- **C8.1** Products MUST follow the serialization architecture (`NODE/UNIT/CORE-XX`)
+  and use the Enclosure design system per `enclosure/DESIGN.md`.
+- **C8.2** The `0x00` mark certifies a zero-person-tracking environment; it MUST NOT be
+  applied to any surface that violates Sections 1–2.
+- **C8.3** Accessibility: WCAG 2.1 AA minimum, keyboard navigable, `prefers-reduced-motion`
+  respected.
+
+---
+
+## Compliance checklist (run before shipping or branding anything)
+
+- [ ] Local-only path exists for the core function (C1.3)
+- [ ] Plain-words disclosure of what is sent and where (C1.4, C7.3)
+- [ ] No user content on any NC-750 server; no training; no sale (C1.1–C1.2)
+- [ ] Telemetry (if any) is opt-in, anonymous, aggregate, self-hosted, schema published (C2)
+- [ ] No persistent ID or IP in telemetry; license ID stays out of telemetry (C2.3, C2.5, C2.8)
+- [ ] BYOK + local model available; relay (if any) is no-log + DPA + no-train confirmed (C3)
+- [ ] Usable with no in-app account; secrets in OS keystore (C4)
+- [ ] No dark patterns; features gated, core not crippled; claims literally true (C5)
+- [ ] Org buyers see seats, never content (C6)
+- [ ] No misused crypto terms; docs match reality (C7)
+- [ ] Serialization, Enclosure system, `0x00`, WCAG AA (C8)

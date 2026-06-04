@@ -12,9 +12,9 @@ import Button from "./Button.astro";
       <div class="nc-panel text-center">
         <h3 class="nc-heading-4 mb-2">Desktop app</h3>
         <p class="nc-text-sm nc-text-secondary mb-1">{DOWNLOAD.platforms.join(" · ")}</p>
-        <p class="nc-caption mb-5">Free &amp; open source. Built with Tauri.</p>
-        <Button variant="primary" size="sm" href={DOWNLOAD.githubReleases} external>
-          GitHub Releases
+        <p class="nc-caption mb-5">Free to download. Built with Tauri.</p>
+        <Button variant="primary" size="sm" href={DOWNLOAD.desktopUrl} external>
+          Download
         </Button>
       </div>
 
@@ -30,10 +30,7 @@ import Button from "./Button.astro";
     </div>
 
     <p class="nc-text-sm nc-text-muted text-center mt-8">
-      Pro license activates in both the desktop app and PWA.{" "}
-      <a href="https://github.com/vendinois/mirror" class="nc-text-secondary underline underline-offset-2 hover:text-[--nc-ink]" target="_blank" rel="noopener noreferrer">
-        Source code on GitHub
-      </a>.
+      One Pro license activates in both the desktop app and the PWA.
     </p>
   </div>
 </section>
