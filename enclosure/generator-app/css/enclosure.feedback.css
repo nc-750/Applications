@@ -1,0 +1,76 @@
+/* ============================================================
+   8 · FEEDBACK — alert
+
+   Each alert MUST carry a modifier (--info, --success, --warning,
+   --error).  The ::before pseudo-element renders a mono severity
+   label — the text content conveys severity without relying on
+   colour, satisfying WCAG SC 1.4.1.  The 3px left border and
+   subtle background tint are redundant visual reinforcement.
+
+   For the strongest AT support, pair the CSS with an inline
+   severity badge in the markup:
+     <span class="nc-alert__badge" role="img" aria-label="Warning">⚠</span>
+   ============================================================ */
+.nc-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--nc-space-3);
+    padding: var(--nc-space-3) var(--nc-space-4);
+    font-size: var(--nc-text-sm);
+    color: var(--nc-ink);
+    background: var(--nc-panel);
+    border: var(--nc-border-width) solid var(--nc-line);
+    border-radius: var(--nc-radius-md);
+}
+
+/* Severity label — the technical voice (mono / uppercase / wide).
+   Rendered as silkscreened annotation on the control panel. */
+.nc-alert::before {
+    flex-shrink: 0;
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    line-height: var(--nc-leading-snug);
+    padding-top: 2px;            /* optical centring against 13px body */
+    color: var(--nc-ink-2);
+}
+
+/* --- Variants --- */
+
+.nc-alert--info {
+    border-left: 3px solid var(--nc-info);
+    background: var(--nc-info-subtle);
+}
+.nc-alert--info::before { content: "Info"; }
+
+.nc-alert--success {
+    border-left: 3px solid var(--nc-success);
+    background: var(--nc-success-subtle);
+}
+.nc-alert--success::before { content: "Success"; }
+
+.nc-alert--warning {
+    border-left: 3px solid var(--nc-warning);
+    background: var(--nc-warning-subtle);
+}
+.nc-alert--warning::before { content: "Warning"; }
+
+.nc-alert--error {
+    border-left: 3px solid var(--nc-error);
+    background: var(--nc-error-subtle);
+}
+.nc-alert--error::before { content: "Error"; }
+
+/* Optional inline severity badge — use in HTML for a coloured
+   icon alongside the text label when visual urgency matters. */
+.nc-alert__badge {
+    flex-shrink: 0;
+    font-size: var(--nc-text-md);
+    line-height: 1.2;
+}
+.nc-alert--info .nc-alert__badge    { color: var(--nc-info); }
+.nc-alert--success .nc-alert__badge { color: var(--nc-success); }
+.nc-alert--warning .nc-alert__badge { color: var(--nc-warning); }
+.nc-alert--error .nc-alert__badge   { color: var(--nc-error); }

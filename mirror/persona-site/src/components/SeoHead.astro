@@ -1,0 +1,39 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: string;
+  pathname?: string;
+}
+
+const {
+  title = "Persona — Your career, understood honestly.",
+  description = "Persona interviews you with AI, finds patterns you missed, and produces a private insight document and a polished public profile. Nothing leaves your device.",
+  ogImage = "/og-image.png",
+  ogType = "website",
+  pathname = "",
+} = Astro.props;
+
+const siteUrl = Astro.site?.origin ?? "https://persona.vendinois.com";
+const canonical = new URL(pathname, siteUrl).href;
+---
+
+<!-- Primary meta -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content="Persona" />
+{ogImage && <meta property="og:image" content={new URL(ogImage, siteUrl).href} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={new URL(ogImage, siteUrl).href} />}

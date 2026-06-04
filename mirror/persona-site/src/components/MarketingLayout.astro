@@ -1,0 +1,21 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import NavBar from "./NavBar.astro";
+import Footer from "./Footer.astro";
+
+import type { Props as SeoProps } from "./BaseLayout.astro";
+
+export interface Props extends SeoProps {
+    currentPath?: string;
+}
+
+const { currentPath = "/", ...seo } = Astro.props;
+---
+
+<BaseLayout {...seo} pathname={seo.pathname ?? currentPath}>
+    <!-- <NavBar currentPath={currentPath} /> -->
+    <main>
+        <slot />
+    </main>
+    <!-- <Footer /> -->
+</BaseLayout>

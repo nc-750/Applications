@@ -1,0 +1,337 @@
+/* ============================================================
+   12 · CHAT — transcript, messages, composer, typing, thinking
+   "Seams, not shadows." Messages are flush plates distinguished
+   by background tint and alignment — no side stripes. The composer
+   is a recessed workspace; the transcript is a sunken channel.
+   ============================================================ */
+
+/* ── Transcript — scrollable message container ──────────── */
+.nc-transcript {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-3);
+    background: var(--nc-bg-sunken);
+    border: var(--nc-border-width) solid var(--nc-line-subtle);
+    border-radius: var(--nc-radius-md);
+    padding: var(--nc-space-4);
+    overflow-y: auto;
+}
+
+/* ── Message — single message block, flush plate ────────── */
+.nc-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 70ch;
+    padding: var(--nc-space-4);
+    border-radius: var(--nc-radius-md);
+    /* No box-shadow — "integrated, not floating" */
+}
+.nc-message--user {
+    align-self: flex-end;
+    background: var(--nc-panel-2);
+    border: var(--nc-border-width) solid var(--nc-line-subtle);
+}
+.nc-message--assistant {
+    align-self: flex-start;
+    background: var(--nc-panel);
+    border: var(--nc-border-width) solid var(--nc-line-subtle);
+}
+.nc-message--system {
+    align-self: center;
+    text-align: center;
+    background: transparent;
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-3);
+    padding: var(--nc-space-2) var(--nc-space-4);
+    max-width: 100%;
+    border: none;
+}
+.nc-message--error {
+    border-color: var(--nc-error);
+    background: var(--nc-error-subtle);
+}
+
+/* ── Message header — avatar + name + timestamp ─────────── */
+.nc-message__header {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    margin-bottom: var(--nc-space-2);
+}
+.nc-message__name {
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-sm);
+    font-weight: var(--nc-font-semibold);
+    color: var(--nc-ink);
+}
+.nc-message__time {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-3);
+    margin-left: auto;
+}
+
+/* ── Message body — rich text content ───────────────────── */
+.nc-message__body {
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-base);
+    line-height: var(--nc-leading-relaxed);
+    color: var(--nc-ink);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+.nc-message__body p {
+    margin-bottom: var(--nc-space-3);
+}
+.nc-message__body p:last-child {
+    margin-bottom: 0;
+}
+.nc-message__body code {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    background: var(--nc-inset);
+    color: var(--nc-accent-ink);
+    padding: var(--nc-border-width) var(--nc-space-2);
+    border-radius: var(--nc-radius-sm);
+    box-shadow: var(--nc-edge-inset);
+}
+.nc-message__body pre {
+    background: var(--nc-console);
+    border: var(--nc-border-width) solid var(--nc-console-line);
+    border-radius: var(--nc-radius-md);
+    padding: var(--nc-space-4);
+    overflow-x: auto;
+    margin: var(--nc-space-3) 0;
+}
+.nc-message__body pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    color: var(--nc-ink-invert);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-sm);
+}
+.nc-message__body ul,
+.nc-message__body ol {
+    padding-left: var(--nc-space-6);
+    margin-bottom: var(--nc-space-3);
+}
+.nc-message__body li {
+    margin-bottom: var(--nc-space-1);
+}
+.nc-message__body a {
+    color: var(--nc-accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.nc-message__body a:hover {
+    color: var(--nc-accent);
+}
+.nc-message__body strong {
+    color: var(--nc-ink);
+    font-weight: var(--nc-font-semibold);
+}
+.nc-message__body blockquote {
+    border-left: 2px solid var(--nc-line-strong);
+    padding-left: var(--nc-space-4);
+    margin: var(--nc-space-3) 0;
+    color: var(--nc-ink-2);
+}
+.nc-message__body h1,
+.nc-message__body h2,
+.nc-message__body h3 {
+    font-family: var(--nc-font-display);
+    color: var(--nc-ink);
+    font-weight: var(--nc-font-semibold);
+    line-height: var(--nc-leading-tight);
+}
+.nc-message__body h1 {
+    font-size: var(--nc-text-xl);
+    margin-top: var(--nc-space-6);
+    margin-bottom: var(--nc-space-3);
+}
+.nc-message__body h2 {
+    font-size: var(--nc-text-lg);
+    margin-top: var(--nc-space-5);
+    margin-bottom: var(--nc-space-2);
+}
+.nc-message__body h3 {
+    font-size: var(--nc-text-md);
+    margin-top: var(--nc-space-4);
+    margin-bottom: var(--nc-space-2);
+}
+.nc-message__body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--nc-space-3);
+    font-size: var(--nc-text-sm);
+}
+.nc-message__body th,
+.nc-message__body td {
+    border: var(--nc-border-width) solid var(--nc-line);
+    padding: var(--nc-space-2) var(--nc-space-3);
+    text-align: left;
+}
+.nc-message__body th {
+    background: var(--nc-panel-3);
+    font-weight: var(--nc-font-semibold);
+}
+.nc-message__body hr {
+    border: none;
+    border-top: var(--nc-border-width) solid var(--nc-line);
+    margin: var(--nc-space-4) 0;
+}
+
+/* ── Message actions — ghost buttons on hover ───────────── */
+.nc-message__actions {
+    display: flex;
+    gap: var(--nc-space-1);
+    margin-top: var(--nc-space-2);
+    opacity: 0;
+    transition: opacity var(--nc-transition-fast);
+}
+.nc-message:hover .nc-message__actions,
+.nc-message:focus-within .nc-message__actions {
+    opacity: 1;
+}
+/* Touch: actions always visible */
+@media (hover: none) {
+    .nc-message__actions {
+        opacity: 1;
+    }
+}
+
+/* ── Composer — recessed input workspace ────────────────── */
+.nc-composer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-2);
+    background: var(--nc-inset);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-md);
+    box-shadow: var(--nc-edge-inset);
+    padding: var(--nc-space-3);
+}
+.nc-composer__input {
+    width: 100%;
+    min-height: var(--nc-control-lg);
+    max-height: 200px;
+    padding: var(--nc-space-2) var(--nc-space-3);
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-base);
+    line-height: var(--nc-leading-normal);
+    color: var(--nc-ink);
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+}
+.nc-composer__input::placeholder {
+    color: var(--nc-ink-3);
+}
+.nc-composer__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+}
+.nc-composer__send {
+    margin-left: auto;
+}
+
+/* ── Typing indicator — LED pulse + label ────────────────── */
+.nc-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    padding: var(--nc-space-2) var(--nc-space-3);
+}
+.nc-typing__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: var(--nc-radius-full);
+    background: var(--nc-accent);
+    box-shadow: 0 0 5px var(--nc-accent);
+    animation: nc-typing-pulse 1.2s ease-in-out infinite;
+}
+.nc-typing__label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-3);
+}
+
+@keyframes nc-typing-pulse {
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ── Thinking — collapsible reasoning block ─────────────── */
+.nc-thinking {
+    background: var(--nc-warning-subtle);
+    border: var(--nc-border-width) solid var(--nc-warning);
+    border-radius: var(--nc-radius-md);
+    margin: var(--nc-space-2) 0;
+    overflow: hidden;
+}
+.nc-thinking__header {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    padding: var(--nc-space-3);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--nc-transition-fast);
+}
+.nc-thinking__header:hover {
+    background: var(--nc-hover);
+}
+.nc-thinking__header:focus-visible {
+    outline: 2px solid var(--nc-accent);
+    outline-offset: -2px;
+}
+.nc-thinking__label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-warning);
+    flex: 1;
+}
+.nc-thinking__toggle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--nc-transition-fast);
+    color: var(--nc-ink-3);
+    font-size: var(--nc-text-sm);
+    flex-shrink: 0;
+}
+.nc-thinking--open .nc-thinking__toggle {
+    transform: rotate(180deg);
+}
+.nc-thinking__body {
+    padding: 0 var(--nc-space-3) var(--nc-space-3);
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-sm);
+    line-height: var(--nc-leading-relaxed);
+    color: var(--nc-ink-2);
+    display: none;
+}
+.nc-thinking--open .nc-thinking__body {
+    display: block;
+}

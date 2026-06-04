@@ -1,0 +1,12 @@
+import { flattenRethemable, flattenStatic } from "./flatten";
+const seed = { h: 214, s: 14, l: 85 };
+const accent = { h: 18, s: 100, l: 53 };
+const re = flattenRethemable(seed, accent);
+const st = flattenStatic(seed, accent);
+console.log("REtheme len", re.length, "has {{", re.includes("{{"), "has seed vals h=", /--nc-seed-h:\s*214;/.test(re));
+console.log("REtheme has calc(", re.includes("calc("), "(expected true)");
+console.log("STATIC len", st.length, "has --nc-seed-", st.includes("--nc-seed-"), "has {{", st.includes("{{"));
+console.log("STATIC sample --nc-bg line:");
+console.log(st.split("\n").filter((l) => l.includes("--nc-bg:") || l.includes("--nc-accent:")).slice(0, 2).join("\n"));
+console.log("STATIC dark --nc-ink:");
+console.log(st.split("\n").filter((l) => l.trim().startsWith("--nc-ink:")).join(" | "));

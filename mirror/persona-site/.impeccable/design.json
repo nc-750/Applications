@@ -1,0 +1,697 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-01T00:00:00.000Z",
+  "title": "Design System: Enclosure",
+  "extensions": {
+    "colorMeta": {
+      "safety-orange": {
+        "role": "primary",
+        "displayName": "Safety Orange",
+        "canonical": "hsl(18, 100%, 53%)",
+        "tonalRamp": [
+          "hsl(18, 100%, 15%)",
+          "hsl(18, 100%, 27%)",
+          "hsl(18, 100%, 38%)",
+          "hsl(18, 100%, 47%)",
+          "hsl(18, 100%, 53%)",
+          "hsl(18, 100%, 63%)",
+          "hsl(18, 100%, 78%)",
+          "hsl(18, 100%, 92%)"
+        ]
+      },
+      "safety-orange-hover": {
+        "role": "primary",
+        "displayName": "Safety Orange Hover",
+        "canonical": "hsl(18, 100%, 58%)",
+        "tonalRamp": [
+          "hsl(18, 100%, 18%)",
+          "hsl(18, 100%, 30%)",
+          "hsl(18, 100%, 42%)",
+          "hsl(18, 100%, 50%)",
+          "hsl(18, 100%, 58%)",
+          "hsl(18, 100%, 68%)",
+          "hsl(18, 100%, 82%)",
+          "hsl(18, 100%, 94%)"
+        ]
+      },
+      "safety-orange-pressed": {
+        "role": "primary",
+        "displayName": "Safety Orange Pressed",
+        "canonical": "hsl(15, 92%, 47%)",
+        "tonalRamp": [
+          "hsl(15, 92%, 14%)",
+          "hsl(15, 92%, 25%)",
+          "hsl(15, 92%, 35%)",
+          "hsl(15, 92%, 42%)",
+          "hsl(15, 92%, 47%)",
+          "hsl(15, 92%, 60%)",
+          "hsl(15, 92%, 76%)",
+          "hsl(15, 92%, 90%)"
+        ]
+      },
+      "burnt-orange-ink": {
+        "role": "primary",
+        "displayName": "Burnt Orange Ink",
+        "canonical": "hsl(17, 88%, 38%)",
+        "tonalRamp": [
+          "hsl(17, 88%, 10%)",
+          "hsl(17, 88%, 20%)",
+          "hsl(17, 88%, 29%)",
+          "hsl(17, 88%, 34%)",
+          "hsl(17, 88%, 38%)",
+          "hsl(17, 88%, 50%)",
+          "hsl(17, 88%, 68%)",
+          "hsl(17, 88%, 88%)"
+        ]
+      },
+      "dark-on-orange": {
+        "role": "primary",
+        "displayName": "Dark on Orange",
+        "canonical": "hsl(20, 60%, 10%)",
+        "tonalRamp": [
+          "hsl(20, 60%, 3%)",
+          "hsl(20, 60%, 7%)",
+          "hsl(20, 60%, 10%)",
+          "hsl(20, 60%, 18%)",
+          "hsl(20, 60%, 28%)",
+          "hsl(20, 60%, 42%)",
+          "hsl(20, 60%, 62%)",
+          "hsl(20, 60%, 85%)"
+        ]
+      },
+      "machined-aluminium-field": {
+        "role": "neutral",
+        "displayName": "Machined Aluminium Field",
+        "canonical": "hsl(214, 14%, 85%)",
+        "tonalRamp": [
+          "hsl(214, 14%, 15%)",
+          "hsl(214, 14%, 30%)",
+          "hsl(214, 14%, 45%)",
+          "hsl(214, 14%, 60%)",
+          "hsl(214, 14%, 75%)",
+          "hsl(214, 14%, 85%)",
+          "hsl(214, 14%, 92%)",
+          "hsl(214, 14%, 97%)"
+        ]
+      },
+      "polished-white-panel": {
+        "role": "neutral",
+        "displayName": "Polished White Panel",
+        "canonical": "hsl(210, 22%, 98%)",
+        "tonalRamp": [
+          "hsl(210, 22%, 18%)",
+          "hsl(210, 22%, 35%)",
+          "hsl(210, 22%, 55%)",
+          "hsl(210, 22%, 75%)",
+          "hsl(210, 22%, 88%)",
+          "hsl(210, 22%, 94%)",
+          "hsl(210, 22%, 97%)",
+          "hsl(210, 22%, 99%)"
+        ]
+      },
+      "brushed-aluminium-panel": {
+        "role": "neutral",
+        "displayName": "Brushed Aluminium Panel",
+        "canonical": "hsl(212, 16%, 93%)",
+        "tonalRamp": [
+          "hsl(212, 16%, 18%)",
+          "hsl(212, 16%, 35%)",
+          "hsl(212, 16%, 50%)",
+          "hsl(212, 16%, 68%)",
+          "hsl(212, 16%, 82%)",
+          "hsl(212, 16%, 90%)",
+          "hsl(212, 16%, 95%)",
+          "hsl(212, 16%, 98%)"
+        ]
+      },
+      "bare-aluminium": {
+        "role": "neutral",
+        "displayName": "Bare Aluminium",
+        "canonical": "hsl(214, 14%, 88%)",
+        "tonalRamp": [
+          "hsl(214, 14%, 18%)",
+          "hsl(214, 14%, 33%)",
+          "hsl(214, 14%, 48%)",
+          "hsl(214, 14%, 63%)",
+          "hsl(214, 14%, 78%)",
+          "hsl(214, 14%, 88%)",
+          "hsl(214, 14%, 93%)",
+          "hsl(214, 14%, 98%)"
+        ]
+      },
+      "recessed-well": {
+        "role": "neutral",
+        "displayName": "Recessed Well",
+        "canonical": "hsl(214, 13%, 90%)",
+        "tonalRamp": [
+          "hsl(214, 13%, 18%)",
+          "hsl(214, 13%, 35%)",
+          "hsl(214, 13%, 52%)",
+          "hsl(214, 13%, 68%)",
+          "hsl(214, 13%, 82%)",
+          "hsl(214, 13%, 90%)",
+          "hsl(214, 13%, 94%)",
+          "hsl(214, 13%, 98%)"
+        ]
+      },
+      "warm-aluminium-hover": {
+        "role": "neutral",
+        "displayName": "Warm Aluminium Hover",
+        "canonical": "hsl(212, 16%, 90%)",
+        "tonalRamp": [
+          "hsl(212, 16%, 18%)",
+          "hsl(212, 16%, 35%)",
+          "hsl(212, 16%, 50%)",
+          "hsl(212, 16%, 65%)",
+          "hsl(212, 16%, 80%)",
+          "hsl(212, 16%, 90%)",
+          "hsl(212, 16%, 95%)",
+          "hsl(212, 16%, 98%)"
+        ]
+      },
+      "pressed-aluminium": {
+        "role": "neutral",
+        "displayName": "Pressed Aluminium",
+        "canonical": "hsl(212, 16%, 86%)",
+        "tonalRamp": [
+          "hsl(212, 16%, 16%)",
+          "hsl(212, 16%, 32%)",
+          "hsl(212, 16%, 48%)",
+          "hsl(212, 16%, 62%)",
+          "hsl(212, 16%, 76%)",
+          "hsl(212, 16%, 86%)",
+          "hsl(212, 16%, 92%)",
+          "hsl(212, 16%, 97%)"
+        ]
+      },
+      "sunken-aluminium": {
+        "role": "neutral",
+        "displayName": "Sunken Aluminium",
+        "canonical": "hsl(214, 14%, 80%)",
+        "tonalRamp": [
+          "hsl(214, 14%, 12%)",
+          "hsl(214, 14%, 25%)",
+          "hsl(214, 14%, 40%)",
+          "hsl(214, 14%, 55%)",
+          "hsl(214, 14%, 68%)",
+          "hsl(214, 14%, 80%)",
+          "hsl(214, 14%, 90%)",
+          "hsl(214, 14%, 96%)"
+        ]
+      },
+      "lcd-cavity": {
+        "role": "neutral",
+        "displayName": "LCD Cavity",
+        "canonical": "hsl(220, 16%, 10%)",
+        "tonalRamp": [
+          "hsl(220, 16%, 3%)",
+          "hsl(220, 16%, 7%)",
+          "hsl(220, 16%, 10%)",
+          "hsl(220, 16%, 16%)",
+          "hsl(220, 16%, 24%)",
+          "hsl(220, 16%, 36%)",
+          "hsl(220, 16%, 52%)",
+          "hsl(220, 16%, 72%)"
+        ]
+      },
+      "lcd-border": {
+        "role": "neutral",
+        "displayName": "LCD Border",
+        "canonical": "hsl(220, 14%, 15%)",
+        "tonalRamp": [
+          "hsl(220, 14%, 4%)",
+          "hsl(220, 14%, 10%)",
+          "hsl(220, 14%, 15%)",
+          "hsl(220, 14%, 22%)",
+          "hsl(220, 14%, 32%)",
+          "hsl(220, 14%, 46%)",
+          "hsl(220, 14%, 62%)",
+          "hsl(220, 14%, 80%)"
+        ]
+      },
+      "lcd-seam": {
+        "role": "neutral",
+        "displayName": "LCD Seam",
+        "canonical": "hsl(220, 12%, 26%)",
+        "tonalRamp": [
+          "hsl(220, 12%, 8%)",
+          "hsl(220, 12%, 16%)",
+          "hsl(220, 12%, 26%)",
+          "hsl(220, 12%, 36%)",
+          "hsl(220, 12%, 48%)",
+          "hsl(220, 12%, 62%)",
+          "hsl(220, 12%, 76%)",
+          "hsl(220, 12%, 90%)"
+        ]
+      },
+      "etched-black": {
+        "role": "neutral",
+        "displayName": "Etched Black",
+        "canonical": "hsl(220, 20%, 11%)",
+        "tonalRamp": [
+          "hsl(220, 20%, 3%)",
+          "hsl(220, 20%, 7%)",
+          "hsl(220, 20%, 11%)",
+          "hsl(220, 20%, 18%)",
+          "hsl(220, 20%, 28%)",
+          "hsl(220, 20%, 42%)",
+          "hsl(220, 20%, 62%)",
+          "hsl(220, 20%, 85%)"
+        ]
+      },
+      "engraved-grey": {
+        "role": "neutral",
+        "displayName": "Engraved Grey",
+        "canonical": "hsl(218, 11%, 30%)",
+        "tonalRamp": [
+          "hsl(218, 11%, 8%)",
+          "hsl(218, 11%, 18%)",
+          "hsl(218, 11%, 30%)",
+          "hsl(218, 11%, 42%)",
+          "hsl(218, 11%, 55%)",
+          "hsl(218, 11%, 68%)",
+          "hsl(218, 11%, 82%)",
+          "hsl(218, 11%, 94%)"
+        ]
+      },
+      "silkscreen-grey": {
+        "role": "neutral",
+        "displayName": "Silkscreen Grey",
+        "canonical": "hsl(216, 9%, 46%)",
+        "tonalRamp": [
+          "hsl(216, 9%, 12%)",
+          "hsl(216, 9%, 24%)",
+          "hsl(216, 9%, 36%)",
+          "hsl(216, 9%, 46%)",
+          "hsl(216, 9%, 58%)",
+          "hsl(216, 9%, 72%)",
+          "hsl(216, 9%, 85%)",
+          "hsl(216, 9%, 95%)"
+        ]
+      },
+      "faded-mark": {
+        "role": "neutral",
+        "displayName": "Faded Mark",
+        "canonical": "hsl(216, 9%, 60%)",
+        "tonalRamp": [
+          "hsl(216, 9%, 18%)",
+          "hsl(216, 9%, 32%)",
+          "hsl(216, 9%, 45%)",
+          "hsl(216, 9%, 55%)",
+          "hsl(216, 9%, 65%)",
+          "hsl(216, 9%, 76%)",
+          "hsl(216, 9%, 88%)",
+          "hsl(216, 9%, 96%)"
+        ]
+      },
+      "white-on-black": {
+        "role": "neutral",
+        "displayName": "White on Black",
+        "canonical": "hsl(210, 18%, 93%)",
+        "tonalRamp": [
+          "hsl(210, 18%, 20%)",
+          "hsl(210, 18%, 40%)",
+          "hsl(210, 18%, 58%)",
+          "hsl(210, 18%, 74%)",
+          "hsl(210, 18%, 86%)",
+          "hsl(210, 18%, 93%)",
+          "hsl(210, 18%, 96%)",
+          "hsl(210, 18%, 99%)"
+        ]
+      },
+      "dim-console-text": {
+        "role": "neutral",
+        "displayName": "Dim Console Text",
+        "canonical": "hsl(212, 10%, 62%)",
+        "tonalRamp": [
+          "hsl(212, 10%, 18%)",
+          "hsl(212, 10%, 32%)",
+          "hsl(212, 10%, 46%)",
+          "hsl(212, 10%, 56%)",
+          "hsl(212, 10%, 66%)",
+          "hsl(212, 10%, 78%)",
+          "hsl(212, 10%, 90%)",
+          "hsl(212, 10%, 97%)"
+        ]
+      },
+      "on-ink-white": {
+        "role": "neutral",
+        "displayName": "On Ink White",
+        "canonical": "hsl(210, 22%, 98%)",
+        "tonalRamp": [
+          "hsl(210, 22%, 20%)",
+          "hsl(210, 22%, 40%)",
+          "hsl(210, 22%, 60%)",
+          "hsl(210, 22%, 76%)",
+          "hsl(210, 22%, 88%)",
+          "hsl(210, 22%, 94%)",
+          "hsl(210, 22%, 97%)",
+          "hsl(210, 22%, 99%)"
+        ]
+      },
+      "panel-seam": {
+        "role": "neutral",
+        "displayName": "Panel Seam",
+        "canonical": "hsl(214, 14%, 73%)",
+        "tonalRamp": [
+          "hsl(214, 14%, 12%)",
+          "hsl(214, 14%, 26%)",
+          "hsl(214, 14%, 40%)",
+          "hsl(214, 14%, 54%)",
+          "hsl(214, 14%, 65%)",
+          "hsl(214, 14%, 78%)",
+          "hsl(214, 14%, 88%)",
+          "hsl(214, 14%, 96%)"
+        ]
+      },
+      "hairline-seam": {
+        "role": "neutral",
+        "displayName": "Hairline Seam",
+        "canonical": "hsl(214, 13%, 80%)",
+        "tonalRamp": [
+          "hsl(214, 13%, 15%)",
+          "hsl(214, 13%, 30%)",
+          "hsl(214, 13%, 45%)",
+          "hsl(214, 13%, 58%)",
+          "hsl(214, 13%, 72%)",
+          "hsl(214, 13%, 84%)",
+          "hsl(214, 13%, 92%)",
+          "hsl(214, 13%, 97%)"
+        ]
+      },
+      "structural-seam": {
+        "role": "neutral",
+        "displayName": "Structural Seam",
+        "canonical": "hsl(216, 16%, 60%)",
+        "tonalRamp": [
+          "hsl(216, 16%, 14%)",
+          "hsl(216, 16%, 28%)",
+          "hsl(216, 16%, 40%)",
+          "hsl(216, 16%, 52%)",
+          "hsl(216, 16%, 64%)",
+          "hsl(216, 16%, 76%)",
+          "hsl(216, 16%, 88%)",
+          "hsl(216, 16%, 96%)"
+        ]
+      },
+      "ink-seam": {
+        "role": "neutral",
+        "displayName": "Ink Seam",
+        "canonical": "hsl(220, 20%, 11%)",
+        "tonalRamp": [
+          "hsl(220, 20%, 3%)",
+          "hsl(220, 20%, 8%)",
+          "hsl(220, 20%, 13%)",
+          "hsl(220, 20%, 20%)",
+          "hsl(220, 20%, 32%)",
+          "hsl(220, 20%, 48%)",
+          "hsl(220, 20%, 68%)",
+          "hsl(220, 20%, 88%)"
+        ]
+      },
+      "signal-green": {
+        "role": "semantic",
+        "displayName": "Signal Green",
+        "canonical": "hsl(150, 42%, 36%)",
+        "tonalRamp": [
+          "hsl(150, 42%, 10%)",
+          "hsl(150, 42%, 20%)",
+          "hsl(150, 42%, 30%)",
+          "hsl(150, 42%, 40%)",
+          "hsl(150, 42%, 52%)",
+          "hsl(150, 42%, 66%)",
+          "hsl(150, 42%, 82%)",
+          "hsl(150, 42%, 94%)"
+        ]
+      },
+      "signal-amber": {
+        "role": "semantic",
+        "displayName": "Signal Amber",
+        "canonical": "hsl(38, 92%, 45%)",
+        "tonalRamp": [
+          "hsl(38, 92%, 12%)",
+          "hsl(38, 92%, 24%)",
+          "hsl(38, 92%, 36%)",
+          "hsl(38, 92%, 48%)",
+          "hsl(38, 92%, 60%)",
+          "hsl(38, 92%, 74%)",
+          "hsl(38, 92%, 88%)",
+          "hsl(38, 92%, 96%)"
+        ]
+      },
+      "signal-red": {
+        "role": "semantic",
+        "displayName": "Signal Red",
+        "canonical": "hsl(4, 78%, 50%)",
+        "tonalRamp": [
+          "hsl(4, 78%, 14%)",
+          "hsl(4, 78%, 26%)",
+          "hsl(4, 78%, 38%)",
+          "hsl(4, 78%, 50%)",
+          "hsl(4, 78%, 62%)",
+          "hsl(4, 78%, 76%)",
+          "hsl(4, 78%, 89%)",
+          "hsl(4, 78%, 96%)"
+        ]
+      },
+      "signal-blue": {
+        "role": "semantic",
+        "displayName": "Signal Blue",
+        "canonical": "hsl(206, 64%, 44%)",
+        "tonalRamp": [
+          "hsl(206, 64%, 12%)",
+          "hsl(206, 64%, 24%)",
+          "hsl(206, 64%, 34%)",
+          "hsl(206, 64%, 44%)",
+          "hsl(206, 64%, 56%)",
+          "hsl(206, 64%, 70%)",
+          "hsl(206, 64%, 85%)",
+          "hsl(206, 64%, 95%)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero masthead titles and giant numeral readouts. ClashDisplay Bold, clamp(3.5rem, 8vw, 6rem), tracking -0.035em, line-height 1.0. The biggest thing on the page by a factor of 2."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All body copy, form labels, table cells. Chillax Regular 400, 0.875rem/14px, line-height 1.5. Max 65ch for prose."
+      },
+      "mono": {
+        "displayName": "Mono / Label",
+        "purpose": "Technical voice. System monospace, 0.6875rem/11px uppercase, tracking 0.14em. Silkscreened annotations on a control panel. Also used for code blocks and LCD readouts."
+      }
+    },
+    "shadows": [
+      {
+        "name": "edge-raised",
+        "value": "inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12)",
+        "purpose": "Convex bevel catch-light. Buttons, keycaps, knobs, raised panels, avatars at rest."
+      },
+      {
+        "name": "edge-inset",
+        "value": "inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5)",
+        "purpose": "Concave recess shadow. Inputs, toggle tracks, inset panels, pressed buttons."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-fast",
+        "value": "90ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Immediate feedback: hover color shifts, border changes."
+      },
+      {
+        "name": "transition-normal",
+        "value": "160ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default state transitions: background changes, opacity fades."
+      },
+      {
+        "name": "transition-slow",
+        "value": "280ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Slower fills: progress bars, large area changes."
+      },
+      {
+        "name": "transition-press",
+        "value": "120ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "Tactile press with slight overshoot. Toggles, button presses, switch levers. Simulates mechanical snap."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "Machined metal key with gradient face and edge bevel. The standard action button. Presses down on click.",
+      "html": "<button class=\"ds-btn\">DEFAULT BUTTON</button>",
+      "css": ".ds-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  height: 36px;\n  padding: 0 16px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  color: #161a22;\n  background: linear-gradient(180deg, hsl(210 20% 99%) 0%, hsl(212 16% 94%) 48%, hsl(214 14% 89%) 100%);\n  border: 1px solid #8996a9;\n  border-radius: 5px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12);\n  cursor: pointer;\n  white-space: nowrap;\n  user-select: none;\n  transition: filter 90ms cubic-bezier(0.4, 0, 0.2, 1), transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-btn:hover {\n  filter: brightness(1.03);\n  border-color: #161a22;\n}\n.ds-btn:active {\n  background: linear-gradient(180deg, hsl(214 14% 88%) 0%, hsl(212 16% 92%) 100%);\n  transform: translateY(1px);\n  box-shadow: inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5);\n}\n.ds-btn:focus-visible {\n  outline: 2px solid #ff570f;\n  outline-offset: 1px;\n}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid near-black button with subtle top catch-light. The bold alternative to accent. Use for primary CTAs.",
+      "html": "<button class=\"ds-btn-primary\">GET STARTED</button>",
+      "css": ".ds-btn-primary {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  height: 36px;\n  padding: 0 16px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  color: #f9fafb;\n  background: #161a22;\n  border: 1px solid #161a22;\n  border-radius: 5px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.14);\n  cursor: pointer;\n  white-space: nowrap;\n  user-select: none;\n  transition: filter 90ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-btn-primary:hover {\n  filter: brightness(1.18);\n}\n.ds-btn-primary:active {\n  filter: brightness(1);\n  box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.4);\n}\n.ds-btn-primary:focus-visible {\n  outline: 2px solid #ff570f;\n  outline-offset: 1px;\n}"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Solid safety-orange signal button. The loudest button — use once per action group. Semibold weight.",
+      "html": "<button class=\"ds-btn-accent\">DOWNLOAD</button>",
+      "css": ".ds-btn-accent {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  height: 36px;\n  padding: 0 16px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  font-weight: 600;\n  line-height: 1;\n  color: #29140a;\n  background: #ff570f;\n  border: 1px solid #e6410a;\n  border-radius: 5px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.3);\n  cursor: pointer;\n  white-space: nowrap;\n  user-select: none;\n  transition: background 160ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 120ms cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.ds-btn-accent:hover {\n  background: #ff6929;\n}\n.ds-btn-accent:active {\n  background: #e6410a;\n  box-shadow: inset 0 2px 4px hsl(20 60% 10% / 0.4);\n}\n.ds-btn-accent:focus-visible {\n  outline: 2px solid #ff570f;\n  outline-offset: 1px;\n}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Fully transparent, no border, no bevel. Gains a warm aluminium background on hover. For secondary/tertiary actions.",
+      "html": "<button class=\"ds-btn-ghost\">Learn more</button>",
+      "css": ".ds-btn-ghost {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  height: 36px;\n  padding: 0 16px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  color: #444a55;\n  background: transparent;\n  border: 1px solid transparent;\n  border-radius: 5px;\n  box-shadow: none;\n  cursor: pointer;\n  white-space: nowrap;\n  user-select: none;\n  transition: background 90ms cubic-bezier(0.4, 0, 0.2, 1), color 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-btn-ghost:hover {\n  background: #e1e5ea;\n  color: #161a22;\n}\n.ds-btn-ghost:active {\n  background: #d6dbe1;\n  transform: translateY(1px);\n}\n.ds-btn-ghost:focus-visible {\n  outline: 2px solid #ff570f;\n  outline-offset: 1px;\n}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Recessed cutout with edge-inset bevel. Reads as an engraved label on a control panel. Focus adds an accent rim.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Enter value...\" />",
+      "css": ".ds-input {\n  width: 100%;\n  height: 36px;\n  padding: 0 12px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  color: #161a22;\n  background: #e2e5e9;\n  border: 1px solid #8996a9;\n  border-radius: 5px;\n  box-shadow: inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5);\n  transition: border-color 90ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-input::placeholder {\n  color: #9097a2;\n}\n.ds-input:hover {\n  border-color: #161a22;\n}\n.ds-input:focus {\n  outline: none;\n  border-color: #ff570f;\n  box-shadow: inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5), 0 0 0 2px hsl(18 100% 53% / 0.12);\n}"
+    },
+    {
+      "name": "Toggle Switch",
+      "kind": "custom",
+      "refersTo": "button-accent",
+      "description": "Hardware toggle with a machined metal thumb in a recessed track. Checked state fills the track with safety orange and snaps the thumb right with a mechanical overshoot curve.",
+      "html": "<label class=\"ds-toggle\">\n  <input type=\"checkbox\" checked />\n  <span>Enable feature</span>\n</label>",
+      "css": ".ds-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 0.8125rem;\n  cursor: pointer;\n  user-select: none;\n}\n.ds-toggle input {\n  appearance: none;\n  width: 40px;\n  height: 22px;\n  background: #e2e5e9;\n  border: 1px solid #8996a9;\n  border-radius: 9999px;\n  box-shadow: inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5);\n  position: relative;\n  flex-shrink: 0;\n  cursor: pointer;\n  transition: background 90ms cubic-bezier(0.4, 0, 0.2, 1), border-color 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-toggle input::after {\n  content: '';\n  position: absolute;\n  top: 1px;\n  left: 1px;\n  width: 18px;\n  height: 18px;\n  background: linear-gradient(180deg, hsl(210 20% 99%) 0%, hsl(212 16% 94%) 48%, hsl(214 14% 89%) 100%);\n  border: 1px solid #8996a9;\n  border-radius: 9999px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12);\n  transition: transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.ds-toggle input:checked {\n  background: #ff570f;\n  border-color: #e6410a;\n}\n.ds-toggle input:checked::after {\n  transform: translateX(18px);\n}\n.ds-toggle input:focus-visible {\n  outline: 2px solid #ff570f;\n  outline-offset: 1px;\n}"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "button-ghost",
+      "description": "Inline 20px-tall technical label. Mono uppercase, brushed aluminium background, hairline border. Reads as a silkscreened tag on a control panel.",
+      "html": "<span class=\"ds-badge\">STABLE</span>",
+      "css": ".ds-badge {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  height: 20px;\n  padding: 0 8px;\n  font-family: ui-monospace, 'Cascadia Mono', 'Cascadia Code', Consolas, 'SFMono-Regular', Menlo, 'JetBrains Mono', monospace;\n  font-size: 0.6875rem;\n  font-weight: 500;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  line-height: 1;\n  color: #444a55;\n  background: #eaedf0;\n  border: 1px solid #b1b9c4;\n  border-radius: 3px;\n  white-space: nowrap;\n  user-select: none;\n}"
+    },
+    {
+      "name": "Accent Badge",
+      "kind": "chip",
+      "refersTo": "button-accent",
+      "description": "Solid safety-orange badge variant. For high-signal labels.",
+      "html": "<span class=\"ds-badge-accent\">PRO</span>",
+      "css": ".ds-badge-accent {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  height: 20px;\n  padding: 0 8px;\n  font-family: ui-monospace, 'Cascadia Mono', 'Cascadia Code', Consolas, 'SFMono-Regular', Menlo, 'JetBrains Mono', monospace;\n  font-size: 0.6875rem;\n  font-weight: 500;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  line-height: 1;\n  color: #29140a;\n  background: #ff570f;\n  border: 1px solid #e6410a;\n  border-radius: 3px;\n  white-space: nowrap;\n  user-select: none;\n}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Standalone polished white surface with a hairline seam border and subtle edge-raised bevel. The standard container surface.",
+      "html": "<div class=\"ds-panel\">\n  <h4 class=\"ds-panel-title\">Panel Title</h4>\n  <p class=\"ds-panel-body\">Content goes here. Panels are joined by 1px seams, never by shadows.</p>\n</div>",
+      "css": ".ds-panel {\n  background: #f9fafb;\n  border: 1px solid #b1b9c4;\n  border-radius: 5px;\n  padding: 16px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12);\n}\n.ds-panel-title {\n  font-family: 'ClashDisplay-Variable', 'ClashDisplay', 'Archivo', system-ui, sans-serif;\n  font-size: 1.375rem;\n  font-weight: 600;\n  line-height: 1.08;\n  letter-spacing: -0.015em;\n  color: #161a22;\n  margin: 0 0 8px 0;\n}\n.ds-panel-body {\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #161a22;\n  margin: 0;\n}"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "panel",
+      "description": "Sticky top navigation bar with a bottom seam border. Links in secondary ink, active link in primary ink. Includes mobile hamburger menu pattern.",
+      "html": "<nav class=\"ds-nav\">\n  <div class=\"ds-nav-inner\">\n    <a href=\"/\" class=\"ds-nav-brand\">BRAND</a>\n    <div class=\"ds-nav-links\">\n      <a href=\"/docs\" class=\"ds-nav-link\">Docs</a>\n      <a href=\"/download\" class=\"ds-nav-link is-active\">Download</a>\n    </div>\n    <button class=\"ds-nav-cta\">Get Started</button>\n  </div>\n</nav>",
+      "css": ".ds-nav {\n  position: sticky;\n  top: 0;\n  z-index: 50;\n  background: #d3d8de;\n  border-bottom: 1px solid #b1b9c4;\n}\n.ds-nav-inner {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  max-width: 72rem;\n  margin: 0 auto;\n  padding: 0 16px;\n  height: 56px;\n}\n.ds-nav-brand {\n  font-family: 'ClashDisplay-Variable', 'ClashDisplay', system-ui, sans-serif;\n  font-size: 1.375rem;\n  font-weight: 700;\n  color: #161a22;\n  text-decoration: none;\n  letter-spacing: -0.015em;\n}\n.ds-nav-links {\n  display: flex;\n  align-items: center;\n  gap: 24px;\n}\n.ds-nav-link {\n  font-size: 0.8125rem;\n  color: #444a55;\n  text-decoration: none;\n  transition: color 90ms cubic-bezier(0.4, 0, 0.2, 1);\n}\n.ds-nav-link:hover,\n.ds-nav-link.is-active {\n  color: #161a22;\n  font-weight: 500;\n}\n.ds-nav-cta {\n  display: inline-flex;\n  align-items: center;\n  height: 36px;\n  padding: 0 16px;\n  font-family: 'Chillax-Variable', 'Chillax', system-ui, sans-serif;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: #f9fafb;\n  background: #161a22;\n  border: 1px solid #161a22;\n  border-radius: 5px;\n  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.14);\n  cursor: pointer;\n}\n.ds-nav-cta:hover {\n  filter: brightness(1.18);\n}\n@media (max-width: 640px) {\n  .ds-nav-links {\n    display: none;\n  }\n}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calibrated Faceplate",
+    "overview": "Enclosure is a design system for interfaces that feel like the front panel of a precision-machined modular synthesiser. The default theme is a light aluminium field — cool, bright, tool-like — with polished white cells joined by crisp 1px seams. A single loud accent signal (safety orange, #ff570f) cuts through the monochrome: primary actions, focus rings, the checked toggle, the glowing LCD readout. The dark theme inverts to a gunmetal console for night sessions, keeping the same hue character and the same accent pulse.\n\nThe system is driven by a seed architecture: six CSS custom properties control every color token through hsl() + calc() derivations. Change two color pickers, retheme the entire system. The seed is the API.\n\nThe personality is surgical, industrial, and tactile. Typography runs at extreme contrast: ClashDisplay set huge and tight for display numerals and headings, Chillax for body, and a system monospace stack for the tiny wide-tracked uppercase labels that carry the technical voice. Material simulation — brushed metal gradients, edge bevels that flip on press, fractal noise textures — sells the physicality without decoration.\n\nThis system explicitly rejects: floating cards, box-shadow elevation, gradients as decoration, glassmorphism, hero-metric SaaS templates, and anything that reads as a Bootstrap or Material Design app. The interface should feel like it was milled from a billet of aluminium and assembled on a workbench, not arranged in a design tool.",
+    "keyCharacteristics": [
+      "Seed-driven: every color derives from 6 channel variables; the theme is programmable",
+      "Light-first: default is a bright machined aluminium field; dark is a gunmetal console",
+      "Seam grammar: 1px borders and tonal shifts separate surfaces; nothing floats",
+      "Metal materials: gradients, textures, and edge bevels simulate machined metal, not elevation",
+      "Accent signal: the single chromatic signal — loud, industrial, used on ≤10% of any screen",
+      "Extreme type contrast: enormous tight display against tiny wide-tracked monospace labels",
+      "Hardware controls: knobs, switches, faders, keycaps, toggles — the interface feels operable"
+    ],
+    "rules": [
+      {
+        "name": "The Seed Rule",
+        "body": "Every color token derives from six channel variables (--nc-seed-h/s/l, --nc-accent-h/s/l). Never hardcode a color in a component; reference the token. To retheme, change the seeds.",
+        "section": "colors"
+      },
+      {
+        "name": "The Accent Rule",
+        "body": "The accent is a 100% saturated signal color. It never desaturates, never shifts hue dramatically, never goes pastel. Its loudness is functional, not decorative. Use on ≤10% of any screen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Metal Finishes Rule",
+        "body": "The surface ramp has exactly four finishes: raw field, bare aluminium, brushed panel, polished white. Darker surfaces are recessed (inset, console); lighter surfaces are raised (panel, polished). If you need a fifth surface, you've misused one of the four.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three-Face Rule",
+        "body": "ClashDisplay for display/headings. Chillax for body/buttons/operational text. Monospace for technical labels/annotations. Never swap.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tight/Loose Rule",
+        "body": "The larger the type, the tighter the tracking. Display numerals at -0.035em. Body at 0. Labels at +0.14em. The contrast in tracking is as important as the contrast in size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Bevel-Only Rule",
+        "body": "Box-shadow is permitted exclusively for edge bevels (--nc-edge-raised, --nc-edge-inset). No drop shadows, no ambient shadows, no glow-as-elevation, no blur-based depth.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Press-Flip Rule",
+        "body": "Interactive elements that use Edge Raised at rest must flip to Edge Inset on :active. The bevel reversal is the tactile confirmation — no ripple, no color pulse, no scale bounce.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Token-Only Rule",
+        "body": "Components reference CSS custom properties exclusively. No hardcoded colors, radii, spacing, or font stacks in component rules. A component that references a hex value directly is a bug.",
+        "section": "components"
+      },
+      {
+        "name": "The Dark-Auto Rule",
+        "body": "Every component works in both themes without a single theme-specific selector. The [data-theme=\"dark\"] block only redefines tokens, never components.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do separate surfaces with 1px seam borders (--nc-line, --nc-line-subtle, --nc-line-strong) or tonal background shifts. The seam is the system's primary spatial grammar.",
+      "Do use the accent color on ≤10% of any screen. A primary button, or a focus ring, or a checked toggle — never all three competing.",
+      "Do use the four aluminium finishes (raw field, bare aluminium, brushed panel, polished white) consistently. Brighter surfaces are closer to the user.",
+      "Do set inputs on the Recessed Well background (--nc-inset) with the Edge Inset bevel. The cutout IS the affordance.",
+      "Do use ClashDisplay for display numerals and headings, Chillax for body and operational text, monospace for technical labels. The three-face rule is non-negotiable.",
+      "Do flip Edge Raised to Edge Inset on :active for all pressable elements. The bevel reversal is the tactile confirmation.",
+      "Do use the seed channels to customize the theme. Change --nc-seed-h/s/l and --nc-accent-h/s/l on :root; every component follows.",
+      "Do keep transitions at 90–280ms. State changes feel immediate (90ms fast, 160ms normal, 280ms slow for fills). The tactile press transition uses a slight overshoot curve (120ms, cubic-bezier(0.34, 1.56, 0.64, 1)).",
+      "Do target WCAG 2.1 AA contrast. Etched Black on Polished White achieves ~13:1. Text on accent achieves ~10:1.",
+      "Do use the prefers-reduced-motion media query to collapse all transitions to 0.01ms."
+    ],
+    "donts": [
+      "Don't use box-shadow for elevation. The only permitted shadows are the physical edge bevels (--nc-edge-raised, --nc-edge-inset). No drop shadows, no ambient shadows, no glow-as-elevation.",
+      "Don't use gradients decoratively. The metal gradients simulate machined surfaces. No gradient washes, no gradient text, no gradient backgrounds for visual effect.",
+      "Don't use glassmorphism, backdrop-filter blur, or transparency effects. The interface is opaque aluminium, not glass.",
+      "Don't add decorative motion. Transitions serve state changes only. No page-load choreography, no hover bounce, no scroll-triggered reveals.",
+      "Don't use rounded corners above 16px except for fully round elements (badge pills, avatars, knobs). The system is machined, not molded.",
+      "Don't hardcode a color value in any component rule. Every visual decision flows through CSS custom properties.",
+      "Don't place ClashDisplay in buttons, inputs, labels, or operational text. Display fonts in functional UI read as a branding mistake.",
+      "Don't use the accent color as decoration. It marks primary actions, current selection, focus, and the active signal. Nothing else earns it.",
+      "Don't add a fifth surface finish. The four-finish ramp plus recessed well and LCD cavity are the complete vocabulary.",
+      "Don't use Material Design patterns: no floating action buttons, no ripple effects, no elevation-based shadow hierarchy. If it looks like a Google app, it's wrong.",
+      "Don't use generic SaaS template patterns: no hero-metric dashboards, no icon-above-heading card grids, no purple-to-blue gradients. If it looks like every startup landing page, it's wrong.",
+      "Don't be deliberately raw or brutalist. Industrial means precision-machined, not crude. The system is considered and surgical, not confrontational.",
+      "Don't use border-left or border-right greater than 1px as a colored accent stripe on cards, list items, or callouts. The alert component's 3px left border is the sole exception."
+    ]
+  }
+}

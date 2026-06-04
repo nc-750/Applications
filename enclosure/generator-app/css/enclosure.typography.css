@@ -1,0 +1,163 @@
+/* ============================================================
+   1 · TYPOGRAPHY
+   The voice = extreme contrast. Display is huge & tight;
+   mono labels are tiny & wide. Body is quiet Chillax.
+   ============================================================ */
+
+.nc-text-display {
+    font-family: var(--nc-font-display);
+}
+.nc-text-body {
+    font-family: var(--nc-font-body);
+}
+.nc-text-mono {
+    font-family: var(--nc-font-mono);
+}
+
+.nc-heading-1,
+.nc-heading-2,
+.nc-heading-3,
+.nc-heading-4 {
+    font-family: var(--nc-font-display);
+    line-height: var(--nc-leading-tight);
+    letter-spacing: var(--nc-track-display);
+    color: var(--nc-ink);
+}
+.nc-heading-1 {
+    font-size: var(--nc-text-4xl);
+    font-weight: var(--nc-font-bold);
+}
+.nc-heading-2 {
+    font-size: var(--nc-text-3xl);
+    font-weight: var(--nc-font-bold);
+}
+.nc-heading-3 {
+    font-size: var(--nc-text-2xl);
+    font-weight: var(--nc-font-semibold);
+    letter-spacing: var(--nc-track-tight);
+}
+.nc-heading-4 {
+    font-size: var(--nc-text-xl);
+    font-weight: var(--nc-font-semibold);
+    letter-spacing: var(--nc-track-tight);
+}
+
+/* Hero display — for mastheads / big statements */
+.nc-display {
+    font-family: var(--nc-font-display);
+    font-size: var(--nc-text-5xl);
+    font-weight: var(--nc-font-bold);
+    line-height: var(--nc-leading-none);
+    letter-spacing: var(--nc-track-display);
+    color: var(--nc-ink);
+}
+
+.nc-text-xl {
+    font-size: var(--nc-text-xl);
+}
+.nc-text-lg {
+    font-size: var(--nc-text-lg);
+}
+.nc-text-md {
+    font-size: var(--nc-text-md);
+}
+.nc-text-base {
+    font-size: var(--nc-text-base);
+}
+.nc-text-sm {
+    font-size: var(--nc-text-sm);
+}
+.nc-text-xs {
+    font-size: var(--nc-text-xs);
+}
+.nc-text-2xs {
+    font-size: var(--nc-text-2xs);
+}
+
+.nc-text-secondary {
+    color: var(--nc-ink-2);
+}
+.nc-text-muted {
+    color: var(--nc-ink-3);
+}
+.nc-text--accent {
+    color: var(--nc-accent);
+}
+
+.nc-font-light {
+    font-weight: var(--nc-font-light);
+}
+.nc-font-regular {
+    font-weight: var(--nc-font-regular);
+}
+.nc-font-medium {
+    font-weight: var(--nc-font-medium);
+}
+.nc-font-semibold {
+    font-weight: var(--nc-font-semibold);
+}
+.nc-font-bold {
+    font-weight: var(--nc-font-bold);
+}
+
+/* Silkscreened technical label — tiny, wide, mono, uppercase */
+.nc-label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    line-height: 1.4;
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-3);
+}
+.nc-label--accent {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    line-height: 1.4;
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-accent-ink);
+}
+
+/* Part number — mono, slightly narrower tracking, the "PN-001" tag */
+.nc-partno {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-3);
+}
+
+.nc-caption {
+    font-size: var(--nc-text-sm);
+    color: var(--nc-ink-2);
+}
+
+.nc-caption--accent {
+    font-size: var(--nc-text-sm);
+    color: var(--nc-accent-ink);
+}
+
+.nc-code {
+    font-family: var(--nc-font-mono);
+    font-size: 0.92em;
+    background: var(--nc-inset);
+    color: var(--nc-accent-ink);
+    padding: 1px 6px;
+    border-radius: var(--nc-radius-sm);
+    box-shadow: var(--nc-edge-inset);
+}
+
+.nc-kbd {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    color: var(--nc-ink-2);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-sm);
+    padding: 2px 7px;
+    display: inline-block;
+    line-height: 1.4;
+    box-shadow: var(--nc-edge-raised);
+}

@@ -1,0 +1,33 @@
+---
+import { COMPARISON_FEATURES } from "../config.ts";
+---
+
+<section id="compare" class="border-t border-(--nc-line)">
+  <div class="nc-shell py-20 pb-28">
+    <h2 class="nc-heading-2 text-center mb-3">Free vs Pro</h2>
+    <p class="nc-text-base nc-text-secondary text-center mb-10 mx-auto max-w-prose">
+      Free is fully functional, not a trial. Pro adds depth — richer interviews, more nuanced synthesis.
+    </p>
+
+    <div class="mx-auto overflow-x-auto max-w-3xl">
+      <table class="nc-table">
+        <thead>
+          <tr>
+            <th class="w-[40%]">Feature</th>
+            <th class="text-center w-[30%]">Free</th>
+            <th class="text-center nc-text--accent w-[30%] bg-[--nc-accent-subtle]">Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COMPARISON_FEATURES.map((row) => (
+            <tr>
+              <td class="nc-font-medium nc-text-sm">{row.feature}</td>
+              <td class="text-center nc-text-secondary nc-text-xs">{row.free}</td>
+              <td class="text-center nc-text-secondary nc-text-xs bg-[--nc-accent-subtle]">{row.pro}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

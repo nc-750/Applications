@@ -1,0 +1,108 @@
+/* ============================================================
+   7 · CONSOLE / LCD — the black "display" surface
+   ============================================================ */
+.nc-console {
+    position: relative;
+    background: var(--nc-console);
+    color: var(--nc-ink-invert);
+    border: var(--nc-border-width) solid var(--nc-console-line);
+    border-radius: var(--nc-radius-md);
+    padding: var(--nc-space-4);
+    overflow: hidden;
+    box-shadow: var(--nc-edge-inset);
+}
+/* Scanline overlay */
+.nc-console--scan::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0 2px,
+        hsl(0 0% 0% / 0.18) 2px 3px
+    );
+}
+.nc-lcd {
+    font-family: var(--nc-font-mono);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-accent);
+    text-shadow: 0 0 8px hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%) calc(var(--nc-accent-l) * 1%) / 0.6
+    );
+    font-variant-numeric: tabular-nums;
+}
+.nc-lcd--lg {
+    font-size: var(--nc-text-3xl);
+    line-height: 1;
+}
+.nc-lcd--green {
+    color: var(--nc-success);
+    text-shadow: 0 0 8px var(--nc-success);
+}
+.nc-lcd-sub {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-invert-2);
+}
+
+/* Terminal (kept for code/log output; sits on console surface) */
+.nc-terminal {
+    background: var(--nc-console);
+    border: var(--nc-border-width) solid var(--nc-console-line);
+    border-radius: var(--nc-radius-md);
+    overflow: hidden;
+}
+.nc-terminal__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    padding: var(--nc-space-2) var(--nc-space-3);
+    background: var(--nc-console-2);
+    border-bottom: var(--nc-border-width) solid var(--nc-console-line);
+}
+.nc-terminal__dots {
+    display: flex;
+    gap: 6px;
+}
+.nc-terminal__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--nc-radius-full);
+}
+.nc-terminal__dot--red {
+    background: var(--nc-error);
+}
+.nc-terminal__dot--amber {
+    background: var(--nc-warning);
+}
+.nc-terminal__dot--green {
+    background: var(--nc-success);
+}
+.nc-terminal__title {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-invert-2);
+    margin-left: var(--nc-space-2);
+}
+.nc-terminal__body {
+    padding: var(--nc-space-4);
+}
+.nc-terminal__body pre {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-sm);
+    line-height: var(--nc-leading-relaxed);
+    color: var(--nc-ink-invert);
+    white-space: pre-wrap;
+    margin: 0;
+}
+.nc-terminal--amber .nc-terminal__body pre {
+    color: var(--nc-warning);
+}
+.nc-terminal--green .nc-terminal__body pre {
+    color: var(--nc-success);
+}

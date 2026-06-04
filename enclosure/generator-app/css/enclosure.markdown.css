@@ -1,0 +1,108 @@
+/* ============================================================
+   DOCS PROSE
+   Reading layout for markdown content. Uses enclosure tokens.
+   ============================================================ */
+.nc-prose {
+    max-width: 70ch;
+    color: var(--nc-ink);
+}
+.nc-prose h1,
+.nc-prose h2,
+.nc-prose h3 {
+    font-family: var(--nc-font-display);
+    color: var(--nc-ink);
+    font-weight: var(--nc-font-semibold);
+    line-height: var(--nc-leading-tight);
+}
+.nc-prose h1 {
+    font-size: var(--nc-text-2xl);
+    margin-top: var(--nc-space-8);
+    margin-bottom: var(--nc-space-3);
+}
+.nc-prose h2 {
+    font-size: var(--nc-text-xl);
+    margin-top: var(--nc-space-6);
+    margin-bottom: var(--nc-space-2);
+}
+.nc-prose h3 {
+    font-size: var(--nc-text-lg);
+    margin-top: var(--nc-space-5);
+    margin-bottom: var(--nc-space-2);
+}
+.nc-prose p {
+    margin-bottom: var(--nc-space-4);
+    line-height: var(--nc-leading-relaxed);
+}
+.nc-prose a {
+    color: var(--nc-accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.nc-prose a:hover {
+    color: var(--nc-accent);
+}
+.nc-prose ul,
+.nc-prose ol {
+    padding-left: 1.5rem;
+    margin-bottom: var(--nc-space-4);
+}
+.nc-prose li {
+    margin-bottom: var(--nc-space-1);
+}
+.nc-prose code {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    background: var(--nc-inset);
+    color: var(--nc-accent-ink);
+    padding: 1px 6px;
+    border-radius: var(--nc-radius-sm);
+    box-shadow: var(--nc-edge-inset);
+}
+.nc-prose pre {
+    background: var(--nc-console);
+    border: var(--nc-border-width) solid var(--nc-console-line);
+    border-radius: var(--nc-radius-md);
+    padding: var(--nc-space-4);
+    overflow-x: auto;
+    margin-bottom: var(--nc-space-4);
+}
+.nc-prose pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    color: var(--nc-ink-invert);
+    font-size: var(--nc-text-sm);
+}
+.nc-prose blockquote {
+    border-left: 2px solid var(--nc-accent);
+    padding-left: var(--nc-space-4);
+    margin-left: 0;
+    color: var(--nc-ink-2);
+    font-style: italic;
+}
+.nc-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--nc-space-4);
+    font-size: var(--nc-text-sm);
+}
+.nc-prose th,
+.nc-prose td {
+    border: var(--nc-border-width) solid var(--nc-line);
+    padding: var(--nc-space-2) var(--nc-space-3);
+    text-align: left;
+}
+.nc-prose th {
+    background: var(--nc-panel-3);
+    font-weight: var(--nc-font-semibold);
+}
+.nc-prose strong {
+    color: var(--nc-ink);
+    font-weight: var(--nc-font-semibold);
+}
+.nc-prose hr {
+    border: none;
+    border-top: var(--nc-border-width) solid var(--nc-line);
+    margin: var(--nc-space-8) 0;
+}

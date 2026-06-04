@@ -1,0 +1,129 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    background-color: var(--nc-bg);
+    /* Aluminium field: directional brushed grain over the base color */
+    background-image: var(--nc-grain-brushed);
+    color: var(--nc-ink);
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-base);
+    font-weight: var(--nc-font-regular);
+    line-height: var(--nc-leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fine fractal noise over the whole field — pinned, non-interactive */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: var(--nc-texture-noise);
+    background-size: 220px 220px;
+    opacity: var(--nc-texture-opacity);
+    mix-blend-mode: multiply;
+}
+
+/* Keep real content above the noise layer */
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: var(--nc-accent-ink);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--nc-accent);
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+code,
+kbd,
+pre {
+    font-family: var(--nc-font-mono);
+}
+
+::selection {
+    background: var(--nc-accent);
+    color: var(--nc-on-accent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--nc-accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Scrollbar — theme-aware thumb only, no width override ── */
+@media (hover: hover) {
+    ::-webkit-scrollbar-thumb {
+        background: var(--nc-line);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--nc-line-strong);
+    }
+}
+
+/* Screen-reader-only utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

@@ -1,0 +1,22 @@
+@import "enclosure.tokens.css";
+
+/* ── Map Tailwind's spacing scale to Enclosure tokens ─────── */
+/*    Concrete values so Tailwind v4 can resolve the scale.    */
+/*    gap utilities use var(--spacing-N) while margin/padding  */
+/*    use calc(var(--spacing) * N) — the base --spacing must  */
+/*    be set for the calc() path to work.                      */
+@theme {
+    --spacing: 4px;               /* base multiplier (1 unit = 4px) */
+    --spacing-0: 0;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+}

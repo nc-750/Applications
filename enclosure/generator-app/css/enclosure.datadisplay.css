@@ -1,0 +1,347 @@
+/* ============================================================
+   6 · DATA DISPLAY — readout, spec, stat, LED, badge, pill,
+   table, progress, dot-matrix, console/LCD
+   ============================================================ */
+
+/* Big numeral readout — the "72" / "07" / "002". */
+.nc-readout {
+    font-family: var(--nc-font-display);
+    font-size: var(--nc-text-5xl);
+    font-weight: var(--nc-font-bold);
+    line-height: var(--nc-leading-none);
+    letter-spacing: var(--nc-track-display);
+    color: var(--nc-ink);
+    font-variant-numeric: tabular-nums;
+}
+.nc-readout--accent {
+    color: var(--nc-accent-ink);
+}
+/* Rotated index numeral, like the "002 / 001" markers */
+.nc-readout--vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+/* Spec cell — a labelled value (mono label + value) */
+.nc-spec {
+    display: flex;
+    flex-direction: column;
+    gap: 0;                    /* label line-height provides separation */
+}
+.nc-spec__label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-3);
+}
+.nc-spec__value {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-md);
+    font-weight: var(--nc-font-medium);
+    color: var(--nc-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Strip of spec cells divided by vertical hairlines */
+.nc-spec-strip {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: var(--nc-border-width) solid var(--nc-line);
+}
+.nc-spec-strip .nc-spec {
+    padding: var(--nc-space-3) var(--nc-space-4);
+    border-right: var(--nc-border-width) solid var(--nc-line);
+}
+.nc-spec-strip .nc-spec:last-child {
+    border-right: none;
+}
+
+/* Status LED */
+.nc-led {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-2);
+}
+.nc-led::before {
+    content: "";
+    width: var(--nc-space-2);   /* 8px */
+    height: var(--nc-space-2);
+    border-radius: var(--nc-radius-full);
+    background: var(--nc-ink-faint);
+    flex-shrink: 0;
+}
+.nc-led--on::before {
+    background: var(--nc-success);
+    box-shadow: 0 0 6px var(--nc-success);
+}
+.nc-led--rec::before {
+    background: var(--nc-accent);
+    box-shadow: 0 0 6px var(--nc-accent);
+}
+.nc-led--warn::before {
+    background: var(--nc-warning);
+    box-shadow: 0 0 6px var(--nc-warning);
+}
+.nc-led--err::before {
+    background: var(--nc-error);
+    box-shadow: 0 0 6px var(--nc-error);
+}
+
+/* Badge / tag */
+.nc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nc-space-1);
+    height: 20px;
+    padding: 0 var(--nc-space-2);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-mono);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--nc-ink-2);
+    background: var(--nc-panel-2);
+    border: var(--nc-border-width) solid var(--nc-line);
+    border-radius: var(--nc-radius-sm);
+    white-space: nowrap;
+}
+.nc-badge--accent {
+    color: var(--nc-on-accent);
+    background: var(--nc-accent);
+    border-color: var(--nc-accent-active);
+}
+.nc-badge--success {
+    color: var(--nc-success);
+    background: var(--nc-success-subtle);
+    border-color: transparent;
+}
+.nc-badge--warning {
+    color: var(--nc-warning);
+    background: var(--nc-warning-subtle);
+    border-color: transparent;
+}
+.nc-badge--error {
+    color: var(--nc-error);
+    background: var(--nc-error-subtle);
+    border-color: transparent;
+}
+.nc-badge--info {
+    color: var(--nc-info);
+    background: var(--nc-info-subtle);
+    border-color: transparent;
+}
+
+/* Pill — rounded badge variant */
+.nc-pill {
+    border-radius: var(--nc-radius-full);
+    padding: 0 var(--nc-space-3);
+}
+
+/* Table */
+.nc-table {
+    width: 100%;
+    font-size: var(--nc-text-sm);
+    border-collapse: separate;
+    border-spacing: 0;
+    border: var(--nc-border-width) solid var(--nc-line);
+    border-radius: var(--nc-radius-md);
+    overflow: hidden;
+    background: var(--nc-panel);
+}
+.nc-table thead {
+    background: var(--nc-panel-3);
+}
+.nc-table th {
+    padding: var(--nc-space-2) var(--nc-space-4);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-label);
+    color: var(--nc-ink-3);
+    text-transform: uppercase;
+    text-align: left;
+    border-bottom: var(--nc-border-width) solid var(--nc-line);
+}
+.nc-table td {
+    padding: var(--nc-space-3) var(--nc-space-4);
+    border-bottom: var(--nc-border-width) solid var(--nc-line-subtle);
+}
+.nc-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.nc-table tbody tr:hover td {
+    background: var(--nc-hover);
+}
+
+/* Scroll wrapper — preserves the table's border-radius and enables
+   horizontal pan when columns exceed the viewport. */
+.nc-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: var(--nc-border-width) solid var(--nc-line);
+    border-radius: var(--nc-radius-md);
+}
+.nc-table-wrapper .nc-table {
+    border: none;
+    border-radius: 0;
+}
+
+/* Stacked-card variant — at narrow widths each row becomes a
+   vertical key-value list. Requires data-label on every <td>:
+     <td data-label="Name">Acme Corp</td>
+
+   IMPORTANT — Restore table semantics when `display: block` strips
+   implicit roles.  The <table> element needs these attributes:
+     <table class="nc-table nc-table--stacked" role="table">
+   Each <tr> must carry role="row", each <td> role="cell".
+   The ::before pseudo-element `data-label` is purely visual;
+   it should NOT replace a real column header.  Pair with a
+   screen-reader-only <span> inside each <td> for AT support:
+     <td data-label="Name"><span class="sr-only">Name: </span>Acme Corp</td> */
+@media (max-width: 640px) {
+    .nc-table--stacked,
+    .nc-table--stacked tbody,
+    .nc-table--stacked tbody tr,
+    .nc-table--stacked td {
+        display: block;
+    }
+    .nc-table--stacked thead {
+        display: none;
+    }
+    .nc-table--stacked tbody tr {
+        border-bottom: var(--nc-border-width) solid var(--nc-line);
+        border-radius: 0;
+    }
+    .nc-table--stacked tbody tr:last-child {
+        border-bottom: none;
+    }
+    .nc-table--stacked td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--nc-space-3);
+        padding: var(--nc-space-2) var(--nc-space-4);
+        border-bottom: var(--nc-border-width) solid var(--nc-line-subtle);
+        text-align: right;
+    }
+    .nc-table--stacked td:last-child {
+        border-bottom: none;
+    }
+    .nc-table--stacked td::before {
+        content: attr(data-label);
+        font-family: var(--nc-font-mono);
+        font-size: var(--nc-text-2xs);
+        font-weight: var(--nc-font-medium);
+        letter-spacing: var(--nc-track-label);
+        text-transform: uppercase;
+        color: var(--nc-ink-3);
+        text-align: left;
+        flex-shrink: 0;
+    }
+    .nc-table--stacked tbody tr:hover td {
+        background: var(--nc-hover);
+    }
+}
+
+/* Progress meter — thin track.
+   Drive the fill via --nc-progress (0–1) on the bar element:
+     <div class="nc-progress">
+       <div class="nc-progress__bar" style="--nc-progress: 0.42"></div>
+     </div>
+   Uses scaleX to stay on the compositor; no layout work. */
+.nc-progress {
+    width: 100%;
+    height: 6px;
+    background: var(--nc-inset);
+    border: var(--nc-border-width) solid var(--nc-line);
+    border-radius: var(--nc-radius-full);
+    overflow: hidden;
+    box-shadow: var(--nc-edge-inset);
+}
+.nc-progress__bar {
+    height: 100%;
+    width: 100%;
+    background: var(--nc-accent);
+    transform-origin: left;
+    transform: scaleX(var(--nc-progress, 0));
+    transition: transform var(--nc-transition-slow);
+}
+.nc-progress--success .nc-progress__bar {
+    background: var(--nc-success);
+}
+.nc-progress--warning .nc-progress__bar {
+    background: var(--nc-warning);
+}
+.nc-progress--error .nc-progress__bar {
+    background: var(--nc-error);
+}
+
+/* Vertical bar meter group — the "ADSR" mini bar chart */
+.nc-meters {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: var(--nc-space-1);     /* 4px */
+    height: 40px;               /* intentional: meter body height */
+}
+.nc-meters i {
+    display: block;
+    width: var(--nc-space-2);   /* 8px */
+    background: var(--nc-ink);
+    align-self: flex-end;
+}
+.nc-meters i.is-accent {
+    background: var(--nc-accent);
+}
+/* On the dark console, plain bars must invert to stay visible */
+.nc-console .nc-meters i {
+    background: var(--nc-ink-invert);
+}
+.nc-console .nc-meters i.is-accent {
+    background: var(--nc-accent);
+}
+
+/* Dot-matrix display — responsive grid of circular dots.
+   Columns default to 14; override --nc-matrix-cols to suit
+   your data. Narrows automatically on small viewports. */
+.nc-matrix {
+    display: grid;
+    grid-template-columns: repeat(var(--nc-matrix-cols, 14), 1fr);
+    gap: var(--nc-space-1);     /* 4px */
+}
+.nc-matrix i {
+    aspect-ratio: 1;
+    border-radius: var(--nc-radius-full);
+    background: var(--nc-console-line);
+}
+.nc-matrix i.is-on {
+    background: var(--nc-accent);
+    box-shadow: 0 0 4px var(--nc-accent);
+}
+
+/* Tighter grid on narrow viewports — fewer columns so dots
+   stay readable and glow doesn't bleed into neighbours. */
+@media (max-width: 480px) {
+    .nc-matrix {
+        grid-template-columns: repeat(var(--nc-matrix-cols, 10), 1fr);
+        gap: 3px;
+    }
+    .nc-matrix i.is-on {
+        box-shadow: 0 0 3px var(--nc-accent);
+    }
+}
+@media (max-width: 360px) {
+    .nc-matrix {
+        grid-template-columns: repeat(var(--nc-matrix-cols, 8), 1fr);
+        gap: 2px;
+    }
+    .nc-matrix i.is-on {
+        box-shadow: 0 0 2px var(--nc-accent);
+    }
+}

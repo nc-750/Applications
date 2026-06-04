@@ -1,0 +1,143 @@
+/* ── Page container ─────────────────────────────────────── */
+.nc-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--nc-space-6) var(--nc-space-6) var(--nc-space-20);
+}
+
+@media (max-width: 640px) {
+    .nc-shell {
+        padding: var(--nc-space-4) var(--nc-space-4) var(--nc-space-10);
+    }
+}
+
+.nc-page {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: var(--nc-space-6);
+    padding-block: var(--nc-space-10);
+}
+
+@media (max-width: 640px) {
+    .nc-page {
+        padding-inline: var(--nc-space-4);
+        padding-block: var(--nc-space-6);
+    }
+}
+
+/* ============================================================
+   FACEPLATE LAYOUT
+   Industrial seam-joined grid. The container is a machined
+   faceplate; cells are coplanar plates butted together with
+   milled grooves between them.
+
+   Usage:
+     <div class="nc-faceplate grid grid-cols-3">
+       <div class="nc-cell col-span-2">…</div>
+       <div class="nc-cell row-span-2">…</div>
+     </div>
+
+   Grid spans are handled via Tailwind (col-span-*, row-span-*).
+   The faceplate owns the grid container and seam visuals.
+   ============================================================ */
+
+/* ── Faceplate container ─────────────────────────────────── */
+.nc-faceplate {
+    display: grid;
+    grid-template-columns: repeat(var(--nc-cols, 1), 1fr);
+    gap: var(--nc-seam-width);
+    background: var(--nc-seam-fill);
+}
+
+/* ── Cell ────────────────────────────────────────────────── */
+.nc-cell {
+    background: var(--nc-panel);
+    padding: var(--nc-space-5);
+    min-width: 0;
+    /* Bevel the four inner edges into the seam channel: top/left
+       lip catches light, bottom/right lip falls into shade */
+    box-shadow:
+        inset 1px 1px 0 var(--nc-seam-highlight),
+        inset -1px -1px 0 var(--nc-seam-shadow);
+}
+
+/* ── Cell colour variants ────────────────────────────────── */
+.nc-cell--2 {
+    background: var(--nc-panel-2);
+}
+.nc-cell--dark {
+    background: var(--nc-console);
+    color: var(--nc-ink-invert);
+}
+.nc-cell--accent {
+    background: var(--nc-accent);
+    color: var(--nc-on-accent);
+}
+.nc-cell--brushed {
+    background: var(--nc-panel-2);
+    background-image: var(--nc-metal-brushed);
+    /*background-size: 100% 100%;*/
+}
+
+.nc-cell--noisy {
+    background-image: var(--nc-texture-noise);
+}
+
+/* ── Column count variants ───────────────────────────────── */
+.nc-faceplate--cols-1 {
+    --nc-cols: 1;
+}
+.nc-faceplate--cols-2 {
+    --nc-cols: 2;
+}
+.nc-faceplate--cols-3 {
+    --nc-cols: 3;
+}
+.nc-faceplate--cols-4 {
+    --nc-cols: 4;
+}
+
+/* ── Seam character variants ─────────────────────────────── */
+/* Deep — wider, harder-shadowed channel for hero chassis */
+.nc-faceplate--seam-deep {
+    --nc-seam-width: 4px;
+    --nc-seam-shadow: hsl(220 22% 18% / 0.26);
+}
+/* Hairline — 1px line where space is tight */
+.nc-faceplate--seam-hairline {
+    --nc-seam-width: 1px;
+    --nc-seam-fill: var(--nc-line);
+}
+.nc-faceplate--seam-hairline > .nc-cell {
+    box-shadow: none;
+}
+/* Accent — thin signal channel, like a painted expansion joint */
+.nc-faceplate--seam-accent {
+    --nc-seam-fill: var(--nc-accent);
+    --nc-seam-shadow: hsl(20 60% 10% / 0.22);
+}
+
+/* ============================================================
+   RESPONSIVE
+   Column collapse at breakpoints — faceplate-only.
+   Cell spans are handled by Tailwind responsive prefixes.
+   ============================================================ */
+
+/* Tablet: 641px – 1023px */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .nc-faceplate--cols-2,
+    .nc-faceplate--cols-3,
+    .nc-faceplate--cols-4 {
+        --nc-cols: 2;
+    }
+}
+
+/* Mobile: ≤ 640px */
+@media (max-width: 640px) {
+    .nc-faceplate--cols-2,
+    .nc-faceplate--cols-3,
+    .nc-faceplate--cols-4 {
+        --nc-cols: 1;
+    }
+}

@@ -1,0 +1,14 @@
+:root {
+    /* ----------------------------------------------------------
+     SEEDS — the only values you need to change to retheme
+     H: hue 0–360 | S: saturation 0–100 | L: lightness 0–100
+     (all unitless; multiplied by 1% where needed in calc)
+     ---------------------------------------------------------- */
+    --nc-seed-h: 214;
+    --nc-seed-s: 14;
+    --nc-seed-l: 85;
+
+    --nc-accent-h: 18;
+    --nc-accent-s: 100;
+    --nc-accent-l: 53;
+}

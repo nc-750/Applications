@@ -1,0 +1,193 @@
+/* ============================================================
+   10 · TECHNICAL MARKS — divider, dimension, registration, hatch, barcode
+   ============================================================ */
+
+.nc-divider {
+    border: none;
+    border-top: var(--nc-border-width) solid var(--nc-line);
+    margin: var(--nc-space-6) 0;
+}
+.nc-divider--subtle {
+    border-color: var(--nc-line-subtle);
+}
+
+/* Schematic divider — labelled rule, like a section header in a blueprint */
+.nc-schematic {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-3);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-label);
+    text-transform: uppercase;
+    color: var(--nc-ink-3);
+}
+.nc-schematic::before,
+.nc-schematic::after {
+    content: "";
+    height: 1px;
+    background: var(--nc-line-strong);
+    flex: 1;
+}
+
+/* Dimension line — engineering measure with end ticks */
+.nc-dimension {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    color: var(--nc-ink-3);
+}
+.nc-dimension__line {
+    position: relative;
+    height: 1px;
+    background: var(--nc-line-strong);
+    flex: 1;
+}
+.nc-dimension__line::before,
+.nc-dimension__line::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--nc-line-strong);
+}
+.nc-dimension__line::before {
+    left: 0;
+}
+.nc-dimension__line::after {
+    right: 0;
+}
+
+/* Registration mark — crosshair target */
+.nc-reg {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    flex-shrink: 0;
+}
+.nc-reg::before,
+.nc-reg::after {
+    content: "";
+    position: absolute;
+    background: var(--nc-ink-3);
+}
+.nc-reg::before {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    margin-left: -0.5px;
+}
+.nc-reg::after {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    margin-top: -0.5px;
+}
+
+/* Hatch block — orange/ink hazard fill */
+.nc-hatch {
+    background-image: var(--nc-hatch);
+    background-color: var(--nc-accent);
+}
+
+.nc-hatch--half {
+    height: 50%;
+}
+
+.nc-hatch--third {
+    height: 33%;
+}
+
+.nc-hatch--faint {
+    background-image: var(--nc-hatch--faint);
+    background-color: var(--nc-accent);
+}
+
+/* Barcode — pure CSS stripes */
+.nc-barcode {
+    height: 36px;
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--nc-ink) 0,
+        var(--nc-ink) 1px,
+        transparent 1px,
+        transparent 3px,
+        var(--nc-ink) 3px,
+        var(--nc-ink) 5px,
+        transparent 5px,
+        transparent 6px,
+        var(--nc-ink) 6px,
+        var(--nc-ink) 9px,
+        transparent 9px,
+        transparent 11px
+    );
+    background-size: 11px 100%;
+}
+
+/* ============================================================
+   11 · MISC — avatar, tooltip, layout utilities
+   ============================================================ */
+
+.nc-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-family: var(--nc-font-display);
+    font-size: var(--nc-text-sm);
+    font-weight: var(--nc-font-semibold);
+    color: var(--nc-ink);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-full);
+    box-shadow: var(--nc-edge-raised);
+    overflow: hidden;
+    user-select: none;
+}
+.nc-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.nc-avatar--sm {
+    width: 26px;
+    height: 26px;
+    font-size: var(--nc-text-2xs);
+}
+.nc-avatar--lg {
+    width: 46px;
+    height: 46px;
+    font-size: var(--nc-text-base);
+}
+
+.nc-tooltip {
+    position: relative;
+}
+.nc-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--nc-space-1) var(--nc-space-2);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-invert);
+    background: var(--nc-ink);
+    border-radius: var(--nc-radius-sm);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--nc-transition-fast);
+}
+.nc-tooltip:hover::after,
+.nc-tooltip:focus-within::after {
+    opacity: 1;
+}

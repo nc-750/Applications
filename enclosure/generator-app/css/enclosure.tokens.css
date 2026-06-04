@@ -1,0 +1,508 @@
+@import "enclosure.seeds.css";
+
+:root {
+    /* ----------------------------------------------------------
+     COLOR — Light "Steel" theme (default)
+     Surfaces ascend in lightness: field < panel < panel cells.
+     A faint cool hue (~214) keeps it reading as aluminium, not
+     plain gray. Saturation stays low (8–14%) so it never tints.
+     ---------------------------------------------------------- */
+
+    /* Surface ramp */
+    --nc-bg: hsl(
+        var(--nc-seed-h) calc(var(--nc-seed-s) * 1%) calc(var(--nc-seed-l) * 1%)
+    );
+    --nc-bg-sunken: hsl(
+        var(--nc-seed-h) calc(var(--nc-seed-s) * 1%)
+            calc((var(--nc-seed-l) - 5) * 1%)
+    );
+    --nc-panel: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 8) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 13) * 1%), 98%)
+    );
+    --nc-panel-2: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 8) * 1%), 98%)
+    );
+    --nc-panel-3: hsl(
+        var(--nc-seed-h) calc(var(--nc-seed-s) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 3) * 1%), 98%)
+    );
+    --nc-inset: hsl(
+        var(--nc-seed-h) calc((var(--nc-seed-s) - 1) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 5) * 1%), 98%)
+    );
+    --nc-hover: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 5) * 1%), 98%)
+    );
+    --nc-active: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) + 1) * 1%), 98%)
+    );
+
+    /* Console — the "display" surface (LCD, dark cards) */
+    --nc-console: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(5%, calc((var(--nc-seed-l) - 75) * 1%), 20%)
+    );
+    --nc-console-2: hsl(
+        calc(var(--nc-seed-h) + 6) calc(var(--nc-seed-s) * 1%)
+            clamp(5%, calc((var(--nc-seed-l) - 70) * 1%), 25%)
+    );
+    --nc-console-line: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) - 2) * 1%)
+            clamp(10%, calc((var(--nc-seed-l) - 59) * 1%), 40%)
+    );
+
+    /* Ink — near-black in light theme */
+    --nc-ink: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 6) * 1%)
+            clamp(5%, calc((var(--nc-seed-l) - 74) * 1%), 20%)
+    );
+    --nc-ink-2: hsl(
+        calc(var(--nc-seed-h) + 4) calc((var(--nc-seed-s) - 3) * 1%)
+            clamp(10%, calc((var(--nc-seed-l) - 55) * 1%), 45%)
+    );
+    --nc-ink-3: hsl(
+        calc(var(--nc-seed-h) + 2) calc((var(--nc-seed-s) - 5) * 1%)
+            clamp(15%, calc((var(--nc-seed-l) - 39) * 1%), 60%)
+    );
+    --nc-ink-faint: hsl(
+        calc(var(--nc-seed-h) + 2) calc((var(--nc-seed-s) - 5) * 1%)
+            clamp(20%, calc((var(--nc-seed-l) - 35) * 1%), 75%)
+    );
+    --nc-ink-invert: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 4) * 1%)
+            clamp(88%, calc((var(--nc-seed-l) + 8) * 1%), 98%)
+    );
+    --nc-ink-invert-2: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) - 4) * 1%)
+            clamp(50%, calc((var(--nc-seed-l) - 23) * 1%), 75%)
+    );
+    --nc-on-ink: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 8) * 1%)
+            clamp(93%, calc((var(--nc-seed-l) + 13) * 1%), 100%)
+    );
+
+    /* Seams / lines */
+    --nc-line: hsl(
+        var(--nc-seed-h) calc(var(--nc-seed-s) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) - 12) * 1%), 100%)
+    );
+    --nc-line-subtle: hsl(
+        var(--nc-seed-h) calc((var(--nc-seed-s) - 1) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) - 5) * 1%), 100%)
+    );
+    --nc-line-strong: hsl(
+        calc(var(--nc-seed-h) + 2) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) - 25) * 1%), 100%)
+    );
+    --nc-line-ink: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 6) * 1%)
+            clamp(5%, calc((var(--nc-seed-l) - 74) * 1%), 20%)
+    );
+
+    /* ----------------------------------------------------------
+     SEAM — the recessed channel between joined cells.
+     Not a line: a milled groove with two lit walls, read as
+     two coplanar plates butted together and lit from the top.
+       width      — channel thickness (the visible gap)
+       fill       — groove floor, in shadow (darkest)
+       highlight  — lower wall catch-light (top/left inner lip)
+       shadow     — upper wall shade (bottom/right inner lip)
+     Tune these four lines to change every seam at once.
+     ---------------------------------------------------------- */
+    --nc-seam-width: 2px;
+    --nc-seam-fill: hsl(
+        var(--nc-seed-h) calc((var(--nc-seed-s) + 2) * 1%)
+            clamp(0%, calc((var(--nc-seed-l) - 24) * 1%), 100%)
+    );
+    --nc-seam-highlight: hsl(0 0% 100% / 0.7);
+    --nc-seam-shadow: hsl(220 22% 18% / 0.16);
+
+    /* Accent — the single chromatic signal */
+    --nc-accent: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            calc(var(--nc-accent-l) * 1%)
+    );
+    --nc-accent-hover: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) + 5) * 1%), 100%)
+    );
+    --nc-accent-active: hsl(
+        calc(var(--nc-accent-h) - 3) calc((var(--nc-accent-s) - 8) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) - 6) * 1%), 100%)
+    );
+    --nc-accent-ink: hsl(
+        calc(var(--nc-accent-h) - 1) calc((var(--nc-accent-s) - 12) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) - 15) * 1%), 100%)
+    );
+    --nc-accent-subtle: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            calc(var(--nc-accent-l) * 1%) / 0.12
+    );
+    --nc-on-accent: hsl(calc(var(--nc-accent-h) + 2) 60% 10%);
+
+    /* Semantic — fixed hues, lightness tuned for light backgrounds */
+    --nc-success: hsl(150 42% 36%);
+    --nc-success-subtle: hsl(150 42% 36% / 0.12);
+    --nc-warning: hsl(38 92% 45%);
+    --nc-warning-subtle: hsl(38 92% 45% / 0.14);
+    --nc-error: hsl(4 78% 50%);
+    --nc-error-subtle: hsl(4 78% 50% / 0.12);
+    --nc-on-error: hsl(0 0% 100%);
+    --nc-info: hsl(206 64% 44%);
+    --nc-info-subtle: hsl(206 64% 44% / 0.12);
+
+    /* ----------------------------------------------------------
+     MATERIAL — gradients & textures that sell the "metal"
+     ---------------------------------------------------------- */
+
+    /* Raised key/button face: top catch-light → body */
+    --nc-metal-key: linear-gradient(
+        180deg,
+        hsl(210 20% 99%) 0%,
+        hsl(212 16% 94%) 48%,
+        hsl(214 14% 89%) 100%
+    );
+    --nc-metal-key-press: linear-gradient(
+        180deg,
+        hsl(214 14% 88%) 0%,
+        hsl(212 16% 92%) 100%
+    );
+
+    /* Brushed disc for knobs — conic sweep + radial shading */
+    --nc-metal-brushed:
+        radial-gradient(
+            circle at 50% 38%,
+            hsl(210 18% 99% / 0.9),
+            transparent 60%
+        ),
+        conic-gradient(
+            from 0deg,
+            hsl(214 12% 78%),
+            hsl(210 16% 92%),
+            hsl(214 12% 76%),
+            hsl(210 16% 94%),
+            hsl(214 12% 78%),
+            hsl(210 16% 90%),
+            hsl(214 12% 76%),
+            hsl(210 16% 93%),
+            hsl(214 12% 78%)
+        );
+
+    /* Directional brushed grain — overlay on metal panels */
+    --nc-grain-brushed: repeating-linear-gradient(
+        90deg,
+        hsl(0 0% 100% / 0.035) 0px,
+        hsl(0 0% 100% / 0.035) 1px,
+        hsl(220 20% 0% / 0.02) 1px,
+        hsl(220 20% 0% / 0.02) 2px
+    );
+
+    /* Hazard / spec hatching — the hatched block */
+    --nc-hatch: repeating-linear-gradient(
+        45deg,
+        var(--nc-ink) 0px,
+        var(--nc-ink) 2px,
+        transparent 2px,
+        transparent 7px
+    );
+
+    --nc-hatch--faint: repeating-linear-gradient(
+        45deg,
+        var(--nc-ink-faint) 0px,
+        var(--nc-ink-faint) 2px,
+        transparent 2px,
+        transparent 7px
+    );
+
+    /* Fine fractal noise — breaks flat fields on metal surfaces */
+    --nc-texture-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    --nc-texture-opacity: 0.05;
+
+    /* Fastener — decorative corner screw */
+    --nc-screw-face: hsl(var(--nc-seed-h) 14% 96%);
+    --nc-screw-body: hsl(var(--nc-seed-h) 12% 70%);
+    --nc-screw-edge: hsl(calc(var(--nc-seed-h) + 2) 14% 56%);
+    --nc-screw-ring: hsl(calc(var(--nc-seed-h) + 2) 16% 50% / 0.5);
+    --nc-screw-drop: hsl(220 20% 20% / 0.2);
+    --nc-screw-slot: hsl(calc(var(--nc-seed-h) + 2) 16% 48% / 0.7);
+
+    /* Edge lighting — physical bevels, applied as box-shadow */
+    --nc-edge-raised:
+        inset 0 1px 0 hsl(0 0% 100% / 0.7),
+        inset 0 -1px 0 hsl(220 20% 30% / 0.12);
+    --nc-edge-inset:
+        inset 0 1px 2px hsl(220 20% 20% / 0.16),
+        inset 0 -1px 0 hsl(0 0% 100% / 0.5);
+
+    /* ----------------------------------------------------------
+     TYPOGRAPHY
+     Display = ClashDisplay (grotesque, set BIG and TIGHT).
+     Body    = Chillax.
+     Mono    = system monospace (technical labels, readouts).
+     ---------------------------------------------------------- */
+    --nc-font-display:
+        "ClashDisplay-Variable", "ClashDisplay", "Archivo", system-ui,
+        sans-serif;
+    --nc-font-body: "Chillax-Variable", "Chillax", system-ui, sans-serif;
+    --nc-font-mono:
+        ui-monospace, "Cascadia Mono", "Cascadia Code", "Consolas",
+        "SFMono-Regular", "Menlo", "JetBrains Mono", monospace;
+
+    /* Size scale — extended upward for display drama */
+    --nc-text-2xs: 0.6875rem; /* 11px  — mono micro-labels   */
+    --nc-text-xs: 0.75rem; /* 12px                        */
+    --nc-text-sm: 0.8125rem; /* 13px                        */
+    --nc-text-base: 0.875rem; /* 14px  — body                */
+    --nc-text-md: 1rem; /* 16px                        */
+    --nc-text-lg: 1.125rem; /* 18px                        */
+    --nc-text-xl: 1.375rem; /* 22px                        */
+    --nc-text-2xl: 1.75rem; /* 28px                        */
+    --nc-text-3xl: 2.25rem; /* 36px                        */
+    --nc-text-4xl: 3.25rem; /* 52px  — display             */
+    --nc-text-5xl: clamp(3.5rem, 8vw, 6rem); /* hero display */
+    --nc-text-6xl: clamp(5rem, 14vw, 11rem); /* giant numeral*/
+
+    /* Weights — Clash/Chillax variable axis 200–700 */
+    --nc-font-light: 300;
+    --nc-font-regular: 400;
+    --nc-font-medium: 500;
+    --nc-font-semibold: 600;
+    --nc-font-bold: 700;
+
+    /* Leading */
+    --nc-leading-none: 1;
+    --nc-leading-tight: 1.08;
+    --nc-leading-snug: 1.28;
+    --nc-leading-normal: 1.5;
+    --nc-leading-relaxed: 1.7;
+
+    /* Tracking — the contrast that defines the voice */
+    --nc-track-display: -0.035em; /* huge headings / numerals   */
+    --nc-track-tight: -0.015em; /* sub-headings                */
+    --nc-track-normal: 0;
+    --nc-track-label: 0.14em; /* wide mono labels            */
+    --nc-track-mono: 0.04em; /* running mono                */
+
+    /* ----------------------------------------------------------
+     SPACING — 4px grid
+     ---------------------------------------------------------- */
+    --nc-space-0: 0;
+    --nc-space-1: 4px;
+    --nc-space-2: 8px;
+    --nc-space-3: 12px;
+    --nc-space-4: 16px;
+    --nc-space-5: 20px;
+    --nc-space-6: 24px;
+    --nc-space-8: 32px;
+    --nc-space-10: 40px;
+    --nc-space-12: 48px;
+    --nc-space-16: 64px;
+    --nc-space-20: 80px;
+
+    /* ----------------------------------------------------------
+     RADII — sharp internal seams, one generous outer radius
+     ---------------------------------------------------------- */
+    --nc-radius-none: 0;
+    --nc-radius-sm: 3px; /* controls, chips             */
+    --nc-radius-md: 5px; /* inputs, small panels        */
+    --nc-radius-lg: 10px; /* cards                       */
+    --nc-radius-xl: 16px; /* hero module / device chassis*/
+    --nc-radius-full: 9999px;
+
+    /* ----------------------------------------------------------
+     BORDERS / CONTROL SIZING / MOTION
+     ---------------------------------------------------------- */
+    --nc-border-width: 1px;
+    --nc-border-ink: 1.5px; /* bold framing hairline       */
+
+    --nc-control-sm: 32px;
+    --nc-control-md: 40px;
+    --nc-control-lg: 48px;
+
+    --nc-transition-fast: 90ms cubic-bezier(0.4, 0, 0.2, 1);
+    --nc-transition-normal: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+    --nc-transition-slow: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* Tactile press — slight overshoot, like a real key */
+    --nc-transition-press: 120ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   DARK "CONSOLE" THEME
+   Same H/S character from seed, pinned to dark lightness values.
+   The accent orange stays the signal; slightly brightened.
+   ============================================================ */
+:root[data-theme="dark"],
+[data-theme="dark"] {
+    /* Surface ramp — seed H/S + pinned dark L */
+    --nc-bg: hsl(calc(var(--nc-seed-h) + 6) calc(var(--nc-seed-s) * 1%) 13%);
+    --nc-bg-sunken: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%) 9%
+    );
+    --nc-panel: hsl(
+        calc(var(--nc-seed-h) + 4) calc((var(--nc-seed-s) - 2) * 1%) 18%
+    );
+    --nc-panel-2: hsl(
+        calc(var(--nc-seed-h) + 5) calc((var(--nc-seed-s) - 2) * 1%) 16%
+    );
+    --nc-panel-3: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) - 1) * 1%) 14%
+    );
+    --nc-inset: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%) 10%
+    );
+    --nc-hover: hsl(
+        calc(var(--nc-seed-h) + 3) calc((var(--nc-seed-s) - 2) * 1%) 22%
+    );
+    --nc-active: hsl(
+        calc(var(--nc-seed-h) + 3) calc((var(--nc-seed-s) - 2) * 1%) 26%
+    );
+
+    --nc-console: hsl(
+        calc(var(--nc-seed-h) + 8) calc((var(--nc-seed-s) + 4) * 1%) 7%
+    );
+    --nc-console-2: hsl(
+        calc(var(--nc-seed-h) + 7) calc((var(--nc-seed-s) + 1) * 1%) 11%
+    );
+    --nc-console-line: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) - 2) * 1%) 24%
+    );
+
+    /* Ink — inverted: near-white text on dark surfaces */
+    --nc-ink: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 2) * 1%) 92%
+    );
+    --nc-ink-2: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) - 4) * 1%) 70%
+    );
+    --nc-ink-3: hsl(var(--nc-seed-h) calc((var(--nc-seed-s) - 5) * 1%) 54%);
+    --nc-ink-faint: hsl(
+        calc(var(--nc-seed-h) + 2) calc((var(--nc-seed-s) - 5) * 1%) 48%
+    );
+    --nc-ink-invert: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 4) * 1%) 93%
+    );
+    --nc-ink-invert-2: hsl(
+        calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) - 4) * 1%) 62%
+    );
+    --nc-on-ink: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%) 10%
+    );
+
+    /* Seams */
+    --nc-line: hsl(
+        calc(var(--nc-seed-h) + 4) calc((var(--nc-seed-s) - 4) * 1%) 28%
+    );
+    --nc-line-subtle: hsl(
+        calc(var(--nc-seed-h) + 5) calc((var(--nc-seed-s) - 3) * 1%) 22%
+    );
+    --nc-line-strong: hsl(
+        calc(var(--nc-seed-h) + 2) calc((var(--nc-seed-s) - 3) * 1%) 40%
+    );
+    --nc-line-ink: hsl(
+        calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 2) * 1%) 88%
+    );
+
+    /* Seam — darker groove, fainter catch-light, deeper shade */
+    --nc-seam-fill: hsl(
+        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%) 6%
+    );
+    --nc-seam-highlight: hsl(0 0% 100% / 0.07);
+    --nc-seam-shadow: hsl(220 30% 0% / 0.5);
+
+    /* Accent — slightly brightened for dark backgrounds */
+    --nc-accent: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) + 3) * 1%), 100%)
+    );
+    --nc-accent-hover: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) + 9) * 1%), 100%)
+    );
+    --nc-accent-active: hsl(
+        calc(var(--nc-accent-h) - 3) calc((var(--nc-accent-s) - 8) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) - 3) * 1%), 100%)
+    );
+    --nc-accent-ink: hsl(
+        calc(var(--nc-accent-h) + 2) 100%
+            clamp(0%, calc((var(--nc-accent-l) + 13) * 1%), 100%)
+    );
+    --nc-accent-subtle: hsl(
+        var(--nc-accent-h) calc(var(--nc-accent-s) * 1%)
+            clamp(0%, calc((var(--nc-accent-l) + 3) * 1%), 100%) / 0.16
+    );
+    --nc-on-accent: hsl(calc(var(--nc-accent-h) + 2) 60% 8%);
+
+    /* Semantic — brighter to stand out on dark backgrounds */
+    --nc-success: hsl(150 46% 50%);
+    --nc-success-subtle: hsl(150 46% 50% / 0.16);
+    --nc-warning: hsl(40 92% 56%);
+    --nc-warning-subtle: hsl(40 92% 56% / 0.16);
+    --nc-error: hsl(4 82% 60%);
+    --nc-error-subtle: hsl(4 82% 60% / 0.16);
+    --nc-on-error: hsl(0 0% 100%);
+    --nc-info: hsl(206 70% 58%);
+    --nc-info-subtle: hsl(206 70% 58% / 0.16);
+
+    --nc-metal-key: linear-gradient(
+        180deg,
+        hsl(218 12% 26%) 0%,
+        hsl(219 13% 19%) 100%
+    );
+    --nc-metal-key-press: linear-gradient(
+        180deg,
+        hsl(219 13% 17%) 0%,
+        hsl(218 12% 21%) 100%
+    );
+    --nc-metal-brushed:
+        radial-gradient(
+            circle at 50% 38%,
+            hsl(210 12% 40% / 0.8),
+            transparent 60%
+        ),
+        conic-gradient(
+            from 0deg,
+            hsl(218 10% 22%),
+            hsl(216 10% 34%),
+            hsl(218 10% 20%),
+            hsl(216 10% 36%),
+            hsl(218 10% 22%),
+            hsl(216 10% 32%),
+            hsl(218 10% 20%),
+            hsl(216 10% 35%),
+            hsl(218 10% 22%)
+        );
+    --nc-grain-brushed: repeating-linear-gradient(
+        90deg,
+        hsl(0 0% 100% / 0.025) 0px,
+        hsl(0 0% 100% / 0.025) 1px,
+        hsl(220 20% 0% / 0.06) 1px,
+        hsl(220 20% 0% / 0.06) 2px
+    );
+    --nc-hatch: repeating-linear-gradient(
+        45deg,
+        var(--nc-ink) 0px,
+        var(--nc-ink) 2px,
+        transparent 2px,
+        transparent 7px
+    );
+    --nc-texture-opacity: 0.06;
+
+    --nc-edge-raised:
+        inset 0 1px 0 hsl(0 0% 100% / 0.08),
+        inset 0 -1px 0 hsl(220 20% 0% / 0.4);
+    --nc-edge-inset:
+        inset 0 1px 2px hsl(220 30% 0% / 0.5),
+        inset 0 -1px 0 hsl(0 0% 100% / 0.04);
+
+    /* Fastener — dark theme */
+    --nc-screw-face: hsl(var(--nc-seed-h) 10% 28%);
+    --nc-screw-body: hsl(var(--nc-seed-h) 8% 20%);
+    --nc-screw-edge: hsl(calc(var(--nc-seed-h) + 2) 8% 14%);
+    --nc-screw-ring: hsl(calc(var(--nc-seed-h) + 2) 10% 18% / 0.6);
+    --nc-screw-drop: hsl(220 30% 0% / 0.5);
+    --nc-screw-slot: hsl(calc(var(--nc-seed-h) + 2) 8% 28% / 0.6);
+}

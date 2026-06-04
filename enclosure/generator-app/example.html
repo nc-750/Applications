@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enclosure · Faceplate Layout</title>
+    <link rel="stylesheet" href="css/enclosure.css">
+</head>
+<body>
+
+    <div class="nc-page">
+        <div class="flex flex-col gap-10">
+
+            <!-- ========================================================
+                 SYNTH MODULE DASHBOARD
+                 Default seam · 4 columns
+                 ======================================================== -->
+            <div class="nc-faceplate nc-faceplate--cols-4">
+
+                <!-- Row 1 · Col 1–2: Terminal -->
+                <div class="nc-cell col-span-2">
+                    <div class="flex flex-col gap-4">
+                        <span class="nc-label">DSP Engine Log</span>
+                        <div class="nc-terminal">
+                            <div class="nc-terminal__bar">
+                                <div class="nc-terminal__dots">
+                                    <div class="nc-terminal__dot nc-terminal__dot--red"></div>
+                                    <div class="nc-terminal__dot nc-terminal__dot--amber"></div>
+                                    <div class="nc-terminal__dot nc-terminal__dot--green"></div>
+                                </div>
+                                <span class="nc-terminal__title">console.log</span>
+                            </div>
+                            <div class="nc-terminal__body">
+                                <pre>[12:34:56] Initialising DSP engine
+[12:34:56] Loading patch <span class="nc-text--accent">"Reese Bass"</span>
+[12:34:57] Oscillator sync lock <span class="nc-badge nc-badge--success">OK</span>
+[12:34:57] Envelope routing set to ADSR-2
+[12:34:58] Voice allocation: 8/16 active
+[12:34:58] <span class="nc-text--accent">&gt; _</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 1 · Col 3: Status LEDs -->
+                <div class="nc-cell">
+                    <div class="flex flex-col gap-3">
+                        <span class="nc-label">System Status</span>
+                        <span class="nc-led nc-led--on">Oscillator Lock</span>
+                        <span class="nc-led nc-led--on">MIDI Sync</span>
+                        <span class="nc-led nc-led--warn">Buffer 78%</span>
+                        <span class="nc-led nc-led--err">CV Bus Offline</span>
+                    </div>
+                </div>
+
+                <!-- Row 1–2 · Col 4: Channel levels (tall) -->
+                <div class="nc-cell row-span-2 nc-cell--dark">
+                    <div class="flex flex-col gap-4">
+                        <span class="nc-label">Channel Levels</span>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 1 · Kick</span>
+                            <span class="nc-spec__value">-6.2 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 2 · Snare</span>
+                            <span class="nc-spec__value">-4.8 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 3 · Hi-hat</span>
+                            <span class="nc-spec__value">-12.1 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 4 · Bass</span>
+                            <span class="nc-spec__value">-3.5 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 5 · Pad</span>
+                            <span class="nc-spec__value">-8.7 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Ch 6 · Lead</span>
+                            <span class="nc-spec__value">-2.1 <span class="nc-text--accent">dB</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 · Col 1: Accent trigger -->
+                <div class="nc-cell nc-cell--accent text-center">
+                    <div class="flex flex-col gap-3">
+                        <span class="nc-label nc-label--accent">Main Trigger</span>
+                        <span class="nc-heading-2">ARM</span>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="nc-badge nc-badge--success">READY</span>
+                            <span class="nc-badge">MIDI CH 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 · Col 2–3: LCD readout -->
+                <div class="nc-cell col-span-2 nc-cell--dark">
+                    <div class="flex flex-col gap-3">
+                        <span class="nc-label">Master Output</span>
+                        <span class="nc-lcd nc-lcd--lg">72.4</span>
+                        <span class="nc-lcd-sub">dB Peak · 44100 Hz · 24-bit</span>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="nc-badge nc-badge--info">STEREO</span>
+                            <span class="nc-badge">LIMITER ON</span>
+                            <span class="nc-badge nc-badge--warning">DITHER</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================
+                 HAIRLINE SEAMS
+                 3 columns · subtle lines, no bevel on cells
+                 ======================================================== -->
+            <div class="nc-faceplate nc-faceplate--cols-3 nc-faceplate--seam-hairline">
+
+                <div class="nc-cell">
+                    <div class="flex flex-col gap-2">
+                        <span class="nc-label">Hairline Seam</span>
+                        <p class="nc-caption">
+                            Cells sit flush with no bevel — the seam is a
+                            single 1px line. Best for dense spec strips or
+                            data-heavy panels where the bevel would add
+                            visual noise.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="nc-cell">
+                    <div class="nc-spec-strip">
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Oscillator</span>
+                            <span class="nc-spec__value">Sawtooth</span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Filter</span>
+                            <span class="nc-spec__value">LPF 24dB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nc-cell">
+                    <div class="nc-spec-strip">
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Envelope</span>
+                            <span class="nc-spec__value">ADSR-2</span>
+                        </div>
+                        <div class="nc-spec">
+                            <span class="nc-spec__label">Velocity</span>
+                            <span class="nc-spec__value">78%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================
+                 DEEP SEAMS
+                 2 columns · 4px milled channels with heavy shadow
+                 ======================================================== -->
+            <div class="nc-faceplate nc-faceplate--cols-2 nc-faceplate--seam-deep">
+
+                <div class="nc-cell">
+                    <div class="flex flex-col gap-3">
+                        <span class="nc-label">Deep Seam · 4px</span>
+                        <p class="nc-caption">
+                            A wider, harder-shadowed channel between plates.
+                            The increased depth reads as a structural gap —
+                            the kind of join you&rsquo;d see on a milled billet
+                            chassis where two major sub-assemblies meet.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="nc-cell">
+                    <div class="flex flex-col gap-3">
+                        <span class="nc-label">Hero Chassis</span>
+                        <p class="nc-caption">
+                            Best reserved for the top-level enclosure frame.
+                            The heavy shadow creates a clear boundary between
+                            functional zones without relying on borders or
+                            background shifts. Purely physical depth.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

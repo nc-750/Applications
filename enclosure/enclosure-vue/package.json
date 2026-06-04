@@ -1,0 +1,35 @@
+{
+  "name": "enclosure-vue",
+  "version": "0.1.0",
+  "description": "Typed Vue 3 facade over the Enclosure (.nc-*) design system.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/enclosure-vue.umd.cjs",
+  "module": "./dist/enclosure-vue.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/enclosure-vue.js",
+      "require": "./dist/enclosure-vue.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -p tsconfig.build.json && vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.1.10"
+  }
+}

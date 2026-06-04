@@ -1,0 +1,279 @@
+/* ============================================================
+   3 · BUTTONS
+   Default = machined metal key. Primary = solid ink. Accent =
+   orange signal. All press DOWN: the catch-light flips on click.
+   ============================================================ */
+
+.nc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nc-space-2);
+    height: var(--nc-control-md);
+    padding: 0 var(--nc-space-4);
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-sm);
+    font-weight: var(--nc-font-medium);
+    line-height: 1;
+    color: var(--nc-ink);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-md);
+    box-shadow: var(--nc-edge-raised);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition:
+        filter var(--nc-transition-fast),
+        transform var(--nc-transition-press),
+        box-shadow var(--nc-transition-fast),
+        background var(--nc-transition-fast);
+}
+.nc-btn:hover {
+    filter: brightness(1.03);
+    border-color: var(--nc-line-ink);
+}
+.nc-btn:active {
+    background: var(--nc-metal-key-press);
+    transform: translateY(1px);
+    box-shadow: var(--nc-edge-inset);
+}
+.nc-btn:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Primary — solid ink key */
+.nc-btn--primary {
+    color: var(--nc-on-ink);
+    background: var(--nc-ink);
+    border-color: var(--nc-ink);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.14);
+}
+.nc-btn--primary:hover {
+    filter: brightness(1.18);
+    border-color: var(--nc-ink);
+}
+.nc-btn--primary:active {
+    filter: brightness(1);
+    box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.4);
+}
+
+/* Accent — orange signal key */
+.nc-btn--accent {
+    color: var(--nc-on-accent);
+    background: var(--nc-accent);
+    border-color: var(--nc-accent-active);
+    font-weight: var(--nc-font-semibold);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.3);
+}
+.nc-btn--accent:hover {
+    background: var(--nc-accent-hover);
+}
+.nc-btn--accent:active {
+    background: var(--nc-accent-active);
+    box-shadow: inset 0 2px 4px hsl(20 60% 10% / 0.4);
+}
+
+/* Secondary — outlined ink */
+.nc-btn--secondary {
+    background: transparent;
+    border-color: var(--nc-line-ink);
+    color: var(--nc-ink);
+    box-shadow: none;
+}
+.nc-btn--secondary:hover {
+    background: var(--nc-hover);
+    filter: none;
+}
+.nc-btn--secondary:active {
+    background: var(--nc-active);
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+/* Ghost */
+.nc-btn--ghost {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--nc-ink-2);
+}
+.nc-btn--ghost:hover {
+    background: var(--nc-hover);
+    color: var(--nc-ink);
+    filter: none;
+}
+.nc-btn--ghost:active {
+    background: var(--nc-active);
+    transform: translateY(1px);
+}
+
+/* Danger */
+.nc-btn--danger {
+    color: var(--nc-on-error);
+    background: var(--nc-error);
+    border-color: var(--nc-error);
+    font-weight: var(--nc-font-semibold);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.2);
+}
+.nc-btn--danger:hover {
+    filter: brightness(1.08);
+}
+.nc-btn--danger:active {
+    filter: brightness(0.94);
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.3);
+}
+
+/* Sizes */
+.nc-btn--sm {
+    height: var(--nc-control-sm);
+    padding: 0 var(--nc-space-3);
+    font-size: var(--nc-text-xs);
+}
+.nc-btn--lg {
+    height: var(--nc-control-lg);
+    padding: 0 var(--nc-space-6);
+    font-size: var(--nc-text-base);
+}
+
+/* Icon */
+.nc-btn--icon {
+    width: var(--nc-control-md);
+    padding: 0;
+}
+.nc-btn--icon.nc-btn--sm {
+    width: var(--nc-control-sm);
+}
+.nc-btn--icon.nc-btn--lg {
+    width: var(--nc-control-lg);
+}
+
+/* Group — fused machined keys */
+.nc-btn-group {
+    display: inline-flex;
+}
+.nc-btn-group .nc-btn {
+    border-radius: 0;
+}
+.nc-btn-group .nc-btn + .nc-btn {
+    margin-left: calc(var(--nc-border-width) * -1);
+}
+.nc-btn-group .nc-btn:first-child {
+    border-radius: var(--nc-radius-md) 0 0 var(--nc-radius-md);
+}
+.nc-btn-group .nc-btn:last-child {
+    border-radius: 0 var(--nc-radius-md) var(--nc-radius-md) 0;
+}
+.nc-btn-group .nc-btn:only-child {
+    border-radius: var(--nc-radius-md);
+}
+
+/* Keycap — square machined key (keyboard / launchpad) */
+.nc-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--nc-control-lg);
+    height: var(--nc-control-lg);
+    padding: 0 var(--nc-space-3);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    font-weight: var(--nc-font-medium);
+    color: var(--nc-ink-2);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-md);
+    box-shadow: var(--nc-edge-raised);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        transform var(--nc-transition-press),
+        box-shadow var(--nc-transition-fast);
+}
+.nc-key:focus-visible {
+    outline: 2px solid var(--nc-accent);
+    outline-offset: 1px;
+}
+.nc-key:active {
+    transform: translateY(2px);
+    box-shadow: var(--nc-edge-inset);
+}
+.nc-key--accent {
+    color: var(--nc-on-accent);
+    background: var(--nc-accent);
+    border-color: var(--nc-accent-active);
+}
+
+/* Expandable button group — machined dropdown key.
+   Trigger button carries a small arrow indicator; clicking reveals a
+   menu panel with additional action buttons. */
+.nc-btn-expand {
+    position: relative;
+    display: inline-flex;
+}
+.nc-btn-expand__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+}
+.nc-btn-expand__trigger::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform var(--nc-transition-fast);
+}
+.nc-btn-expand--open .nc-btn-expand__trigger::after {
+    transform: rotate(-135deg) translateY(-1px);
+}
+.nc-btn-expand__menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--nc-space-1);
+    min-width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    padding: var(--nc-space-1);
+    background: var(--nc-panel);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-md);
+    box-shadow: var(--nc-edge-raised);
+    z-index: 100;
+    white-space: nowrap;
+}
+.nc-btn-expand--open .nc-btn-expand__menu {
+    display: flex;
+}
+.nc-btn-expand__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--nc-space-2);
+    height: var(--nc-control-sm);
+    padding: 0 var(--nc-space-3);
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-xs);
+    font-weight: var(--nc-font-medium);
+    line-height: 1;
+    color: var(--nc-ink);
+    background: transparent;
+    border: none;
+    border-radius: var(--nc-radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: background var(--nc-transition-fast);
+}
+.nc-btn-expand__item:hover {
+    background: var(--nc-hover);
+}
+.nc-btn-expand__item:active {
+    background: var(--nc-active);
+}
