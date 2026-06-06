@@ -299,11 +299,11 @@
 .nc-meters i.is-accent {
     background: var(--nc-accent);
 }
-/* On the dark console, plain bars must invert to stay visible */
-.nc-console .nc-meters i {
+/* On the dark monitor, plain bars must invert to stay visible */
+.nc-monitor .nc-meters i {
     background: var(--nc-ink-invert);
 }
-.nc-console .nc-meters i.is-accent {
+.nc-monitor .nc-meters i.is-accent {
     background: var(--nc-accent);
 }
 

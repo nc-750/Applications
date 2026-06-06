@@ -5,9 +5,9 @@ import GeneratorPanel from "./components/GeneratorPanel.vue";
 </script>
 
 <template>
-    <div class="nc-shell">
-        <div class="nc-module">
-            <div class="nc-faceplate">
+    <div class="nc-lab">
+        <div class="nc-chassis">
+            <div class="nc-band">
                 <GeneratorPanel />
                 <Header />
                 <Main />

@@ -1,18 +1,16 @@
 /* ============================================================
    7 · CONSOLE / LCD — the black "display" surface
    ============================================================ */
-.nc-console {
+.nc-monitor {
     position: relative;
     background: var(--nc-console);
     color: var(--nc-ink-invert);
-    border: var(--nc-border-width) solid var(--nc-console-line);
-    border-radius: var(--nc-radius-md);
-    padding: var(--nc-space-4);
-    overflow: hidden;
-    box-shadow: var(--nc-edge-inset);
+    /* Dark surface only. Compose onto a cell or bar; box chrome (border,
+       radius, padding) comes from the cell/plate, so .nc-monitor layers
+       cleanly. The dark on-surface contract vars are set here. */
 }
 /* Scanline overlay */
-.nc-console--scan::after {
+.nc-monitor--scan::after {
     content: "";
     position: absolute;
     inset: 0;

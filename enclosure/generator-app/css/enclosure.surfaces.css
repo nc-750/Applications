@@ -4,16 +4,11 @@
    radius. Panels are simpler standalone surfaces.
 
    For the bento grid layout (cells joined by seams), see
-   enclosure.layout.css — .nc-faceplate + .nc-cell.
+   enclosure.layout.css — .nc-band + .nc-cell.
    ============================================================ */
 
-/* Module — the device chassis. Bold ink frame, big outer radius. */
-.nc-module {
-    background-color: var(--nc-bg);
-    border: var(--nc-border-ink) solid var(--nc-line-subtle);
-    border-radius: var(--nc-radius-xl);
-    overflow: hidden;
-}
+/* The device chassis (.nc-chassis) lives in enclosure.layout.css — it is the
+   vertical flex container that frames header / bands / footer. */
 
 /* Panel — standalone surface, hairline border, subtle bevel */
 .nc-panel {

@@ -3,8 +3,8 @@ import HeaderDemo from "./components/HeaderDemo.vue";
 </script>
 
 <template>
-    <header class="nc-faceplate">
-        <div class="nc-cell col-span-full">
+    <header class="nc-band">
+        <div class="nc-cell">
             <span class="nc-label nc-label--accent"
                 >Tactile Industrial Hardware · Minimalist Futurism</span
             >

@@ -1,71 +1,83 @@
-/* ── Page container ─────────────────────────────────────── */
-.nc-shell {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: var(--nc-space-6) var(--nc-space-6) var(--nc-space-20);
-}
-
-@media (max-width: 640px) {
-    .nc-shell {
-        padding: var(--nc-space-4) var(--nc-space-4) var(--nc-space-10);
-    }
-}
-
-.nc-page {
-    width: 100%;
-    max-width: 72rem;
-    margin-inline: auto;
-    padding-inline: var(--nc-space-6);
-    padding-block: var(--nc-space-10);
-}
-
-@media (max-width: 640px) {
-    .nc-page {
-        padding-inline: var(--nc-space-4);
-        padding-block: var(--nc-space-6);
-    }
-}
-
 /* ============================================================
-   FACEPLATE LAYOUT
-   Industrial seam-joined grid. The container is a machined
-   faceplate; cells are coplanar plates butted together with
-   milled grooves between them.
+   LAB LAYOUT — flexbox structural grammar.
 
-   Usage:
-     <div class="nc-faceplate grid grid-cols-3">
-       <div class="nc-cell col-span-2">…</div>
-       <div class="nc-cell row-span-2">…</div>
-     </div>
+   nc-lab        the field the chassis sits in (root)
+   └─ nc-chassis vertical flex: header · bands · footer
+      ├─ header  (a dark .nc-monitor bar)
+      ├─ nc-band horizontal flex: a row of cells
+      │  └─ nc-cell
+      └─ footer  (a dark .nc-monitor bar)
 
-   Grid spans are handled via Tailwind (col-span-*, row-span-*).
-   The faceplate owns the grid container and seam visuals.
+   Seams are the 1px flex `gap` showing the seam-fill background
+   beneath — never a bevel or shadow (DESIGN_USE S1/S2). Cell
+   interiors are free: the app may use grid, flex, or anything.
    ============================================================ */
 
-/* ── Faceplate container ─────────────────────────────────── */
-.nc-faceplate {
-    display: grid;
-    grid-template-columns: repeat(var(--nc-cols, 1), 1fr);
+/* ── Root: the lab the chassis sits in ───────────────────── */
+.nc-lab {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: var(--nc-bg);
+    background-image: var(--nc-texture-noise);
+    padding: var(--nc-space-6);
+}
+@media (max-width: 640px) {
+    .nc-lab {
+        padding: var(--nc-space-4);
+    }
+}
+
+/* ── Chassis: the framed device — vertical flex column ───── */
+.nc-chassis {
+    width: 100%;
+    max-width: 72rem;
+    display: flex;
+    flex-direction: column;
     gap: var(--nc-seam-width);
     background: var(--nc-seam-fill);
+    border: var(--nc-border-ink) solid var(--nc-line-ink);
+    border-radius: var(--nc-radius-xl);
+    overflow: hidden;
 }
 
-/* ── Cell ────────────────────────────────────────────────── */
+/* ── Band: a horizontal row of cells ─────────────────────── */
+.nc-band {
+    display: flex;
+    flex-direction: row;
+    gap: var(--nc-seam-width);
+    background: var(--nc-seam-fill);
+    min-width: 0;
+}
+/* Mobile: bands stack into a single column (DESIGN_USE §9). */
+@media (max-width: 640px) {
+    .nc-band {
+        flex-direction: column;
+    }
+}
+
+/* ── Cell: a flex child; interior is app-owned ───────────── */
 .nc-cell {
+    flex: 1 1 0;
+    min-width: 0;
     background: var(--nc-panel);
     padding: var(--nc-space-5);
-    min-width: 0;
-    /* Flat by default — the 1px gap IS the seam, not a bevel (DESIGN_USE S1/S2).
-       The grooved/machined-edge look is opt-in via .nc-faceplate--seam-grooved. */
 }
 
-/* ── Cell colour variants ────────────────────────────────── */
+/* Span via flex ratio (not grid col-span). */
+.nc-cell--grow-2 {
+    flex-grow: 2;
+}
+.nc-cell--grow-3 {
+    flex-grow: 3;
+}
+.nc-cell--fixed {
+    flex: 0 0 auto;
+}
+
+/* ── Cell surface variants ───────────────────────────────── */
 .nc-cell--2 {
     background: var(--nc-panel-2);
-}
-.nc-cell--dark {
-    background: var(--nc-console);
-    color: var(--nc-ink-invert);
 }
 .nc-cell--accent {
     background: var(--nc-accent);
@@ -74,62 +86,18 @@
 .nc-cell--brushed {
     background: var(--nc-panel-2);
     background-image: var(--nc-metal-brushed);
-    /*background-size: 100% 100%;*/
 }
-
 .nc-cell--noisy {
     background-image: var(--nc-texture-noise);
 }
 
-/* ── Column count variants ───────────────────────────────── */
-.nc-faceplate--cols-1 {
-    --nc-cols: 1;
-}
-.nc-faceplate--cols-2 {
-    --nc-cols: 2;
-}
-.nc-faceplate--cols-3 {
-    --nc-cols: 3;
-}
-.nc-faceplate--cols-4 {
-    --nc-cols: 4;
-}
-
-/* ── Seam character variants ─────────────────────────────── */
-/* Hairline — 1px line where space is tight */
-.nc-faceplate--seam-hairline {
-    --nc-seam-width: 1px;
-    --nc-seam-fill: var(--nc-line);
-}
-.nc-faceplate--seam-hairline > .nc-cell {
-    box-shadow: none;
-}
-/* Accent — thin signal channel, like a painted expansion joint */
-.nc-faceplate--seam-accent {
-    --nc-seam-fill: var(--nc-accent);
-    --nc-seam-shadow: hsl(20 60% 10% / 0.22);
-}
-
-/* ============================================================
-   RESPONSIVE
-   Column collapse at breakpoints — faceplate-only.
-   Cell spans are handled by Tailwind responsive prefixes.
-   ============================================================ */
-
-/* Tablet: 641px – 1023px */
-@media (min-width: 641px) and (max-width: 1023px) {
-    .nc-faceplate--cols-2,
-    .nc-faceplate--cols-3,
-    .nc-faceplate--cols-4 {
-        --nc-cols: 2;
-    }
-}
-
-/* Mobile: ≤ 640px */
-@media (max-width: 640px) {
-    .nc-faceplate--cols-2,
-    .nc-faceplate--cols-3,
-    .nc-faceplate--cols-4 {
-        --nc-cols: 1;
-    }
+/* ── Drafting plate: recessed surface for diagrams/readouts ─ */
+/* A cut-in surface a diagram breathes on. Sits inside a cell
+   that keeps its seam/header; whitespace is bounded by it. */
+.nc-plate {
+    background: var(--nc-inset);
+    border: var(--nc-border-width) solid var(--nc-line-subtle);
+    border-radius: var(--nc-radius-md);
+    box-shadow: var(--nc-edge-inset);
+    padding: var(--nc-space-5);
 }
