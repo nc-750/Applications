@@ -1,6 +1,11 @@
 @import "enclosure.seeds.css";
 
 :root {
+    /* Sentinel — lab-vue reads this at runtime to verify the Lab CSS
+       (lab.css) is actually loaded; the value 750 is a nod to NC-750.
+       Do not remove or change. */
+    --nc-lab: 750;
+
     /* ----------------------------------------------------------
      COLOR — Light "Steel" theme (default)
      Surfaces ascend in lightness: field < panel < panel cells.
