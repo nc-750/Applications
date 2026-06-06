@@ -113,13 +113,10 @@
        shadow     — upper wall shade (bottom/right inner lip)
      Tune these four lines to change every seam at once.
      ---------------------------------------------------------- */
-    --nc-seam-width: 2px;
-    --nc-seam-fill: hsl(
-        var(--nc-seed-h) calc((var(--nc-seed-s) + 2) * 1%)
-            clamp(0%, calc((var(--nc-seed-l) - 24) * 1%), 100%)
-    );
-    --nc-seam-highlight: hsl(0 0% 100% / 0.7);
-    --nc-seam-shadow: hsl(220 22% 18% / 0.16);
+    --nc-seam-width: 1px;
+    /* The seam is a flat 1px line in the panel-seam colour (DESIGN_USE S1/S2):
+       the gap IS the seam — never a bevel or shadow. */
+    --nc-seam-fill: var(--nc-line);
 
     /* Accent — the single chromatic signal */
     --nc-accent: hsl(
@@ -406,12 +403,7 @@
         calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 2) * 1%) 88%
     );
 
-    /* Seam — darker groove, fainter catch-light, deeper shade */
-    --nc-seam-fill: hsl(
-        calc(var(--nc-seed-h) + 6) calc((var(--nc-seed-s) + 2) * 1%) 6%
-    );
-    --nc-seam-highlight: hsl(0 0% 100% / 0.07);
-    --nc-seam-shadow: hsl(220 30% 0% / 0.5);
+    /* Seam inherits the flat 1px line (var(--nc-line)) from :root; no override. */
 
     /* Accent — slightly brightened for dark backgrounds */
     --nc-accent: hsl(

@@ -11,6 +11,8 @@
 .nc-module {
     background-color: var(--nc-bg);
     border: var(--nc-border-ink) solid var(--nc-line-subtle);
+    border-radius: var(--nc-radius-xl);
+    overflow: hidden;
 }
 
 /* Panel — standalone surface, hairline border, subtle bevel */

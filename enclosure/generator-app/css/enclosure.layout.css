@@ -55,11 +55,8 @@
     background: var(--nc-panel);
     padding: var(--nc-space-5);
     min-width: 0;
-    /* Bevel the four inner edges into the seam channel: top/left
-       lip catches light, bottom/right lip falls into shade */
-    box-shadow:
-        inset 1px 1px 0 var(--nc-seam-highlight),
-        inset -1px -1px 0 var(--nc-seam-shadow);
+    /* Flat by default — the 1px gap IS the seam, not a bevel (DESIGN_USE S1/S2).
+       The grooved/machined-edge look is opt-in via .nc-faceplate--seam-grooved. */
 }
 
 /* ── Cell colour variants ────────────────────────────────── */
@@ -99,11 +96,6 @@
 }
 
 /* ── Seam character variants ─────────────────────────────── */
-/* Deep — wider, harder-shadowed channel for hero chassis */
-.nc-faceplate--seam-deep {
-    --nc-seam-width: 4px;
-    --nc-seam-shadow: hsl(220 22% 18% / 0.26);
-}
 /* Hairline — 1px line where space is tight */
 .nc-faceplate--seam-hairline {
     --nc-seam-width: 1px;
