@@ -1,88 +1,62 @@
 # TODO — Lab design system rollout
 
-Tracks the work remaining after the documentation pass. The brand + visual docs now
-match intent (committed in `fe83c91`). This file is the bridge from *documented* to
-*implemented*.
-
-**Reference docs (source of truth):**
-- `brand/VISUAL_IDENTITY.md` — the constitution (three grammars, principles, anti-refs).
-- `lab/DESIGN.md` — tokens + component catalogue (design.md format, lint-clean).
-- `lab/DESIGN_USE.md` — application rules (layout, responsive, motion, interaction).
-- `brand/exploration/*.html` — interactive references. **Do not delete.** Use to validate
-  the CSS rework and the production demos.
+Tracks the work after the documentation pass. Reference docs (source of truth):
+`brand/VISUAL_IDENTITY.md` (constitution), `lab/DESIGN.md` (tokens + components,
+design.md format, lint-clean), `lab/DESIGN_USE.md` (application rules),
+`brand/exploration/*.html` (interactive references — **do not delete**).
 
 ---
 
-## Phase 0 — Done ✓
-- [x] VISUAL_IDENTITY.md (constitution)
-- [x] DESIGN_USE.md (application guide)
-- [x] BRAND.md reframe (visual section → pointer; "structural, not chromatic")
-- [x] ETHOS.md Section 1 reconcile (integrity-not-absolutism; C1.6 fallback tier)
-- [x] DESIGN.md extend + rename to Lab + flatten colors (design.md lint: 0 errors)
-- [x] Commit docs + keep exploration references
+## Phase 0 — Docs ✓ (commit fe83c91)
+- [x] VISUAL_IDENTITY.md, DESIGN_USE.md, BRAND reframe, ETHOS reconcile, DESIGN extend (lint 0 errors).
 
----
+## Phase 1 — CSS rework + Lab rename ✓ (commits 6e2a9de … 99621a3)
+- [x] Flat 1px seams; grooved look removed; chassis framed (radius + overflow). `6e2a9de`
+- [x] Flexbox layout + Lab class vocabulary: `nc-lab` (root) > `nc-chassis` (flex col) >
+      `nc-band` (flex row) > `nc-cell`; `nc-monitor` (one dark surface); `nc-plate`
+      (drafting plate). Removed grid `--cols`, `nc-shell`/`nc-page`/`nc-cell--dark`. `00d0d56`
+- [x] `--nc-lab: 750` sentinel. `d2ae0e1`
+- [x] CSS files renamed `enclosure.*.css` → `lab.*.css` (+ aggregate `lab.css`, flatten.ts,
+      main.ts, example.html). `5b9de9d` / `038571a`
+- [x] lab-vue: package renamed, CSS decoupled (no vendored style.css, no copy plugin,
+      no style.css export), **fail-loud guard** (`src/guard.ts` probes `--nc-lab:750`,
+      console + full-screen banner + throw; auto-runs + optional `Lab` plugin). `63ce9d5`
+- [x] Docs class renames (Module→Chassis, Grid→Band, Console→Monitor). `0c45eee`
+- [x] Folder rename `enclosure/`→`lab/`, `enclosure-vue/`→`lab-vue/` (git mv, history kept). `03c13d9`
+- [x] Path references `enclosure/`→`lab/` in monorepo + brand docs; name in CLAUDE files. `99621a3`
+- [x] `lab/DESIGN.md` design.md lint: **0 errors** (24 benign warnings).
 
-## Phase 1 — CSS rework  ⚠️ ANALYSIS FIRST
-> Do **not** start coding yet. A deeper analysis / brainstorm precedes this; the approach
-> may change radically now that the documentation matches intent. Treat the items below as
-> the *targets* the rework must hit, not a prescribed implementation.
+### Phase 1 — remaining (not yet done)
+- [ ] **Build verification** (could NOT run here — `node_modules` not installed):
+      `cd lab/lab-vue && npm install && npm run build` (vue-tsc + vite — validates guard.ts),
+      and `cd lab/generator-app && npm install && npm run verify` (WCAG-AA + static output).
+- [ ] **On-surface contract** (deferred): contextual `--nc-ctl-*` vars so controls auto-adapt
+      to `.nc-monitor` without `--variant`. Mechanism settled; needs a render pass to tune
+      dark-control visuals. Not Mirror-blocking (interview dark side is readout-only).
+- [ ] **Cosmetic text refs** still saying "enclosure"/"Enclosure": `lab/generator-app` code
+      comments (derive.ts/useTheme.ts/flatten.ts mention `enclosure.tokens.css` etc.) + UI
+      copy (Header.vue, ShowcaseArchitecture/Chat), `lab/lab-vue/README.md`, `lab/PRODUCT.md`,
+      `lab/generator-app/index.html` title.
+- [ ] **Generator-app Tauri identifiers** (`src-tauri/Cargo.toml`, `tauri.conf.json`) still
+      use `enclosure` — renaming the Rust crate/bundle id is a separate, riskier change.
+- [ ] **Regenerate** a distributable flattened `lab.css` artifact if consumers need one.
 
-Pre-work:
-- [ ] Audit the current CSS in `lab/generator-app/css/` (17 files) against
-      `DESIGN_USE.md` — list every place the implementation drifted.
-- [ ] Decide the rework strategy (incremental correction vs. clean rebuild of the
-      seam/elevation/surface layers). Capture the decision before touching code.
-
-Targets (from `DESIGN_USE.md` §14 migration note + the constitution):
-- [ ] **Seams, not shadows** — remove shadowed/floating seams; restore flat 1px seams +
-      bevel-only depth (Rules S1, S2).
-- [ ] **Light-first** — default is the bright machined field; dark is the cavity/night
-      theme, not the default presentation.
-- [ ] **Dense + open rhythm** — introduce the recessed **drafting plate** surface for
-      diagrams/readouts (Section 6 / SF1–SF3). It maps to `--nc-inset` + `--nc-edge-inset`.
-- [ ] Keep the seed engine intact; keep WCAG auto-adjust (`generator-app/src/generator/wcag.ts`).
-- [ ] Keep the `--nc-*` token prefix (rename is name-only; do not churn the token API).
-
-## Phase 2 — New components (CSS + Vue)
-Build the Diagram & Schematic and Instrument components now catalogued in `DESIGN.md` §5.
-- [ ] CSS: `.nc-plate`, `.nc-schematic-box`, `.nc-path`, `.nc-null`, `.nc-sever`,
-      `.nc-leader`, `.nc-exploded`, `.nc-glyph`.
-- [ ] CSS: `.nc-facet`, `.nc-readout-live`, `.nc-coverage`, `.nc-acquire`, `.nc-log`.
-- [ ] Vue facades in `lab/lab-vue/` (class-string facade convention — no
-      `<style>`, no color/spacing props).
-- [ ] Re-sync the vendored `lab-vue/src/style.css` from the generated CSS.
-- [ ] Decide how `.nc-exploded` is authored (hand-built SVG per subject — likely a doc'd
-      pattern, not a component).
+## Phase 2 — New components (CSS + lab-vue)
+- [ ] Diagram/instrument CSS: `.nc-plate` exists; add `.nc-schematic-box`, `.nc-path`,
+      `.nc-null`, `.nc-sever`, `.nc-leader`, `.nc-exploded`, `.nc-glyph`, `.nc-facet`,
+      `.nc-readout-live`, `.nc-coverage`, `.nc-acquire`, `.nc-log` (see DESIGN.md §5).
+- [ ] lab-vue facades for the above (class-string facade convention).
 
 ## Phase 3 — Production reference examples
-Replace the exploration sketches with shipped-quality examples (per VISUAL_IDENTITY note).
-- [ ] Component showcase (every token + component in the Lab language).
-- [ ] Desktop application mock(s).
-- [ ] Mobile application mock(s).
-- [ ] These become the canonical visual tie-breaker referenced by the docs.
+- [ ] Component showcase + desktop + mobile app mocks (shipped-quality) → become the
+      canonical visual tie-breaker referenced by the docs.
 
 ## Phase 4 — Apply to products
-- [ ] Mirror (`mirror/persona-app`): rebuild the interview as the **instrument** model
-      (probe / live readout / saturation / acquisition / collapsing log), per
-      `DESIGN_USE.md` §10. Mobile per §9.
-- [ ] Re-check each NODE/UNIT/CORE surface against the three grammars.
-
----
-
-## Decisions pending
-- [ ] **`missing-primary` lint warning** — leave the descriptive palette as-is (advisory
-      only), or add a `primary` alias token to silence it?
-- [ ] **Folder / package rename** — system is "Lab" but the directory is `lab/` and
-      the package is `lab-vue`. Rename to match (cosmetic, touches root `CLAUDE.md`,
-      `lab/CLAUDE.md`, tooling), or leave the paths and only rebrand the name? Token
-      prefix `--nc-` stays regardless.
-- [ ] **Light ghost-button contrast** — known linter false positive (transparent bg over
-      the field). Leave, or annotate.
+- [ ] **Mirror** (`mirror/app`): migrate from its vendored `enclosure.css` to the Lab
+      system; rebuild the interview as the instrument model (DESIGN_USE §10). Mirror's
+      references were intentionally left untouched by the design-system rename.
 
 ## Constraints (do-not)
-- Do **not** delete `brand/exploration/*.html` — they are validation references.
-- Do **not** rename the `--nc-*` token prefix or churn the component API.
-- Do **not** edit `brand/ETHOS.md` further without an explicit philosophy decision.
-- Keep `lab/DESIGN.md` spec-conforming (run `npx --package "@google/design.md"
-  designmd lint DESIGN.md` after edits; target 0 errors).
+- Do not delete `brand/exploration/*.html`. Do not rename the `--nc-` token/class prefix.
+- Keep `lab/DESIGN.md` design.md-conforming (run `designmd lint`; 0 errors).
+- Maintain WCAG 2.1 AA (do not bypass `wcag.ts`).
