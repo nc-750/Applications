@@ -1,106 +1,44 @@
 ---
-name: Enclosure
-description: A tactile industrial hardware design system — machined aluminium faceplate, panels joined by seams, one loud safety-orange signal.
+name: Lab
+description: The Lab design system — machine-documentation instrument panels. A framed chassis of cells joined by 1px seams; diagrams and readouts on recessed drafting plates; one loud signal, never decoration; identity is structural, not chromatic.
 colors:
   # ── Surface Ramp (Aluminium Finishes) ──
-  machined-aluminium-field:
-    value: "#D3D8DE"
-    role: neutral-bg
-  sunken-aluminium:
-    value: "#C8CED5"
-    role: neutral-bg-sunken
-  polished-white-panel:
-    value: "#F7F9FB"
-    role: neutral-surface
-  brushed-aluminium-panel:
-    value: "#EAEDF1"
-    role: neutral-surface-alt
-  bare-aluminium:
-    value: "#DCE0E5"
-    role: neutral-surface-low
-  recessed-well:
-    value: "#E1E4E9"
-    role: neutral-inset
-  warm-aluminium-hover:
-    value: "#E1E5EA"
-    role: neutral-hover
-  pressed-aluminium:
-    value: "#D7DCE2"
-    role: neutral-active
+  machined-aluminium-field: "#D3D8DE"   # neutral-bg
+  sunken-aluminium: "#C8CED5"           # neutral-bg-sunken
+  polished-white-panel: "#F7F9FB"       # neutral-surface
+  brushed-aluminium-panel: "#EAEDF1"    # neutral-surface-alt
+  bare-aluminium: "#DCE0E5"             # neutral-surface-low
+  recessed-well: "#E1E4E9"              # neutral-inset
+  warm-aluminium-hover: "#E1E5EA"       # neutral-hover
+  pressed-aluminium: "#D7DCE2"          # neutral-active
   # ── Console / LCD Cavity ──
-  lcd-cavity:
-    value: "#16181D"
-    role: neutral-console
-  lcd-border:
-    value: "#21242A"
-    role: neutral-console-alt
-  lcd-seam:
-    value: "#3A3E45"
-    role: neutral-console-line
+  lcd-cavity: "#16181D"                 # neutral-console
+  lcd-border: "#21242A"                 # neutral-console-alt
+  lcd-seam: "#3A3E45"                   # neutral-console-line
   # ── Ink (Text on Light) ──
-  etched-black:
-    value: "#161A1F"
-    role: neutral-text
-  engraved-grey:
-    value: "#444A52"
-    role: neutral-text-secondary
-  silkscreen-grey:
-    value: "#6B727B"
-    role: neutral-text-muted
-  faded-mark:
-    value: "#8D949C"
-    role: neutral-text-faint
-  white-on-black:
-    value: "#E8ECF1"
-    role: neutral-text-invert
-  dim-console-text:
-    value: "#949BA3"
-    role: neutral-text-invert-secondary
-  on-ink-white:
-    value: "#F7F9FB"
-    role: neutral-on-ink
+  etched-black: "#161A1F"               # neutral-text
+  engraved-grey: "#444A52"              # neutral-text-secondary
+  silkscreen-grey: "#6B727B"            # neutral-text-muted
+  faded-mark: "#8D949C"                 # neutral-text-faint
+  white-on-black: "#E8ECF1"             # neutral-text-invert
+  dim-console-text: "#949BA3"           # neutral-text-invert-secondary
+  on-ink-white: "#F7F9FB"               # neutral-on-ink
   # ── Seams / Lines ──
-  panel-seam:
-    value: "#B3B9C1"
-    role: neutral-border
-  hairline-seam:
-    value: "#C6CCD3"
-    role: neutral-border-subtle
-  structural-seam:
-    value: "#8B94A1"
-    role: neutral-border-strong
-  ink-seam:
-    value: "#161A1F"
-    role: neutral-border-ink
+  panel-seam: "#B3B9C1"                 # neutral-border
+  hairline-seam: "#C6CCD3"              # neutral-border-subtle
+  structural-seam: "#8B94A1"            # neutral-border-strong
+  ink-seam: "#161A1F"                   # neutral-border-ink
   # ── Accent (Safety Orange) ──
-  safety-orange:
-    value: "#FF570F"
-    role: primary
-  safety-orange-hover:
-    value: "#FF6B1F"
-    role: primary-hover
-  safety-orange-pressed:
-    value: "#E6490A"
-    role: primary-active
-  burnt-orange-ink:
-    value: "#B33D0A"
-    role: primary-text
-  dark-on-orange:
-    value: "#29140A"
-    role: primary-on
+  safety-orange: "#FF570F"              # primary
+  safety-orange-hover: "#FF6B1F"        # primary-hover
+  safety-orange-pressed: "#E6490A"      # primary-active
+  burnt-orange-ink: "#B33D0A"           # primary-text
+  dark-on-orange: "#29140A"             # primary-on
   # ── Semantic ──
-  signal-green:
-    value: "#3D8C62"
-    role: semantic-success
-  signal-amber:
-    value: "#D4950E"
-    role: semantic-warning
-  signal-red:
-    value: "#D13B3B"
-    role: semantic-error
-  signal-blue:
-    value: "#3B7DBF"
-    role: semantic-info
+  signal-green: "#3D8C62"               # semantic-success
+  signal-amber: "#D4950E"               # semantic-warning
+  signal-red: "#D13B3B"                 # semantic-error
+  signal-blue: "#3B7DBF"                # semantic-info
 typography:
   display:
     fontFamily: "ClashDisplay-Variable, ClashDisplay, Archivo, system-ui, sans-serif"
@@ -168,6 +106,23 @@ components:
     backgroundColor: "{colors.polished-white-panel}"
     rounded: "{rounded.md}"
     padding: "16px"
+  drafting-plate:
+    backgroundColor: "{colors.recessed-well}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.5}"
+  facet-tag:
+    backgroundColor: "{colors.recessed-well}"
+    textColor: "{colors.burnt-orange-ink}"
+    typography: "{typography.mono}"
+    rounded: "{rounded.sm}"
+    padding: "4px 9px"
+  coverage-meter:
+    backgroundColor: "{colors.recessed-well}"
+    rounded: "{rounded.full}"
+    height: "7px"
+  glyph:
+    textColor: "{colors.engraved-grey}"
+    size: "34px"
 ---
 
 # Design System: Enclosure
@@ -176,7 +131,7 @@ components:
 
 **Creative North Star: "The Calibrated Faceplate"**
 
-Enclosure is a design system for interfaces that feel like the front panel of a precision-machined modular synthesiser. The default theme is a light aluminium field — cool, bright, tool-like — with polished white cells joined by crisp 1px seams. A single loud safety-orange signal (#FF570F) cuts through the monochrome: primary actions, focus rings, the checked toggle, the glowing LCD readout. The dark theme (`data-theme="dark"`) inverts to a gunmetal console for night sessions, keeping the same hue character and the same orange pulse.
+Lab is the NC-750 design system — **machine-documentation instrument panels**. Interfaces feel like the front panel of a precision instrument, documented like a technical manual, and are built from three grammars: a framed **chassis**, a **document** layer (schematics, specs, the `0x00` null mark), and an **instrument** layer (live readouts). See `../brand/VISUAL_IDENTITY.md` for the worldview and `DESIGN_USE.md` for how to apply it. The default theme is a light aluminium field — cool, bright, tool-like — with polished white cells joined by crisp 1px seams. A single loud safety-orange signal (#FF570F) cuts through the monochrome: primary actions, focus rings, the checked toggle, the glowing LCD readout. The dark theme (`data-theme="dark"`) inverts to a gunmetal console for night sessions, keeping the same hue character and the same orange pulse.
 
 The system is driven by a **seed architecture**: six CSS custom properties (`--nc-seed-h`, `--nc-seed-s`, `--nc-seed-l` for the background material and `--nc-accent-h`, `--nc-accent-s`, `--nc-accent-l` for the chromatic signal) control every color token through `hsl()` + `calc()` derivations. Change two color pickers, retheme the entire system. The seed is the API.
 
@@ -430,6 +385,39 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 - **Barcode (.nc-barcode):** 36px-tall CSS-only barcode using a repeating linear gradient of Etched Black stripes at varying widths.
 - **Screw (.nc-screw):** 10×10px circular decorative fastener. Radial gradient from near-white to dark grey, with a 42deg rotated slot line. Four position modifiers (tl/tr/bl/br). Used in module corners.
 
+### Diagram & Schematic
+
+**Character:** The machine-documentation grammar. Diagrams sit on a recessed **drafting plate** and communicate real system behaviour, never decoration. Linework is neutral (Structural Seam / Etched Black); the Safety Orange signal marks only the live path and the `0x00` null.
+
+- **Drafting Plate (.nc-plate):** Recessed Well background, Hairline Seam border, Edge Inset bevel, generous padding. The cut-in surface a diagram breathes on. It sits inside a cell that keeps its seam and header — the panel contains the whitespace, the whitespace never dissolves the panel.
+- **Schematic Box (.nc-schematic-box):** A labelled node in a diagram. Polished White Panel fill, 1.5px Etched Black stroke, md radius. Carries a mono part-number label and a name. Represents a real component (a device, a provider).
+- **Data Path (.nc-path):** A 2px Safety Orange line with a triangular arrowhead, marking the one live route through a diagram (e.g. an encrypted request). The only place the signal appears inside a schematic.
+- **Null Box (.nc-null):** A node drawn as a dashed Structural Seam rectangle stamped `0x00`, representing a component deliberately *not* in the path (e.g. the NC-750 server). Usually paired with the Sever Mark.
+- **Sever Mark (.nc-sever):** A small Signal Red ✕ on a dashed line, marking a connection that does not exist. The visual proof of a negative claim.
+- **Leader / Callout (.nc-leader):** A thin Structural Seam line from a diagram element to a mono label at the margin. Annotates without crowding the figure.
+- **Exploded View (.nc-exploded):** A stack of isometric plates pulled apart along a dashed assembly axis, each with a leader to a part-numbered label. A deliberate set-piece (hero, onboarding, privacy page), hand-built per subject — not a per-screen element.
+- **Glyph (.nc-glyph):** A small (≈34px) functional mark from the system's fixed symbol set (node, relay, null, active, enclose, local, signal, verify, registration). Stroke-based; neutral by default, Safety Orange = active, Signal Green = verified, dashed = null.
+
+**Named Rules**
+
+**The Real-Diagram Rule.** A schematic must depict actual behaviour. A diagram that does not match what the system really does is worse than none, and violates the brand's literal-truth ethos. Decorative diagrams are forbidden.
+
+**The Neutral-Linework Rule.** Diagram strokes are neutral (Structural Seam / Etched Black). Safety Orange is spent only on the live path and the `0x00` null. Never introduce a second diagram colour (no blueprint-cyan).
+
+### Instrument
+
+**Character:** Surfaces for products *operated as instruments* rather than browsed as apps. These are live-readout surfaces, not chat or form components. See `DESIGN_USE.md` §10 for the interaction model and the rules on when it applies (foreground vs background work).
+
+- **Facet Tag (.nc-facet):** A small mono uppercase label marking what an instrument is currently measuring (`OBSERVATION · PATTERNS`). Recessed Well background, Structural Seam border, Burnt Orange Ink text, sm radius.
+- **Live Readout (.nc-readout-live):** The accumulating measurement surface — patterns, evidence count, confidence — rendered in the dark Console cavity. The hero of an instrument interaction; it grows and revises as the user feeds it.
+- **Coverage Meter (.nc-coverage):** A saturation bar, not a step counter. Recessed Well track with Edge Inset; the fill rises from Faded Mark toward Signal Green and reads "locked" when sufficient. For open-ended processes of unknown length.
+- **Acquisition (.nc-acquire):** The working state. Instead of a spinner, an animating waveform and an `ANALYZING …` readout show the signal being read. Used only for foreground/blocking work (see `DESIGN_USE.md` Rule I1); background work uses a quiet ambient indicator instead.
+- **Session Log (.nc-log):** Prior exchanges collapsed into terse, re-openable entries (`OBS 01 ▸ ANSWERED`) — a flight recorder, not a chat feed. Append-only.
+
+**Named Rule**
+
+**The Honest-Reading Rule.** An instrument reading (coverage, confidence, lock) must reflect a value the system genuinely computes. No fake progress, no decorative meter (see `../brand/ETHOS.md`: claims literally true).
+
 ### Misc
 
 - **Avatar (.nc-avatar):** 36px circle. Display font initials, Metal Key gradient background, 1px Structural Seam border, Edge Raised bevel. Supports `<img>` with object-fit cover. Sizes: sm (26px), md (36px), lg (46px).
@@ -460,6 +448,9 @@ Every component adapts to the dark theme automatically through the token system.
 - **Do** keep transitions at 90–280ms. State changes feel immediate (90ms fast, 160ms normal, 280ms slow for fills). The tactile press transition uses a slight overshoot curve (120ms, `cubic-bezier(0.34, 1.56, 0.64, 1)`).
 - **Do** target WCAG 2.1 AA contrast. Etched Black on Polished White achieves ~13:1. Safety Orange on white achieves ~3:1 (acceptable for large UI components). Dark on Orange achieves ~10:1.
 - **Do** use the `prefers-reduced-motion` media query to collapse all transitions to 0.01ms. The reset.css already includes this.
+- **Do** place diagrams, schematics, and readouts on a recessed drafting plate (`.nc-plate`) and keep dense chrome on raised panels. Pair a dense cell with an open one — that contrast is the system's signature.
+- **Do** keep diagram linework neutral and spend Safety Orange only on the live path and the `0x00` null.
+- **Do** make every schematic depict real behaviour — a diagram must be verifiable, not illustrative.
 
 ### Don't:
 
@@ -476,3 +467,7 @@ Every component adapts to the dark theme automatically through the token system.
 - **Don't** use generic SaaS template patterns: no hero-metric dashboards (big number + small label + sparkline), no icon-above-heading card grids, no purple-to-blue gradients. If it looks like every startup landing page, it's wrong.
 - **Don't** be deliberately raw or brutalist. Industrial means precision-machined, not crude. The system is considered and surgical, not confrontational.
 - **Don't** use border-left or border-right greater than 1px as a colored accent stripe on cards, list items, or callouts. The alert component's 3px left border is the sole exception — it's a functional severity indicator, not decoration.
+- **Don't** render an instrument's reading (coverage, confidence, lock) as fake progress. The value must be one the system actually computes.
+- **Don't** invent a decorative glyph alphabet. The symbol set is small and each mark means exactly one thing.
+- **Don't** use a second colour for diagram linework (no blueprint-cyan). One signal only — Safety Orange, on the live path and `0x00`.
+- **Don't** pack a diagram edge-to-edge on a raised panel. Diagrams go on a recessed drafting plate where they can breathe.

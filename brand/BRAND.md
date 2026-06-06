@@ -1,4 +1,6 @@
-This master dossier compiles the core identity, visual philosophy, and product naming architecture of the **NC-750** brand universe. It is structured explicitly for consumption by Large Language Models to establish strict guidelines for copywriting, UI/UX implementation, product roadmap expansion, and market positioning.
+This master dossier compiles the core identity, philosophy, voice, and product naming architecture of the **NC-750** brand universe. It is structured explicitly for consumption by both humans and Large Language Models to establish strict guidelines for copywriting, product roadmap expansion, and market positioning.
+
+**Related documents.** `brand/ETHOS.md` — the binding product constraints (privacy, data, monetization). `brand/VISUAL_IDENTITY.md` — the visual worldview (the Lab design system). `enclosure/DESIGN.md` — visual tokens and components. `enclosure/DESIGN_USE.md` — how to apply them. **This file owns identity, voice, and naming; it defers all visual specifics to `VISUAL_IDENTITY.md`.**
 
 ---
 
@@ -6,16 +8,16 @@ This master dossier compiles the core identity, visual philosophy, and product n
 
 ### The Inception
 
-The brand originally began as an exploration of the "Cassette Futurism" art style under the design working name *NeoCassette* (which established the legacy `nc` prefix across its code and system assets). As the design system evolved, it shifted from plastic retro-nostalgia to a heavier, machined, industrial aesthetic known as *Enclosure Design*. To establish an alternative, uncompromising technological identity, the parent brand was formally designated as **NC-750**—derived directly from low-level system layout variables and internal hardware module identifiers (`// MODULE NC-750-B`).
+The brand originally began as an exploration of the "Cassette Futurism" art style under the design working name *NeoCassette* (which established the legacy `nc` prefix across its code and system assets). As the design system evolved, it shifted from plastic retro-nostalgia to a heavier, machined, industrial aesthetic, and then matured into its current form — the **Lab** design system: *machine-documentation instrument panels*, where software is presented as a precision laboratory instrument documented like a technical manual (see `brand/VISUAL_IDENTITY.md`). To establish an alternative, uncompromising technological identity, the parent brand was formally designated as **NC-750**—derived directly from low-level system layout variables and internal hardware module identifiers (`// MODULE NC-750-B`).
 
 ### The Pillars
 
 NC-750 operates at the intersection of premium industrial design (inspired by the ethos of *Nothing* and *Teenage Engineering*) and absolute user sovereignty. The brand rejects standard Web2 corporate models in favor of a strict, technical manifest:
 
-* **Total Data Ownership:** User content is local-first by default and belongs to the user alone. It is never written to an NC-750 server, never sold, and never used to train anything. When a feature genuinely needs to send content somewhere (for example, an AI request), it travels only to the destination the user is on for that request — and a fully local, nothing-leaves-the-device path is always available.
+* **Data Integrity, Not Absolutism:** User content belongs to the user, and the brand's promise is *integrity in how data is collected and used* — not a literally-false absolute. The goal is **zero user-data collection wherever that is possible**, with a local-first, nothing-leaves-the-device path as the default and offered wherever feasible. Where a product or feature genuinely cannot exist without data — for example, training an NC-750 model — the next-best solution is implemented openly: the minimum necessary, with informed, opt-in consent, disclosed in plain words, never repurposed beyond the stated function. **One line is absolute and is never crossed: user data is never sold.** Everything else is the discipline of doing the most honest, least-extractive thing the function allows.
 * **You Are Never the Product:** NC-750 collects nothing *about a person* by default. Any metrics about a *product* are opt-in, off by default, anonymous, aggregate, self-hosted, and never linked to an individual or their content — and whatever is collected is published in plain words. Operational data that necessarily crosses our own infrastructure (downloads, billing, license checks) is *counted*, never the person behind it. This is the honest form of the brand's original anti-telemetry stance: the commitment is **no person is tracked**, not the literally-false absolute that *no number is ever counted*. The premium feature is integrity, not a compliance checkbox.
 * **Bring Your Own Key (BYOK), or a No-Log Relay:** For AI processing, users may supply their own API key (content goes straight to their chosen provider) or run a fully local model (nothing leaves the device at all). An optional NC-750-hosted relay exists purely for zero-setup convenience; when used, it is stateless and content-free by design — it forwards the request and retains nothing. Corporate mediation, hidden data harvesting, and lock-in are removed on every path.
-* **Themeable Minimalist Structuralism:** Interfaces prioritize dense, highly organized geometric layouts that pair structural stability with an expressive, infinitely shifting color spectrum.
+* **Structural, Not Chromatic, Identity:** The visual identity is carried by structure — a framed chassis, dense geometric layouts, crisp seams, recessed readouts — not by any single palette. Colour is a user-owned variable; the system stays unmistakably NC-750 in any theme. (Defined in `brand/VISUAL_IDENTITY.md`.)
 
 ---
 
@@ -51,28 +53,13 @@ The brand uses its name as its logo.
 
 ## 3. Visual & Typographic Guidelines
 
-The visual identity of NC-750 is governed by the *Enclosure Design* system, defined by an unchanging structural frame housing a fluent, themeable emissive color palette.
+The NC-750 visual language is the **Lab design system** — *machine-documentation instrument panels*. This file does not duplicate its specifics; the following are the single sources of truth:
 
-### Layout & UI/UX Principles
+* **`brand/VISUAL_IDENTITY.md`** — the worldview: the three grammars (Chassis, Document, Instrument) and the founding principles.
+* **`enclosure/DESIGN.md`** — tokens, the colour-seed engine, the typography scale, and the component catalogue.
+* **`enclosure/DESIGN_USE.md`** — how to assemble them: layout, responsive, motion, and interaction rules.
 
-* **Panels Joined by Seams:** Visual blocks must be separated by crisp, tight geometric seams rather than drop-shadows or gradients. The layout must feel machined, dense, and physically enclosed.
-* **Themeable Foundations:** The system is a fully configurable theme engine in the spirit of Material You — both the base seed color and the accent color are user-selectable. All major surface and text tokens derive from the base seed (`--nc-seed-h/s/l`), while accent-dependent elements (primary actions, focus rings, active signals) derive from the accent seed (`--nc-accent-h/s/l`). The canonical default pair is a cool steel-blue base with a high-contrast safety-orange accent (`hsl(18, 100%, 53%)`), but the user may freely retheme both. The following screenshots show the range of base hues achievable by changing `--nc-seed-h` alone:
-* *Light Steel Field / Machined Aluminium* (`screenshots/metallic_cyan_light.png`)
-* *Gunmetal Console / Dark Theme* (`screenshots/metallic_cyan_dark.png`)
-* *Vivid Magenta / Crimson Field* (`screenshots/pink_light.png`, `screenshots/pink_dark.png`)
-* *Organic Sage / Forest Green Console* (`screenshots/green_light.png`, `screenshots/green_dark.png`)
-
-
-
-### Typography Hierarchy
-
-The contrast between font weights and tracking serves as the primary "voice" of the brand system:
-
-| Layer | Font Style / Family | Formatting Rules | Target Placement |
-| --- | --- | --- | --- |
-| **Display / Numerals** | *ClashDisplay* | Enormous, ultra-heavy weight, tight tracking | Primary hero statements, massive metrics, branding headers |
-| **Headings & Body** | *Chillax* | Clean, highly legible, calm semantic density | Explanatory text, feature subheads, paragraph blocks |
-| **Technical Labels** | Monospace Family | Monospace, tiny sizing, wide-tracked letter spacing, often uppercase | System variables, component versions, button labels, UI metadata |
+In one line: a framed, textured **chassis** holds cells joined by crisp 1px **seams**; diagrams and readouts sit on recessed **drafting plates**; a single loud accent acts as a **signal**, never decoration; type runs at extreme contrast (heavy display against tiny wide-tracked mono labels); and the identity is **structural, not chromatic** — it survives any user-chosen theme. Products are *operated like instruments*, not browsed like apps.
 
 ---
 
@@ -84,14 +71,16 @@ The contrast between font weights and tracking serves as the primary "voice" of 
 * **Core Utility:** A deeply analytical career reflection tool. It conducts a text-based, conversational AI interview based on a user's dropped raw context (CV, LinkedIn exports, markdown text), exposes overlooked professional patterns, and outputs two documents: a private insight dossier and a polished public profile.
 * **Privacy Stance:** Operating entirely locally with a "Bring Your Own AI Key" architecture. It requires no user accounts, and outputs the finished assets as a self-contained, offline HTML file with zero remote script dependencies.
 
-### Landing Page Implementation (`screenshots/landing_page_01.png` & `screenshots/landing_page_02.png`)
+### Voice in practice
 
-* **The Hero Copy Alignment:** The name *Mirror* reinforces the concept of honest, objective self-appraisal without Web2 marketing hyperbole:
+Mirror demonstrates the NC-750 voice applied — honest, technical, free of Web2 marketing hyperbole:
+
+* **Hero:** the name *Mirror* reinforces honest, objective self-appraisal:
 > ## Your career, understood honestly.
-> 
-> 
+>
 > Mirror interviews you with AI, finds patterns you missed, and produces a private insight document and a polished public profile. Nothing leaves your device.
 
+* **Call to action:** primary actions use the accent signal with plain, verb-first labels: `[ Download Mirror ]` — no fake urgency, no dark patterns (`ETHOS.md` §5).
+* **Framing:** copy balances human utility ("understood honestly," "yours forever") with literal system truth ("No server. Stored on your device; host them or email them — they're yours."). Every claim is literally true (`ETHOS.md` C5.5).
 
-* **Call-to-Action Execution:** Primary conversion elements use the system's signature safety-orange signal field paired with solid black ink typography: `[ Download Mirror ]`.
-* **Product Framing:** Marketing text balances high-end human utility ("Surgical precision," "Yours forever") with literal system capabilities ("No server. Stored securely on your device. Host them, or email them; they're yours.").
+The interview interface — Mirror as an **instrument** rather than a chat — is the reference example in `enclosure/DESIGN_USE.md` §10. Production-grade visual examples will be authored separately once the system stabilises.

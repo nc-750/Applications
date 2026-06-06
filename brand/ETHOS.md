@@ -17,20 +17,37 @@ that needs a written, honest reason to deviate.
 
 ## 1. Content & Data Ownership
 
+The default is **zero collection**. This section is a tiered discipline: collect nothing
+wherever the function allows; where a function genuinely cannot exist without data, fall
+back to the most honest, least-extractive option under C1.6; and never cross the one
+absolute line — **user data is never sold.**
+
 - **C1.1** User content (anything the user authors, uploads, or generates — documents,
-  answers, personas, outputs) MUST be local-first and MUST NOT be written to an
-  NC-750-owned server.
-- **C1.2** User content MUST NEVER be sold, shared for advertising, or used to train
-  any model.
-- **C1.3** A **fully local path** (nothing leaves the device) MUST exist for the
-  product's core function. If the core function is impossible offline, the product
-  MUST say so plainly and name exactly where data goes.
+  answers, personas, outputs) MUST be local-first by default and MUST NOT be written to an
+  NC-750-owned server **unless** the feature genuinely requires it, in which case C1.6
+  applies in full.
+- **C1.2** User content MUST NEVER be **sold** or shared for advertising — this is
+  absolute and admits no exception. It MUST NOT be used to train any model **except** with
+  the user's informed, opt-in consent given specifically for that purpose, under C1.6.
+- **C1.3** A **fully local path** (nothing leaves the device) MUST be offered wherever it
+  is technically feasible, and SHOULD be the default. Where the core function is impossible
+  without transmitting or collecting data, the product MUST say so plainly and name exactly
+  what data goes where, and why.
 - **C1.4** When content must be transmitted (e.g., an AI request), it MUST go *only*
-  to the destination the user is on for that request, and the product MUST document —
+  to the destination required for that request, and the product MUST document —
   in plain words — precisely what is sent and to whom (see `mirror/.../privacy.md`
   as the reference standard).
-- **C1.5** The user MUST be able to export and hard-delete all of their data locally,
-  with no remote copy left behind.
+- **C1.5** The user MUST be able to export and hard-delete all of their **local** data with
+  no remote copy left behind, and MUST be able to request deletion of any data legitimately
+  collected under C1.6.
+- **C1.6 (Fallback tier — when data is genuinely required).** A product or feature that
+  cannot function without collecting user data MUST, at minimum: (a) collect only the
+  **minimum necessary** for the stated function; (b) obtain **informed, opt-in consent**,
+  off by default, with a plain-words explanation; (c) use the data **only** for the
+  disclosed purpose — never repurposed, never sold (C1.2); (d) **publish** what is
+  collected, why, where it is stored, and for how long; (e) provide deletion on request
+  (C1.5). A feature operating in this tier MUST NOT carry the `0x00` zero-tracking mark for
+  the data it collects (see C8.2); `0x00` certifies genuine zero-collection only.
 
 ## 2. Telemetry & Measurement
 
@@ -127,9 +144,9 @@ that needs a written, honest reason to deviate.
 
 ## Compliance checklist (run before shipping or branding anything)
 
-- [ ] Local-only path exists for the core function (C1.3)
+- [ ] Local-only path offered wherever feasible; data destinations disclosed where not (C1.3)
 - [ ] Plain-words disclosure of what is sent and where (C1.4, C7.3)
-- [ ] No user content on any NC-750 server; no training; no sale (C1.1–C1.2)
+- [ ] User data never sold; on NC-750 servers or used for training only under the C1.6 fallback — minimized, opt-in, published (C1.1–C1.2, C1.6)
 - [ ] Telemetry (if any) is opt-in, anonymous, aggregate, self-hosted, schema published (C2)
 - [ ] No persistent ID or IP in telemetry; license ID stays out of telemetry (C2.3, C2.5, C2.8)
 - [ ] BYOK + local model available; relay (if any) is no-log + DPA + no-train confirmed (C3)
