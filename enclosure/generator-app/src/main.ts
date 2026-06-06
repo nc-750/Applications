@@ -1,5 +1,5 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import "../css/enclosure.css";
+import "../css/lab.css";
 
 createApp(App).mount("#app");

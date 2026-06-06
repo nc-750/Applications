@@ -24,12 +24,12 @@ const {
 } = useTheme();
 
 async function exportRethemable() {
-    await exportFile(flattenRethemable(seed.value, accent.value), "enclosure.css");
+    await exportFile(flattenRethemable(seed.value, accent.value), "lab.css");
 }
 async function exportStatic() {
     await exportFile(
         flattenStatic(seed.value, accent.value, useWCAG.value),
-        "enclosure.static.css",
+        "lab.static.css",
     );
 }
 
