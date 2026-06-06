@@ -1,4 +1,4 @@
-@import "enclosure.seeds.css";
+@import "lab.seeds.css";
 
 :root {
     /* Sentinel — lab-vue reads this at runtime to verify the Lab CSS
