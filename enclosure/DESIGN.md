@@ -335,8 +335,8 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 
 **Character:** The "device chassis" grammar. A module is a framed object with a generous outer radius; inside, cells are joined by sharp seams.
 
-- **Module (.nc-module):** Machined Aluminium Field background, 1.5px Ink Seam border, 16px border radius (xl). Overflow hidden. The outermost container — reads as the device enclosure.
-- **Grid (.nc-grid):** CSS Grid with 1px gap. The gap shows through as the Panel Seam color, creating hairline divisions between cells. Columns controlled by `--nc-cols` (default 1).
+- **Chassis (.nc-chassis):** Machined Aluminium Field background, 1.5px Ink Seam border, 16px border radius (xl), overflow hidden. A vertical flexbox column holding the header, bands, and footer. The outermost container — the framed device.
+- **Band (.nc-band):** A horizontal flexbox row of cells. The 1px flex `gap` shows through as the Panel Seam color, creating the seam between cells. Cells default to equal width; spans are expressed as flex ratios.
 - **Cell (.nc-cell):** Polished White Panel background, 20px padding. Variants: `--2` (Brushed Aluminium), `--dark` (LCD Cavity with inverted text), `--accent` (Safety Orange solid with noise texture overlay), `--brushed` (Brushed Disc gradient).
 - **Panel (.nc-panel):** Polished White Panel background, 1px Panel Seam border, 5px radius (md), 16px padding, Edge Raised bevel. The standard standalone surface.
 - **Panel Raised (.nc-panel--raised):** Same background with Brushed Grain texture overlay.
@@ -347,8 +347,8 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 
 **Character:** The black display cavity. A separate visual world for readouts, terminals, and status displays.
 
-- **Console (.nc-console):** LCD Cavity background, 1px LCD Seam border, 5px radius, 16px padding, Edge Inset bevel. White on Black text.
-- **Scanline (.nc-console--scan):** A `::after` pseudo-element with a repeating horizontal line pattern (transparent 0–2px, 18% black 2–3px) overlays the content. Simulates a CRT scanline.
+- **Monitor (.nc-monitor):** LCD Cavity background, White on Black text. The dark "screen" surface; compose it onto a cell or bar — box chrome (border, radius, padding) comes from the cell/plate so it layers cleanly.
+- **Scanline (.nc-monitor--scan):** A `::after` pseudo-element with a repeating horizontal line pattern (transparent 0–2px, 18% black 2–3px) overlays the content. Simulates a CRT scanline.
 - **LCD Text (.nc-lcd):** Monospace, medium weight, 0.04em tracking, Safety Orange color with an 8px orange text-shadow glow. Tabular-nums. Large variant (`--lg`) at 2.25rem with line-height 1. Green variant swaps to a green phosphor color.
 - **LCD Subtitle (.nc-lcd-sub):** Monospace, 11px, uppercase, wide-tracked, Dim Console Text. Labels beneath LCD readouts.
 - **Terminal (.nc-terminal):** LCD Cavity background with a title bar (LCD Border, traffic-light dots in Signal Red/Amber/Green, mono title). Body with mono pre-formatted text in White on Black. Amber and green color variants.

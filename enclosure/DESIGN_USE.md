@@ -18,10 +18,10 @@ Every NC-750 screen is assembled top-down in this order. Omitting a layer is a r
 
 ```
 FIELD              textured page background (the material the device rests on)
-└─ CHASSIS         the framed device (.nc-module): rounded, ink-seam border
+└─ CHASSIS         the framed device (.nc-chassis): vertical flex, ink-seam border
    ├─ HEADER       dark status bar (cavity surface), full width
    ├─ [TABS]       optional navigation row
-   ├─ BANDS        rows of cells joined by 1px seams (.nc-grid of .nc-cell)
+   ├─ BANDS        rows of cells joined by 1px seams (.nc-band of .nc-cell)
    │  └─ CELLS     raised panels (chrome) OR recessed drafting plates (diagrams)
    └─ FOOTER       dark bar (cavity surface), full width
 ```
@@ -36,7 +36,7 @@ never a flat fill. The texture says "material surface"; keep it below ~5% contra
 
 ## 2. Chassis
 
-- The chassis is `.nc-module`: machined field background, **1.5px ink-seam border**,
+- The chassis is `.nc-chassis`: a vertical flex column, **1.5px ink-seam border**,
   16px (`xl`) outer radius, `overflow: hidden` so seams meet the rounded edge cleanly.
 - It carries a single raised edge bevel — never a drop shadow.
 - **Screws (`.nc-screw`) are optional.** Use them on hardware-flavoured or hero surfaces;
@@ -50,7 +50,7 @@ Rounded cells inside a rounded chassis read as bubbles — forbidden.
 
 ## 3. Header & footer
 
-- The top status bar and the footer use the **dark cavity surface** (`--nc-console`),
+- The top status bar and the footer use the **dark monitor surface** (`.nc-monitor`),
   full-bleed across the chassis width, separated from the body by the ink seam.
 - The header carries, left to right: the part-number label (`NC-750 // NODE-XX // …`),
   live status LEDs (`.nc-led`), and a right-aligned readout (clock, revision, or
@@ -66,7 +66,7 @@ frame the instrument like the bezel of a device. Do not lighten them to "match" 
 ## 4. Seams — the spatial grammar
 
 - Surfaces are separated by **1px seams**: either a real border (`--nc-line` family) or a
-  1px grid gap whose background shows through as the seam colour (`.nc-grid` with
+  1px flex gap whose background shows through as the seam colour (`.nc-band` with
   `gap: 1px` over a line-coloured background).
 - Seam weights: `--nc-line` (standard), `--nc-line-subtle` (table rows, minor
   divisions), `--nc-line-strong` (control borders, dimension lines), `--nc-line-ink`
@@ -138,7 +138,7 @@ panel. Dark = alive/measuring; light = static/operable.
 
 ## 7. The grid — non-uniform by design
 
-- The chassis body is a stack of **bands**; each band is a `.nc-grid` with its own column
+- The chassis body is a stack of **bands**; each band is a `.nc-band` (flex row) with its own column
   template. Bands do **not** share a column count.
 - A band may be `[rail | plate]`, `[spec | console]`, `[single full-width cell]`, or any
   mix. Column spans are expected, not exceptional.
