@@ -3,15 +3,15 @@
 This document is the **constitution** of the NC-750 visual language. It defines *what
 the visual language is and why it looks the way it does* — the durable worldview that
 every product surface must express. It does **not** list color values or component specs
-(see `enclosure/DESIGN.md`), and it does **not** give layout recipes (see
-`enclosure/DESIGN_USE.md`). When a concrete rule and this document disagree, this
+(see `lab/DESIGN.md`), and it does **not** give layout recipes (see
+`lab/DESIGN_USE.md`). When a concrete rule and this document disagree, this
 document wins and the rule is the bug.
 
 - **`brand/BRAND.md`** — who NC-750 is: voice, naming architecture, the `0x00` mark.
 - **`brand/ETHOS.md`** — what NC-750 may and may not ship (privacy/data constraints). Untouched by visual decisions.
 - **`brand/VISUAL_IDENTITY.md`** — *this file*: the visual worldview.
-- **`enclosure/DESIGN.md`** — the token + component catalogue (the *what*).
-- **`enclosure/DESIGN_USE.md`** — how to assemble it: layout, responsive, motion, interaction recipes (the *how*).
+- **`lab/DESIGN.md`** — the token + component catalogue (the *what*).
+- **`lab/DESIGN_USE.md`** — how to assemble it: layout, responsive, motion, interaction recipes (the *how*).
 
 Audience: humans (for verification and validation) and LLMs (for guidance and
 generation). Read it before generating any NC-750 interface.

@@ -7,7 +7,7 @@ NC-750 monorepo — three independent packages with no npm workspaces, Turborepo
 | Directory | What | Detailed instructions |
 |-----------|------|-----------------------|
 | `brand/` | Brand manifesto, naming architecture (NODE/UNIT/CORE), visual language | Static docs — see `brand/BRAND.md` |
-| `enclosure/` | Enclosure design system — Vue 3 component library + theme generator Tauri app | `enclosure/CLAUDE.md` |
+| `lab/` | Lab design system — Vue 3 component library + theme generator Tauri app | `lab/CLAUDE.md` |
 | `mirror/` | Persona — BYOK career reflection Tauri app + Astro marketing site | `mirror/persona-app/CLAUDE.md` |
 
 ## Cross-cutting conventions
@@ -19,7 +19,7 @@ NC-750 monorepo — three independent packages with no npm workspaces, Turborepo
 ## Key reference docs
 
 - `brand/BRAND.md` — brand identity, naming, visual guidelines
-- `enclosure/DESIGN.md` — seed-driven color system, typography, component catalog
-- `enclosure/PRODUCT.md` — product framing for the design system
+- `lab/DESIGN.md` — seed-driven color system, typography, component catalog
+- `lab/PRODUCT.md` — product framing for the design system
 - `mirror/DESIGN.md` — Persona app design spec
 - `mirror/PRODUCT.md` — Persona product framing

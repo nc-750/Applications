@@ -1,6 +1,6 @@
 This master dossier compiles the core identity, philosophy, voice, and product naming architecture of the **NC-750** brand universe. It is structured explicitly for consumption by both humans and Large Language Models to establish strict guidelines for copywriting, product roadmap expansion, and market positioning.
 
-**Related documents.** `brand/ETHOS.md` — the binding product constraints (privacy, data, monetization). `brand/VISUAL_IDENTITY.md` — the visual worldview (the Lab design system). `enclosure/DESIGN.md` — visual tokens and components. `enclosure/DESIGN_USE.md` — how to apply them. **This file owns identity, voice, and naming; it defers all visual specifics to `VISUAL_IDENTITY.md`.**
+**Related documents.** `brand/ETHOS.md` — the binding product constraints (privacy, data, monetization). `brand/VISUAL_IDENTITY.md` — the visual worldview (the Lab design system). `lab/DESIGN.md` — visual tokens and components. `lab/DESIGN_USE.md` — how to apply them. **This file owns identity, voice, and naming; it defers all visual specifics to `VISUAL_IDENTITY.md`.**
 
 ---
 
@@ -56,8 +56,8 @@ The brand uses its name as its logo.
 The NC-750 visual language is the **Lab design system** — *machine-documentation instrument panels*. This file does not duplicate its specifics; the following are the single sources of truth:
 
 * **`brand/VISUAL_IDENTITY.md`** — the worldview: the three grammars (Chassis, Document, Instrument) and the founding principles.
-* **`enclosure/DESIGN.md`** — tokens, the colour-seed engine, the typography scale, and the component catalogue.
-* **`enclosure/DESIGN_USE.md`** — how to assemble them: layout, responsive, motion, and interaction rules.
+* **`lab/DESIGN.md`** — tokens, the colour-seed engine, the typography scale, and the component catalogue.
+* **`lab/DESIGN_USE.md`** — how to assemble them: layout, responsive, motion, and interaction rules.
 
 In one line: a framed, textured **chassis** holds cells joined by crisp 1px **seams**; diagrams and readouts sit on recessed **drafting plates**; a single loud accent acts as a **signal**, never decoration; type runs at extreme contrast (heavy display against tiny wide-tracked mono labels); and the identity is **structural, not chromatic** — it survives any user-chosen theme. Products are *operated like instruments*, not browsed like apps.
 
@@ -83,4 +83,4 @@ Mirror demonstrates the NC-750 voice applied — honest, technical, free of Web2
 * **Call to action:** primary actions use the accent signal with plain, verb-first labels: `[ Download Mirror ]` — no fake urgency, no dark patterns (`ETHOS.md` §5).
 * **Framing:** copy balances human utility ("understood honestly," "yours forever") with literal system truth ("No server. Stored on your device; host them or email them — they're yours."). Every claim is literally true (`ETHOS.md` C5.5).
 
-The interview interface — Mirror as an **instrument** rather than a chat — is the reference example in `enclosure/DESIGN_USE.md` §10. Production-grade visual examples will be authored separately once the system stabilises.
+The interview interface — Mirror as an **instrument** rather than a chat — is the reference example in `lab/DESIGN_USE.md` §10. Production-grade visual examples will be authored separately once the system stabilises.
