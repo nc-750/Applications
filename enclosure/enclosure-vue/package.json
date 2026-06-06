@@ -1,21 +1,20 @@
 {
-  "name": "enclosure-vue",
+  "name": "lab-vue",
   "version": "0.1.0",
-  "description": "Typed Vue 3 facade over the Enclosure (.nc-*) design system.",
+  "description": "Typed Vue 3 facade over the Lab (.nc-*) design system.",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/enclosure-vue.umd.cjs",
-  "module": "./dist/enclosure-vue.js",
+  "main": "./dist/lab-vue.umd.cjs",
+  "module": "./dist/lab-vue.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/enclosure-vue.js",
-      "require": "./dist/enclosure-vue.umd.cjs"
-    },
-    "./style.css": "./dist/style.css"
+      "import": "./dist/lab-vue.js",
+      "require": "./dist/lab-vue.umd.cjs"
+    }
   },
   "scripts": {
     "dev": "vite",

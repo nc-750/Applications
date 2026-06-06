@@ -1,29 +1,20 @@
 import { fileURLToPath, URL } from "node:url";
-import { copyFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
-// Inline plugin: copy the vendored flat stylesheet verbatim into dist/.
-// No component imports style.css, so the library build itself emits zero CSS.
-const copyStyle = () => ({
-  name: "enclosure-copy-style",
-  closeBundle() {
-    copyFileSync(
-      fileURLToPath(new URL("./src/style.css", import.meta.url)),
-      fileURLToPath(new URL("./dist/style.css", import.meta.url)),
-    );
-  },
-});
+// lab-vue ships NO CSS: components emit class strings only, and the consumer
+// imports the Lab stylesheet (lab.css) separately. The library build emits
+// zero CSS, and the runtime guard (src/guard.ts) verifies lab.css is loaded.
 
 export default defineConfig({
-  plugins: [vue(), copyStyle()],
+  plugins: [vue()],
   build: {
     // vue-tsc emits .d.ts into dist/ before `vite build` runs; don't wipe them.
     emptyOutDir: false,
     lib: {
       entry: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
-      name: "EnclosureVue",
-      fileName: "enclosure-vue",
+      name: "LabVue",
+      fileName: "lab-vue",
       formats: ["es", "umd"],
     },
     rollupOptions: {

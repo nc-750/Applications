@@ -1,6 +1,9 @@
-// enclosure-vue — typed facade over the Enclosure .nc-* design system.
-// Components emit class strings only; ship the stylesheet separately via
-// `import "enclosure-vue/style.css"` once at your app root.
+// lab-vue — typed facade over the Lab .nc-* design system.
+// Components emit class strings only and ship NO CSS. Import the Lab
+// stylesheet (lab.css) exactly once at your app root; lab-vue verifies it is
+// loaded at runtime (see ./guard) and fails loud if it is missing.
+import "./guard";
+export { Lab, assertLabCss } from "./guard";
 
 // Primitives
 export { default as Button } from "./components/Button.vue";
