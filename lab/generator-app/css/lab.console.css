@@ -1,5 +1,5 @@
 /* ============================================================
-   7 · CONSOLE / LCD — the black "display" surface
+   7 · MONITOR / LCD — the black "display" surface
    ============================================================ */
 .nc-monitor {
     position: relative;
@@ -8,18 +8,20 @@
     /* Dark surface only. Compose onto a cell or bar; box chrome (border,
        radius, padding) comes from the cell/plate, so .nc-monitor layers
        cleanly. The dark on-surface contract vars are set here. */
-}
-/* Scanline overlay */
-.nc-monitor--scan::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent 0 2px,
-        hsl(0 0% 0% / 0.18) 2px 3px
-    );
+
+    /* On-surface contract — controls placed inside .nc-monitor
+       auto-adapt to the dark cavity without --variant modifiers. */
+    --nc-ctl-text: var(--nc-ink-invert);
+    --nc-ctl-text-secondary: var(--nc-ink-invert-2);
+    --nc-ctl-bg: var(--nc-console-2);
+    --nc-ctl-bg-hover: var(--nc-console-line);
+    --nc-ctl-bg-active: var(--nc-console);
+    --nc-ctl-border: var(--nc-console-line);
+    --nc-ctl-border-hover: var(--nc-ink-invert-2);
+    --nc-ctl-inset: var(--nc-console);
+    --nc-ctl-inset-border: var(--nc-console-line);
+    --nc-ctl-metal: var(--nc-ctl-bg);
+    --nc-ctl-metal-press: var(--nc-ctl-bg-active);
 }
 .nc-lcd {
     font-family: var(--nc-font-mono);
@@ -35,72 +37,7 @@
     font-size: var(--nc-text-3xl);
     line-height: 1;
 }
-.nc-lcd--green {
-    color: var(--nc-success);
-    text-shadow: 0 0 8px var(--nc-success);
-}
+/* .nc-lcd-sub joins the label core in typography.css */
 .nc-lcd-sub {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    letter-spacing: var(--nc-track-label);
-    text-transform: uppercase;
     color: var(--nc-ink-invert-2);
-}
-
-/* Terminal (kept for code/log output; sits on console surface) */
-.nc-terminal {
-    background: var(--nc-console);
-    border: var(--nc-border-width) solid var(--nc-console-line);
-    border-radius: var(--nc-radius-md);
-    overflow: hidden;
-}
-.nc-terminal__bar {
-    display: flex;
-    align-items: center;
-    gap: var(--nc-space-2);
-    padding: var(--nc-space-2) var(--nc-space-3);
-    background: var(--nc-console-2);
-    border-bottom: var(--nc-border-width) solid var(--nc-console-line);
-}
-.nc-terminal__dots {
-    display: flex;
-    gap: 6px;
-}
-.nc-terminal__dot {
-    width: 10px;
-    height: 10px;
-    border-radius: var(--nc-radius-full);
-}
-.nc-terminal__dot--red {
-    background: var(--nc-error);
-}
-.nc-terminal__dot--amber {
-    background: var(--nc-warning);
-}
-.nc-terminal__dot--green {
-    background: var(--nc-success);
-}
-.nc-terminal__title {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    letter-spacing: var(--nc-track-mono);
-    color: var(--nc-ink-invert-2);
-    margin-left: var(--nc-space-2);
-}
-.nc-terminal__body {
-    padding: var(--nc-space-4);
-}
-.nc-terminal__body pre {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-sm);
-    line-height: var(--nc-leading-relaxed);
-    color: var(--nc-ink-invert);
-    white-space: pre-wrap;
-    margin: 0;
-}
-.nc-terminal--amber .nc-terminal__body pre {
-    color: var(--nc-warning);
-}
-.nc-terminal--green .nc-terminal__body pre {
-    color: var(--nc-success);
 }

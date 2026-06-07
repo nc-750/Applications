@@ -10,9 +10,9 @@
     padding: 0 var(--nc-space-3);
     font-family: var(--nc-font-body);
     font-size: var(--nc-text-sm);
-    color: var(--nc-ink);
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    color: var(--nc-ctl-text);
+    background: var(--nc-ctl-inset);
+    border: var(--nc-border-width) solid var(--nc-ctl-inset-border);
     border-radius: var(--nc-radius-md);
     box-shadow: var(--nc-edge-inset);
     transition:
@@ -21,12 +21,12 @@
 }
 .nc-input::placeholder,
 .nc-textarea::placeholder {
-    color: var(--nc-ink-3);
+    color: var(--nc-ctl-text-secondary);
 }
 .nc-input:hover,
 .nc-textarea:hover,
 .nc-select:hover {
-    border-color: var(--nc-line-ink);
+    border-color: var(--nc-ctl-border-hover);
 }
 .nc-input:focus,
 .nc-textarea:focus,
@@ -88,8 +88,8 @@
     appearance: none;
     width: 22px;
     height: 22px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    background: var(--nc-ctl-inset);
+    border: var(--nc-border-width) solid var(--nc-ctl-inset-border);
     box-shadow: var(--nc-edge-inset);
     flex-shrink: 0;
     cursor: pointer;
@@ -105,7 +105,7 @@
 }
 .nc-checkbox input:hover,
 .nc-radio input:hover {
-    border-color: var(--nc-line-ink);
+    border-color: var(--nc-ctl-border-hover);
 }
 .nc-checkbox input:checked {
     background: var(--nc-accent);
@@ -136,15 +136,11 @@
     flex-direction: column;
     gap: var(--nc-space-1);
 }
+/* .nc-field__label joins the label core in typography.css */
 .nc-field__label {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-label);
-    text-transform: uppercase;
-    color: var(--nc-ink-3);
+    color: var(--nc-ctl-text-secondary);
 }
 .nc-field__help {
     font-size: var(--nc-text-xs);
-    color: var(--nc-ink-3);
+    color: var(--nc-ctl-text-secondary);
 }

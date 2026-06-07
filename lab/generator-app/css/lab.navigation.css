@@ -11,12 +11,11 @@
 .nc-tabs::-webkit-scrollbar {
     display: none;
 }
+/* .nc-tab joins the mono-meta core (font-family + track-mono) in typography.css */
 .nc-tab {
     padding: var(--nc-space-2) var(--nc-space-4);
-    font-family: var(--nc-font-mono);
     font-size: var(--nc-text-xs);
     font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-mono);
     text-transform: uppercase;
     color: var(--nc-ink-3);
     background: none;
@@ -40,13 +39,12 @@
     border-bottom-color: var(--nc-accent);
 }
 
+/* .nc-breadcrumbs joins the mono-meta core (font-family + track-mono) in typography.css */
 .nc-breadcrumbs {
     display: flex;
     align-items: center;
     gap: var(--nc-space-2);
-    font-family: var(--nc-font-mono);
     font-size: var(--nc-text-xs);
-    letter-spacing: var(--nc-track-mono);
     list-style: none;
     padding: 0;
     overflow-x: auto;

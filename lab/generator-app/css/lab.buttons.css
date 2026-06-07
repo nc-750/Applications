@@ -15,9 +15,9 @@
     font-size: var(--nc-text-sm);
     font-weight: var(--nc-font-medium);
     line-height: 1;
-    color: var(--nc-ink);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    color: var(--nc-ctl-text);
+    background: var(--nc-ctl-metal);
+    border: var(--nc-border-width) solid var(--nc-ctl-border);
     border-radius: var(--nc-radius-md);
     box-shadow: var(--nc-edge-raised);
     cursor: pointer;
@@ -31,10 +31,10 @@
 }
 .nc-btn:hover {
     filter: brightness(1.03);
-    border-color: var(--nc-line-ink);
+    border-color: var(--nc-ctl-border-hover);
 }
 .nc-btn:active {
-    background: var(--nc-metal-key-press);
+    background: var(--nc-ctl-metal-press);
     transform: translateY(1px);
     box-shadow: var(--nc-edge-inset);
 }
@@ -78,16 +78,16 @@
 /* Secondary — outlined ink */
 .nc-btn--secondary {
     background: transparent;
-    border-color: var(--nc-line-ink);
-    color: var(--nc-ink);
+    border-color: var(--nc-ctl-border);
+    color: var(--nc-ctl-text);
     box-shadow: none;
 }
 .nc-btn--secondary:hover {
-    background: var(--nc-hover);
+    background: var(--nc-ctl-bg-hover);
     filter: none;
 }
 .nc-btn--secondary:active {
-    background: var(--nc-active);
+    background: var(--nc-ctl-bg-active);
     transform: translateY(1px);
     box-shadow: none;
 }
@@ -97,15 +97,15 @@
     background: transparent;
     border-color: transparent;
     box-shadow: none;
-    color: var(--nc-ink-2);
+    color: var(--nc-ctl-text-secondary);
 }
 .nc-btn--ghost:hover {
-    background: var(--nc-hover);
-    color: var(--nc-ink);
+    background: var(--nc-ctl-bg-hover);
+    color: var(--nc-ctl-text);
     filter: none;
 }
 .nc-btn--ghost:active {
-    background: var(--nc-active);
+    background: var(--nc-ctl-bg-active);
     transform: translateY(1px);
 }
 
@@ -181,9 +181,9 @@
     font-family: var(--nc-font-mono);
     font-size: var(--nc-text-xs);
     font-weight: var(--nc-font-medium);
-    color: var(--nc-ink-2);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    color: var(--nc-ctl-text-secondary);
+    background: var(--nc-ctl-metal);
+    border: var(--nc-border-width) solid var(--nc-ctl-border);
     border-radius: var(--nc-radius-md);
     box-shadow: var(--nc-edge-raised);
     cursor: pointer;
@@ -241,8 +241,8 @@
     flex-direction: column;
     gap: 1px;
     padding: var(--nc-space-1);
-    background: var(--nc-panel);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    background: var(--nc-ctl-bg);
+    border: var(--nc-border-width) solid var(--nc-ctl-border);
     border-radius: var(--nc-radius-md);
     box-shadow: var(--nc-edge-raised);
     z-index: 100;
@@ -262,7 +262,7 @@
     font-size: var(--nc-text-xs);
     font-weight: var(--nc-font-medium);
     line-height: 1;
-    color: var(--nc-ink);
+    color: var(--nc-ctl-text);
     background: transparent;
     border: none;
     border-radius: var(--nc-radius-sm);
@@ -272,8 +272,8 @@
     transition: background var(--nc-transition-fast);
 }
 .nc-btn-expand__item:hover {
-    background: var(--nc-hover);
+    background: var(--nc-ctl-bg-hover);
 }
 .nc-btn-expand__item:active {
-    background: var(--nc-active);
+    background: var(--nc-ctl-bg-active);
 }

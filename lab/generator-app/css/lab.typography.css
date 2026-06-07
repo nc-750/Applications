@@ -42,7 +42,7 @@
     letter-spacing: var(--nc-track-tight);
 }
 
-/* Hero display — for mastheads / big statements */
+/* Display-numeral core — hero display numerals. */
 .nc-display {
     font-family: var(--nc-font-display);
     font-size: var(--nc-text-5xl);
@@ -100,31 +100,44 @@
     font-weight: var(--nc-font-bold);
 }
 
-/* Silkscreened technical label — tiny, wide, mono, uppercase */
-.nc-label {
+/* Silkscreen-label core — tiny, wide, mono, uppercase. The canonical
+   micro-label recipe; members keep only their colour + box/layout deltas
+   in their own sheets (typography.css is imported first, so those win). */
+.nc-label,
+.nc-spec__label,
+.nc-field__label,
+.nc-alert::before,
+.nc-lcd-sub,
+.nc-badge,
+.nc-table th {
     font-family: var(--nc-font-mono);
     font-size: var(--nc-text-2xs);
     font-weight: var(--nc-font-medium);
-    line-height: 1.4;
     letter-spacing: var(--nc-track-label);
     text-transform: uppercase;
+}
+.nc-label {
+    line-height: 1.4;
     color: var(--nc-ink-3);
 }
 .nc-label--accent {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    font-weight: var(--nc-font-medium);
     line-height: 1.4;
-    letter-spacing: var(--nc-track-label);
-    text-transform: uppercase;
     color: var(--nc-accent-ink);
 }
 
-/* Part number — mono, slightly narrower tracking, the "PN-001" tag */
-.nc-partno {
+/* Mono-meta core — inline/interactive meta labels (mono + track-mono).
+   Members keep their own size/case/colour. */
+.nc-partno,
+.nc-tab,
+.nc-segment button,
+.nc-breadcrumbs {
     font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
     letter-spacing: var(--nc-track-mono);
+}
+
+/* Part number — the "PN-001" tag */
+.nc-partno {
+    font-size: var(--nc-text-2xs);
     color: var(--nc-ink-3);
 }
 
@@ -138,9 +151,11 @@
     color: var(--nc-accent-ink);
 }
 
-.nc-code {
+/* Inline-code core — shared by .nc-code and .nc-prose code. */
+.nc-code,
+.nc-prose code {
     font-family: var(--nc-font-mono);
-    font-size: 0.92em;
+    font-size: var(--nc-text-xs);
     background: var(--nc-inset);
     color: var(--nc-accent-ink);
     padding: 1px 6px;

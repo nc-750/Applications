@@ -25,13 +25,9 @@
 
 /* Severity label — the technical voice (mono / uppercase / wide).
    Rendered as silkscreened annotation on the control panel. */
+/* .nc-alert::before joins the label core in typography.css */
 .nc-alert::before {
     flex-shrink: 0;
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-label);
-    text-transform: uppercase;
     line-height: var(--nc-leading-snug);
     padding-top: 2px;            /* optical centring against 13px body */
     color: var(--nc-ink-2);

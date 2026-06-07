@@ -130,40 +130,20 @@
 }
 
 /* ============================================================
-   11 · MISC — avatar, tooltip, layout utilities
+   11 · MISC — null mark, tooltip, layout utilities
    ============================================================ */
 
-.nc-avatar {
+/* The 0x00 null mark — certifies a zero/none/null state.
+   Markup convention: <span class="nc-null">0x00</span>.
+   The accent here is the one sanctioned signal use for null (P8). */
+.nc-null {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    font-family: var(--nc-font-display);
-    font-size: var(--nc-text-sm);
-    font-weight: var(--nc-font-semibold);
-    color: var(--nc-ink);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    border-radius: var(--nc-radius-full);
-    box-shadow: var(--nc-edge-raised);
-    overflow: hidden;
-    user-select: none;
-}
-.nc-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.nc-avatar--sm {
-    width: 26px;
-    height: 26px;
+    font-family: var(--nc-font-mono);
     font-size: var(--nc-text-2xs);
-}
-.nc-avatar--lg {
-    width: 46px;
-    height: 46px;
-    font-size: var(--nc-text-base);
+    font-weight: var(--nc-font-medium);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-accent);
 }
 
 .nc-tooltip {

@@ -4,15 +4,15 @@
 @import "lab.reset.css" layer(base);
 @import "lab.tailwind.css";
 @import "lab.buttons.css";
-@import "lab.chat.css";
 @import "lab.console.css";
 @import "lab.controls.css";
 @import "lab.datadisplay.css";
 @import "lab.decoration.css";
+@import "lab.diagram.css";
 @import "lab.feedback.css";
 @import "lab.inputs.css";
+@import "lab.instrument.css";
 @import "lab.layout.css";
 @import "lab.markdown.css";
 @import "lab.navigation.css";
-@import "lab.surfaces.css";
 @import "lab.typography.css";

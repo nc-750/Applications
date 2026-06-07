@@ -1,0 +1,162 @@
+/* ============================================================
+   12 · DIAGRAM & SCHEMATIC — document-grammar primitives:
+   schematic-box, data-path, sever, leader, exploded view, glyph
+   ============================================================ */
+
+/* ── Schematic box — labelled node in a diagram ──────────── */
+.nc-schematic-box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-1);
+    background: var(--nc-panel);
+    border: var(--nc-border-ink) solid var(--nc-line-ink);
+    border-radius: var(--nc-radius-md);
+    padding: var(--nc-space-3) var(--nc-space-4);
+}
+.nc-schematic-box__label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-3);
+}
+.nc-schematic-box__name {
+    font-family: var(--nc-font-body);
+    font-size: var(--nc-text-sm);
+    font-weight: var(--nc-font-semibold);
+    color: var(--nc-ink);
+}
+
+/* ── Data path — the one live route through a schematic ──── */
+.nc-path {
+    position: relative;
+    height: 2px;
+    background: var(--nc-accent);
+    min-width: 24px;
+}
+.nc-path::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid var(--nc-accent);
+}
+/* Vertical path variant */
+.nc-path--v {
+    width: 2px;
+    height: 100%;
+    min-height: 24px;
+    min-width: unset;
+}
+.nc-path--v::after {
+    right: 50%;
+    top: unset;
+    bottom: -1px;
+    transform: translateX(50%);
+    border-top: 8px solid var(--nc-accent);
+    border-bottom: none;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+}
+
+/* ── Sever mark — ✕ on a dashed line (connection does NOT exist) ─ */
+.nc-sever {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+}
+.nc-sever__line {
+    flex: 1;
+    height: 0;
+    border-top: 2px dashed var(--nc-error);
+}
+.nc-sever__mark {
+    flex-shrink: 0;
+    color: var(--nc-error);
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-lg);
+    font-weight: var(--nc-font-bold);
+    line-height: 1;
+}
+
+/* ── Leader / callout — thin line to a margin label ──────── */
+.nc-leader {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-2);
+}
+.nc-leader__line {
+    width: 32px;
+    height: 0;
+    border-top: 1px solid var(--nc-line-strong);
+    flex-shrink: 0;
+}
+.nc-leader__label {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-2xs);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-3);
+    white-space: nowrap;
+}
+
+/* ── Exploded view — isometric plates on a dashed axis ───── */
+.nc-exploded {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--nc-space-6);
+    padding: var(--nc-space-6) 0;
+}
+.nc-exploded__axis {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 1px dashed var(--nc-line-strong);
+    transform: translateX(-50%);
+}
+.nc-exploded__part {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-4);
+}
+
+/* ── Glyph — small functional mark from the symbol set ────── */
+.nc-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: var(--nc-ink-2);
+    flex-shrink: 0;
+}
+.nc-glyph svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.nc-glyph--active {
+    color: var(--nc-accent);
+}
+.nc-glyph--verified {
+    color: var(--nc-success);
+}
+.nc-glyph--null {
+    color: var(--nc-ink-faint);
+}
+.nc-glyph--null svg {
+    stroke-dasharray: 3 2;
+}

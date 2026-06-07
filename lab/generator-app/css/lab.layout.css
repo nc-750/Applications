@@ -101,3 +101,61 @@
     box-shadow: var(--nc-edge-inset);
     padding: var(--nc-space-5);
 }
+
+/* ── Cell header: title left / spec-detail right ─────────── */
+/* Gives every cell a consistent header without re-inventing
+   flex each time (DESIGN_USE cell anatomy). */
+.nc-cell-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--nc-space-3);
+    margin-bottom: var(--nc-space-4);
+}
+.nc-cell-head__title { /* a heading; author picks nc-heading-* / nc-label in markup */ }
+.nc-cell-head__spec  { /* right-aligned mono spec-detail — joins the mono-meta core */
+    font-family: var(--nc-font-mono);
+    letter-spacing: var(--nc-track-mono);
+    color: var(--nc-ink-3);
+    white-space: nowrap;
+}
+
+/* ── Corner screws — decorative fasteners for chassis corners ─ */
+.nc-screw {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: var(--nc-radius-full);
+    background: radial-gradient(
+        circle at 38% 32%,
+        var(--nc-screw-face),
+        var(--nc-screw-body) 70%,
+        var(--nc-screw-edge)
+    );
+    box-shadow:
+        inset 0 0 0 1px var(--nc-screw-ring),
+        0 1px 1px var(--nc-screw-drop);
+}
+.nc-screw::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-top: 1px solid var(--nc-screw-slot);
+    transform: rotate(42deg);
+}
+.nc-screw--tl {
+    top: 9px;
+    left: 9px;
+}
+.nc-screw--tr {
+    top: 9px;
+    right: 9px;
+}
+.nc-screw--bl {
+    bottom: 9px;
+    left: 9px;
+}
+.nc-screw--br {
+    bottom: 9px;
+    right: 9px;
+}

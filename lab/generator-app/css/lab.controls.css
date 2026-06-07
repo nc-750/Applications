@@ -1,5 +1,5 @@
 /* ============================================================
-   4 · TACTILE CONTROLS — toggle, switch, knob, fader, segmented
+   4 · TACTILE CONTROLS — toggle, segmented
    ============================================================ */
 
 /* Toggle switch */
@@ -15,8 +15,8 @@
     appearance: none;
     width: 40px;
     height: 22px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    background: var(--nc-ctl-inset);
+    border: var(--nc-border-width) solid var(--nc-ctl-inset-border);
     border-radius: var(--nc-radius-full);
     box-shadow: var(--nc-edge-inset);
     position: relative;
@@ -33,8 +33,8 @@
     left: 1px;
     width: 18px;
     height: 18px;
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
+    background: var(--nc-ctl-metal);
+    border: var(--nc-border-width) solid var(--nc-ctl-border);
     border-radius: var(--nc-radius-full);
     box-shadow: var(--nc-edge-raised);
     transition: transform var(--nc-transition-press);
@@ -55,160 +55,21 @@
     pointer-events: none;
 }
 
-/* Vertical hardware switch — physical lever in a slot */
-.nc-switch {
-    width: 38px;
-    height: 62px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    border-radius: var(--nc-radius-md);
-    box-shadow: var(--nc-edge-inset);
-    position: relative;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-.nc-switch__lever {
-    position: absolute;
-    left: 4px;
-    right: 4px;
-    top: 4px;
-    height: 26px;
-    border-radius: var(--nc-radius-sm);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    box-shadow: var(--nc-edge-raised);
-    transition:
-        top var(--nc-transition-press),
-        background var(--nc-transition-fast);
-}
-.nc-switch:focus-visible {
-    outline: 2px solid var(--nc-accent);
-    outline-offset: 2px;
-}
-.nc-switch.is-on .nc-switch__lever {
-    top: 28px;
-    background: var(--nc-accent);
-    border-color: var(--nc-accent-active);
-}
-
-/* Rotary knob — brushed disc with an accent indicator.
-   Rotate the indicator via --nc-knob-angle (deg), e.g. inline style. */
-.nc-knob {
-    --nc-knob-angle: -120deg;
-    width: 72px;
-    height: 72px;
-    border-radius: var(--nc-radius-full);
-    background: var(--nc-metal-brushed);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    box-shadow:
-        var(--nc-edge-raised),
-        0 2px 4px hsl(220 20% 20% / 0.15);
-    position: relative;
-    cursor: grab;
-    flex-shrink: 0;
-}
-.nc-knob::before {
-    content: "";
-    position: absolute;
-    inset: 14px;
-    border-radius: var(--nc-radius-full);
-    background: radial-gradient(
-        circle at 50% 35%,
-        var(--nc-panel),
-        var(--nc-panel-3)
-    );
-    box-shadow: var(--nc-edge-inset);
-}
-.nc-knob::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 7px;
-    width: 3px;
-    height: 16px;
-    margin-left: -1.5px;
-    border-radius: var(--nc-radius-full);
-    background: var(--nc-accent);
-    transform-origin: 50% 29px;
-    transform: rotate(var(--nc-knob-angle));
-}
-.nc-knob:focus-visible {
-    outline: 2px solid var(--nc-accent);
-    outline-offset: 2px;
-}
-.nc-knob:active {
-    cursor: grabbing;
-}
-
-/* Fader — vertical travel in a slotted track */
-.nc-fader {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--nc-space-2);
-}
-.nc-fader input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    writing-mode: vertical-lr;
-    direction: rtl;
-    width: 26px;
-    height: 110px;
-    background: transparent;
-    cursor: pointer;
-}
-.nc-fader input[type="range"]:focus-visible {
-    outline: 2px solid var(--nc-accent);
-    outline-offset: 2px;
-}
-.nc-fader input[type="range"]::-webkit-slider-runnable-track {
-    width: 6px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    border-radius: var(--nc-radius-full);
-    box-shadow: var(--nc-edge-inset);
-}
-.nc-fader input[type="range"]::-moz-range-track {
-    width: 6px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    border-radius: var(--nc-radius-full);
-}
-.nc-fader input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 26px;
-    height: 16px;
-    border-radius: var(--nc-radius-sm);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    box-shadow: var(--nc-edge-raised);
-    margin-left: -10px;
-}
-.nc-fader input[type="range"]::-moz-range-thumb {
-    width: 26px;
-    height: 16px;
-    border-radius: var(--nc-radius-sm);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    box-shadow: var(--nc-edge-raised);
-}
-
 /* Segmented control — fused tab keys */
 .nc-segment {
     display: inline-flex;
     padding: 3px;
-    background: var(--nc-inset);
-    border: var(--nc-border-width) solid var(--nc-line);
+    background: var(--nc-ctl-inset);
+    border: var(--nc-border-width) solid var(--nc-ctl-inset-border);
     border-radius: var(--nc-radius-md);
     box-shadow: var(--nc-edge-inset);
 }
 .nc-segment button {
-    font-family: var(--nc-font-mono);
+    /* mono-meta core (font-family + track-mono) lives in typography.css */
     font-size: var(--nc-text-xs);
     font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-mono);
     text-transform: uppercase;
-    color: var(--nc-ink-3);
+    color: var(--nc-ctl-text-secondary);
     background: transparent;
     border: none;
     padding: var(--nc-space-2) var(--nc-space-4);
@@ -219,14 +80,14 @@
         color var(--nc-transition-fast);
 }
 .nc-segment button:hover {
-    color: var(--nc-ink);
+    color: var(--nc-ctl-text);
 }
 .nc-segment button:focus-visible {
     outline: 2px solid var(--nc-accent);
     outline-offset: -1px;
 }
 .nc-segment button.is-active {
-    color: var(--nc-ink);
-    background: var(--nc-panel);
+    color: var(--nc-ctl-text);
+    background: var(--nc-ctl-bg);
     box-shadow: var(--nc-edge-raised);
 }

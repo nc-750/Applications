@@ -1,26 +1,7 @@
 /* ============================================================
-   6 · DATA DISPLAY — readout, spec, stat, LED, badge, pill,
-   table, progress, dot-matrix, console/LCD
+   6 · DATA DISPLAY — spec, stat, LED, badge, pill,
+   table, progress
    ============================================================ */
-
-/* Big numeral readout — the "72" / "07" / "002". */
-.nc-readout {
-    font-family: var(--nc-font-display);
-    font-size: var(--nc-text-5xl);
-    font-weight: var(--nc-font-bold);
-    line-height: var(--nc-leading-none);
-    letter-spacing: var(--nc-track-display);
-    color: var(--nc-ink);
-    font-variant-numeric: tabular-nums;
-}
-.nc-readout--accent {
-    color: var(--nc-accent-ink);
-}
-/* Rotated index numeral, like the "002 / 001" markers */
-.nc-readout--vertical {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-}
 
 /* Spec cell — a labelled value (mono label + value) */
 .nc-spec {
@@ -28,11 +9,8 @@
     flex-direction: column;
     gap: 0;                    /* label line-height provides separation */
 }
+/* .nc-spec__label joins the label core in typography.css */
 .nc-spec__label {
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    letter-spacing: var(--nc-track-label);
-    text-transform: uppercase;
     color: var(--nc-ink-3);
 }
 .nc-spec__value {
@@ -92,18 +70,14 @@
     box-shadow: 0 0 6px var(--nc-error);
 }
 
-/* Badge / tag */
+/* Badge / tag — label core (font/size/weight/tracking/uppercase)
+   lives in typography.css; keep box/layout + colour here. */
 .nc-badge {
     display: inline-flex;
     align-items: center;
     gap: var(--nc-space-1);
     height: 20px;
     padding: 0 var(--nc-space-2);
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-mono);
-    text-transform: uppercase;
     line-height: 1;
     color: var(--nc-ink-2);
     background: var(--nc-panel-2);
@@ -157,14 +131,10 @@
 .nc-table thead {
     background: var(--nc-panel-3);
 }
+/* .nc-table th joins the label core in typography.css */
 .nc-table th {
     padding: var(--nc-space-2) var(--nc-space-4);
-    font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-2xs);
-    font-weight: var(--nc-font-medium);
-    letter-spacing: var(--nc-track-label);
     color: var(--nc-ink-3);
-    text-transform: uppercase;
     text-align: left;
     border-bottom: var(--nc-border-width) solid var(--nc-line);
 }
@@ -281,67 +251,4 @@
 }
 .nc-progress--error .nc-progress__bar {
     background: var(--nc-error);
-}
-
-/* Vertical bar meter group — the "ADSR" mini bar chart */
-.nc-meters {
-    display: inline-flex;
-    align-items: flex-end;
-    gap: var(--nc-space-1);     /* 4px */
-    height: 40px;               /* intentional: meter body height */
-}
-.nc-meters i {
-    display: block;
-    width: var(--nc-space-2);   /* 8px */
-    background: var(--nc-ink);
-    align-self: flex-end;
-}
-.nc-meters i.is-accent {
-    background: var(--nc-accent);
-}
-/* On the dark monitor, plain bars must invert to stay visible */
-.nc-monitor .nc-meters i {
-    background: var(--nc-ink-invert);
-}
-.nc-monitor .nc-meters i.is-accent {
-    background: var(--nc-accent);
-}
-
-/* Dot-matrix display — responsive grid of circular dots.
-   Columns default to 14; override --nc-matrix-cols to suit
-   your data. Narrows automatically on small viewports. */
-.nc-matrix {
-    display: grid;
-    grid-template-columns: repeat(var(--nc-matrix-cols, 14), 1fr);
-    gap: var(--nc-space-1);     /* 4px */
-}
-.nc-matrix i {
-    aspect-ratio: 1;
-    border-radius: var(--nc-radius-full);
-    background: var(--nc-console-line);
-}
-.nc-matrix i.is-on {
-    background: var(--nc-accent);
-    box-shadow: 0 0 4px var(--nc-accent);
-}
-
-/* Tighter grid on narrow viewports — fewer columns so dots
-   stay readable and glow doesn't bleed into neighbours. */
-@media (max-width: 480px) {
-    .nc-matrix {
-        grid-template-columns: repeat(var(--nc-matrix-cols, 10), 1fr);
-        gap: 3px;
-    }
-    .nc-matrix i.is-on {
-        box-shadow: 0 0 3px var(--nc-accent);
-    }
-}
-@media (max-width: 360px) {
-    .nc-matrix {
-        grid-template-columns: repeat(var(--nc-matrix-cols, 8), 1fr);
-        gap: 2px;
-    }
-    .nc-matrix i.is-on {
-        box-shadow: 0 0 2px var(--nc-accent);
-    }
 }
