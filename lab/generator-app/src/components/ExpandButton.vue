@@ -67,5 +67,5 @@ function onBlur(e: FocusEvent) {
 </template>
 
 <style scoped>
-/* Scoped styles are minimal — all visual styling lives in enclosure.buttons.css */
+/* Scoped styles are minimal — all visual styling lives in lab.buttons.css */
 </style>

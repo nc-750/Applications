@@ -20,7 +20,7 @@ The Lab design system — a "Tactile Industrial Hardware" aesthetic. Token-drive
 ```bash
 cd lab/lab-vue
 npm run dev          # playground on localhost:5173
-npm run build        # type-check (vue-tsc) + library build (es + umd + style.css)
+npm run build        # type-check (vue-tsc) + library build (es + umd) — ships NO CSS
 ```
 
 ### generator-app
@@ -34,9 +34,9 @@ npm run verify       # WCAG-AA + static output verification (vite-node)
 
 ## Canonical CSS source
 
-`generator-app/css/` — 17 modular CSS files. `enclosure.tokens.css` defines every `--nc-*` custom property. The seed system (`--nc-seed-h/s/l` for surfaces, `--nc-accent-h/s/l` for accent) drives all color tokens through `hsl()` + `calc()`. Component sheets (buttons, inputs, surfaces, console, etc.) reference tokens exclusively — no hardcoded colors.
+`generator-app/css/` — 17 modular CSS files (`lab.*.css`), aggregated by `lab.css`. `lab.tokens.css` defines every `--nc-*` custom property (and the `--nc-lab: 750` sentinel the lab-vue guard probes). The seed system (`--nc-seed-h/s/l` for surfaces, `--nc-accent-h/s/l` for accent) drives all color tokens through `hsl()` + `calc()`. Component sheets (buttons, inputs, surfaces, console, etc.) reference tokens exclusively — no hardcoded colors.
 
-`lab-vue/src/style.css` is a vendored flat copy of the generated enclosure.css. It ships as the library's `style.css` export.
+lab-vue is **decoupled** from this CSS: it ships no stylesheet and does not vendor or export one. Consumers import the flattened `lab.css` (generated from these modular files) once at their app root; lab-vue only emits `.nc-*` class names. See "lab-vue conventions" below.
 
 ## Generator engine
 
@@ -52,4 +52,4 @@ npm run verify       # WCAG-AA + static output verification (vite-node)
 
 Components are a **class-string facade** — they render the real HTML tag the CSS expects, carry the base `.nc-*` class, and map typed props to modifier classes. No `<style>` blocks, no color/spacing props. Form controls and behavioral controls (`Switch`, `Knob`, `Fader`, `Segmented`) support `v-model`.
 
-The library build copies `src/style.css` verbatim to `dist/style.css` via a custom Vite plugin. No component imports the stylesheet — consumers `import "lab-vue/style.css"` once at their app root.
+The library build emits **zero CSS** — no `style.css` export, no vendored copy. Consumers must load the flattened `lab.css` (from `generator-app`) once at their app root. A runtime guard (`src/guard.ts`) probes the `--nc-lab: 750` sentinel `lab.css` sets on `:root`; if it is missing, lab-vue fails loudly (console error + full-screen banner + throw) rather than rendering unstyled. The dev playground (`src/dev/`) loads the modular sheets via `src/dev/lab.dev.css` to satisfy the guard.

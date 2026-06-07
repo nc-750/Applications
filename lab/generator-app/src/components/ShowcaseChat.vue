@@ -11,12 +11,12 @@ import SectionWrapper from "./SectionWrapper.vue";
             <!-- Assistant: welcome / introduction -->
             <div class="nc-message nc-message--assistant">
                 <div class="nc-message__header">
-                    <span class="nc-avatar nc-avatar--sm">E</span>
-                    <span class="nc-message__name">Enclosure AI</span>
+                    <span class="nc-avatar nc-avatar--sm">L</span>
+                    <span class="nc-message__name">Lab AI</span>
                     <span class="nc-message__time">14:32</span>
                 </div>
                 <div class="nc-message__body">
-                    <p>Welcome to the <strong>Enclosure Design System</strong>. I'm here to help you build interfaces that feel industrial, precise, and tactile — panels separated by seams instead of shadows, monochrome with a single accent, everything flush and integrated.</p>
+                    <p>Welcome to the <strong>Lab Design System</strong>. I'm here to help you build interfaces that feel industrial, precise, and tactile — panels separated by seams instead of shadows, monochrome with a single accent, everything flush and integrated.</p>
                     <p>Ask me anything about the <code>--nc-*</code> token architecture, component patterns, or the layout grid.</p>
                 </div>
             </div>
@@ -36,8 +36,8 @@ import SectionWrapper from "./SectionWrapper.vue";
             <!-- Assistant: thinking block + rich response -->
             <div class="nc-message nc-message--assistant">
                 <div class="nc-message__header">
-                    <span class="nc-avatar nc-avatar--sm">E</span>
-                    <span class="nc-message__name">Enclosure AI</span>
+                    <span class="nc-avatar nc-avatar--sm">L</span>
+                    <span class="nc-message__name">Lab AI</span>
                     <span class="nc-message__time">14:33</span>
                 </div>
                 <div class="nc-thinking nc-thinking--open">
@@ -46,14 +46,14 @@ import SectionWrapper from "./SectionWrapper.vue";
                         <span class="nc-thinking__toggle">▾</span>
                     </div>
                     <div class="nc-thinking__body">
-                        <p>The user is asking about the architecture split between <code>generator-app/css/</code> (canonical CSS source) and <code>enclosure-vue/</code> (Vue 3 facade library). I should explain the design-token pipeline: seeds → tokens → component classes → Vue props that compute class strings. The key insight is that Vue components own zero CSS themselves — they only emit class strings.</p>
+                        <p>The user is asking about the architecture split between <code>generator-app/css/</code> (canonical CSS source) and <code>lab-vue/</code> (Vue 3 facade library). I should explain the design-token pipeline: seeds → tokens → component classes → Vue props that compute class strings. The key insight is that Vue components own zero CSS themselves — they only emit class strings.</p>
                     </div>
                 </div>
                 <div class="nc-message__body">
                     <p>Good question. The architecture has <strong>two layers</strong> with a strict separation of concerns:</p>
                     <ul>
                         <li><strong>Canonical CSS</strong> (<code>generator-app/css/</code>) — all <code>.nc-*</code> classes defined with custom properties, zero hardcoded colors</li>
-                        <li><strong>Vue Facade</strong> (<code>enclosure-vue/</code>) — typed props compute class strings; components have no <code>&lt;style&gt;</code> blocks</li>
+                        <li><strong>Vue Facade</strong> (<code>lab-vue/</code>) — typed props compute class strings; components have no <code>&lt;style&gt;</code> blocks</li>
                     </ul>
                     <p>This means you can use the design system with <strong>any</strong> framework — just ship the CSS and apply the classes. The Vue layer is a convenience, not a requirement.</p>
                 </div>
@@ -79,13 +79,13 @@ import SectionWrapper from "./SectionWrapper.vue";
             <!-- Assistant: code block + actions -->
             <div class="nc-message nc-message--assistant">
                 <div class="nc-message__header">
-                    <span class="nc-avatar nc-avatar--sm">E</span>
-                    <span class="nc-message__name">Enclosure AI</span>
+                    <span class="nc-avatar nc-avatar--sm">L</span>
+                    <span class="nc-message__name">Lab AI</span>
                     <span class="nc-message__time">14:35</span>
                 </div>
                 <div class="nc-message__body">
                     <p>The 6 seed channels define the entire palette. Change these and every component re-themes automatically:</p>
-                    <pre><code>/* enclosure.seeds.css — the 6 knobs */
+                    <pre><code>/* lab.seeds.css — the 6 knobs */
 --nc-seed-h: 210;
 --nc-seed-s: 12%;
 --nc-seed-l: 15%;
@@ -119,8 +119,8 @@ import SectionWrapper from "./SectionWrapper.vue";
             <!-- Typing indicator -->
             <div class="nc-message nc-message--assistant">
                 <div class="nc-message__header">
-                    <span class="nc-avatar nc-avatar--sm">E</span>
-                    <span class="nc-message__name">Enclosure AI</span>
+                    <span class="nc-avatar nc-avatar--sm">L</span>
+                    <span class="nc-message__name">Lab AI</span>
                 </div>
                 <div class="nc-typing">
                     <span class="nc-typing__dots">

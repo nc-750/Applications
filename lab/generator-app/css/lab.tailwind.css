@@ -1,6 +1,6 @@
-@import "enclosure.tokens.css";
+@import "lab.tokens.css";
 
-/* ── Map Tailwind's spacing scale to Enclosure tokens ─────── */
+/* ── Map Tailwind's spacing scale to Lab tokens ──────────── */
 /*    Concrete values so Tailwind v4 can resolve the scale.    */
 /*    gap utilities use var(--spacing-N) while margin/padding  */
 /*    use calc(var(--spacing) * N) — the base --spacing must  */

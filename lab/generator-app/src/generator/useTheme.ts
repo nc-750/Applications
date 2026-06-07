@@ -11,7 +11,7 @@ import {
 } from "./derive";
 import { adjustForAA, CRITICAL_PAIRS, computeComplianceScore } from "./wcag";
 
-// Defaults match css/enclosure.seeds.css.
+// Defaults match css/lab.seeds.css.
 export const BG_DEFAULTS: HSL = { h: 214, s: 14, l: 85 };
 export const ACCENT_DEFAULTS: HSL = { h: 18, s: 100, l: 53 };
 

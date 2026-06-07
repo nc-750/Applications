@@ -1,4 +1,4 @@
-// WCAG-AA auto-adjust for derived Enclosure themes.
+// WCAG-AA auto-adjust for derived Lab themes.
 //
 // Strategy: derive both themes from the 6 seeds, then for each critical
 // foreground/background pair, nudge the FOREGROUND token's lightness by 1%

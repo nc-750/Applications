@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "EnclosureGeneratorApp",
+  "productName": "LabGeneratorApp",
   "version": "0.1.0",
-  "identifier": "com.enclosure.app",
+  "identifier": "com.nc750.lab-generator",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Enclosure - Generator App",
+        "title": "Lab - Generator App",
         "width": 800,
         "height": 600
       }

@@ -66,9 +66,9 @@ const fileActions: ExpandAction[] = [
 const composerText = ref("");
 const thinkingOpen = ref(false);
 const messages = ref([
-  { variant: "assistant" as const, name: "Enclosure AI", time: "12:01", body: "Welcome to the chat demo. This transcript showcases all message variants in the Enclosure design language." },
+  { variant: "assistant" as const, name: "Lab AI", time: "12:01", body: "Welcome to the chat demo. This transcript showcases all message variants in the Lab design language." },
   { variant: "user" as const, name: "You", time: "12:02", body: "Looks clean. Show me what else it can do." },
-  { variant: "assistant" as const, name: "Enclosure AI", time: "12:02", body: "Here is a code sample:" },
+  { variant: "assistant" as const, name: "Lab AI", time: "12:02", body: "Here is a code sample:" },
 ]);
 function onSend(text: string) {
   messages.value.push({ variant: "user", name: "You", time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), body: text });
@@ -78,7 +78,7 @@ function onSend(text: string) {
 <template>
   <main style="max-width: 980px; margin: 0 auto; padding: var(--nc-space-8); display: flex; flex-direction: column; gap: var(--nc-space-10)">
     <header style="display: flex; flex-direction: column; gap: var(--nc-space-2)">
-      <Label>enclosure-vue · playground</Label>
+      <Label>lab-vue · playground</Label>
       <Heading :level="1">Component Facade</Heading>
       <Text tone="secondary">Every component bound to live state. Open DevTools to inspect emitted .nc-* classes.</Text>
     </header>
@@ -246,10 +246,10 @@ function onSend(text: string) {
 
         <!-- Code block example -->
         <Message variant="assistant">
-          <MessageHeader name="Enclosure AI" time="12:03" />
+          <MessageHeader name="Lab AI" time="12:03" />
           <MessageBody>
             <p>Here is a code sample:</p>
-            <pre><code>const chat = new EnclosureChat();
+            <pre><code>const chat = new LabChat();
 chat.send("Hello, world!");</code></pre>
             <p>Inline <code>--nc-accent</code> tokens work too.</p>
           </MessageBody>
@@ -264,12 +264,12 @@ chat.send("Hello, world!");</code></pre>
 
         <!-- Thinking block -->
         <Message variant="assistant">
-          <MessageHeader name="Enclosure AI" time="12:04" />
+          <MessageHeader name="Lab AI" time="12:04" />
           <ThinkingBlock v-model:open="thinkingOpen" label="THINKING">
             <p>Let me analyze this request step by step. The user wants to understand the component architecture. I should explain the CSS token system, the Vue facade pattern, and how they compose together.</p>
           </ThinkingBlock>
           <MessageBody>
-            <p>The Enclosure design system uses a two-layer architecture: CSS custom properties define the visual language, and Vue components emit class strings mapped to typed props.</p>
+            <p>The Lab design system uses a two-layer architecture: CSS custom properties define the visual language, and Vue components emit class strings mapped to typed props.</p>
           </MessageBody>
         </Message>
 
@@ -283,7 +283,7 @@ chat.send("Hello, world!");</code></pre>
 
         <!-- Typing indicator -->
         <Message variant="assistant">
-          <MessageHeader name="Enclosure AI" />
+          <MessageHeader name="Lab AI" />
           <TypingIndicator label="ASSISTANT TYPING" />
         </Message>
       </Transcript>

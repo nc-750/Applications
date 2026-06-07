@@ -1,4 +1,4 @@
-// Verification harness for the Enclosure generator (Task 1, F-1 + F-3).
+// Verification harness for the Lab generator (Task 1, F-1 + F-3).
 // Run: npm run verify  (vite-node src/generator/verify.ts)
 //
 // F-1: for a seed matrix (defaults + adversarial), assert every critical

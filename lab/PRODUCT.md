@@ -12,7 +12,7 @@ Their context: they have a project (greenfield app, internal tool, SaaS product)
 
 ## Product Purpose
 
-Enclosure is a reference design system that captures the "Tactile Industrial Hardware" aesthetic — the surgical, panel-based, seam-separated style found in Nothing OS and Teenage Engineering interfaces. It provides a complete, token-driven CSS component library (all classes prefixed `nc-`) that can be dropped into any project and customized through CSS custom properties.
+Lab is a reference design system that captures the "Tactile Industrial Hardware" aesthetic — the surgical, panel-based, seam-separated style found in Nothing OS and Teenage Engineering interfaces. It provides a complete, token-driven CSS component library (all classes prefixed `nc-`) that can be dropped into any project and customized through CSS custom properties.
 
 The cheatsheet page serves as both documentation and a visual proof: every component is shown in context, with explanations of the design rationale.
 

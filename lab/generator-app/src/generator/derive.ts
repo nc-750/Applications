@@ -1,6 +1,6 @@
-// Mirrors css/enclosure.tokens.css; update matching row + run `npm run verify`.
+// Mirrors css/lab.tokens.css; update matching row + run `npm run verify`.
 //
-// Declarative color-token derivation for the Enclosure design system.
+// Declarative color-token derivation for the Lab design system.
 // Every color token in tokens.css is reproduced here as one TokenSpec row,
 // per theme (LIGHT mirrors lines ~11-156, DARK mirrors the [data-theme="dark"]
 // block ~330-492). Offsets/clamps replicate the calc() chains exactly.
@@ -147,6 +147,13 @@ export const LIGHT: TokenSpec[] = [
     { name: "--nc-on-error", chan: "fixed", hOff: 0, sOff: 0, lOff: 100 },
     { name: "--nc-info", chan: "fixed", hOff: 206, sOff: 64, lOff: 44 },
     { name: "--nc-info-subtle", chan: "fixed", hOff: 206, sOff: 64, lOff: 44, alpha: 0.12 },
+    // Screws (chassis corner detail) — seed-hue, absolute S/L
+    { name: "--nc-screw-face", chan: "seed", hOff: 0, sOff: 0, lOff: 0, sAbs: 14, lAbs: 96 },
+    { name: "--nc-screw-body", chan: "seed", hOff: 0, sOff: 0, lOff: 0, sAbs: 12, lAbs: 70 },
+    { name: "--nc-screw-edge", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 14, lAbs: 56 },
+    { name: "--nc-screw-ring", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 16, lAbs: 50, alpha: 0.5 },
+    { name: "--nc-screw-drop", chan: "fixed", hOff: 220, sOff: 20, lOff: 20, alpha: 0.2 },
+    { name: "--nc-screw-slot", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 16, lAbs: 48, alpha: 0.7 },
 ];
 
 // ── DARK theme — mirrors tokens.css [data-theme="dark"] ~330-492 ──────────
@@ -196,6 +203,13 @@ export const DARK: TokenSpec[] = [
     { name: "--nc-on-error", chan: "fixed", hOff: 0, sOff: 0, lOff: 100 },
     { name: "--nc-info", chan: "fixed", hOff: 206, sOff: 70, lOff: 58 },
     { name: "--nc-info-subtle", chan: "fixed", hOff: 206, sOff: 70, lOff: 58, alpha: 0.16 },
+    // Screws (chassis corner detail) — seed-hue, absolute S/L
+    { name: "--nc-screw-face", chan: "seed", hOff: 0, sOff: 0, lOff: 0, sAbs: 10, lAbs: 28 },
+    { name: "--nc-screw-body", chan: "seed", hOff: 0, sOff: 0, lOff: 0, sAbs: 8, lAbs: 20 },
+    { name: "--nc-screw-edge", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 8, lAbs: 14 },
+    { name: "--nc-screw-ring", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 10, lAbs: 18, alpha: 0.6 },
+    { name: "--nc-screw-drop", chan: "fixed", hOff: 220, sOff: 30, lOff: 0, alpha: 0.5 },
+    { name: "--nc-screw-slot", chan: "seed", hOff: 2, sOff: 0, lOff: 0, sAbs: 8, lAbs: 28, alpha: 0.6 },
 ];
 
 function deriveTheme(specs: TokenSpec[], seed: HSL, accent: HSL): DerivedTheme {

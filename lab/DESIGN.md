@@ -125,7 +125,7 @@ components:
     size: "34px"
 ---
 
-# Design System: Enclosure
+# Design System: Lab
 
 ## 1. Overview
 
@@ -259,7 +259,7 @@ The type scale extends across 10 steps from 11px to 11rem, using a roughly 1.25�
 
 ## 4. Elevation
 
-Enclosure conveys depth through **panel assembly**, not shadow elevation. Surfaces butt against each other at 1px seams; brighter surfaces sit closer to the user. The surface hierarchy is: sunken field → bare aluminium → brushed panel → polished white (closest to user), with recessed well and LCD cavity cutting below the field.
+Lab conveys depth through **panel assembly**, not shadow elevation. Surfaces butt against each other at 1px seams; brighter surfaces sit closer to the user. The surface hierarchy is: sunken field → bare aluminium → brushed panel → polished white (closest to user), with recessed well and LCD cavity cutting below the field.
 
 ### Physical Bevels, Not Depth
 

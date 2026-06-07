@@ -26,20 +26,37 @@ design.md format, lint-clean), `lab/DESIGN_USE.md` (application rules),
 - [x] Path references `enclosure/`→`lab/` in monorepo + brand docs; name in CLAUDE files. `99621a3`
 - [x] `lab/DESIGN.md` design.md lint: **0 errors** (24 benign warnings).
 
-### Phase 1 — remaining (not yet done)
-- [ ] **Build verification** (could NOT run here — `node_modules` not installed):
-      `cd lab/lab-vue && npm install && npm run build` (vue-tsc + vite — validates guard.ts),
-      and `cd lab/generator-app && npm install && npm run verify` (WCAG-AA + static output).
-- [ ] **On-surface contract** (deferred): contextual `--nc-ctl-*` vars so controls auto-adapt
-      to `.nc-monitor` without `--variant`. Mechanism settled; needs a render pass to tune
+### Phase 1 — remaining ✓
+- [x] **Build verification** (deps installed, both packages build):
+      `lab/lab-vue` → `npm run build` (vue-tsc ✓ + vite ✓; emits es+umd, **no style.css**).
+      `lab/generator-app` → `npm run verify` (**F-1 WCAG-AA all pass; F-3 static flatten PASS**)
+      and `npm run build` (vue-tsc ✓ + vite ✓).
+- [x] **Bug — broken `@import`** (caught by build): `lab.tailwind.css` imported the renamed-away
+      `enclosure.tokens.css` → fixed to `lab.tokens.css`.
+- [x] **Bug — dead dev import** (caught by build): `lab-vue/src/dev/main.ts` imported the deleted
+      `../style.css`. Added `src/dev/lab.dev.css` (loads the canonical modular sheets, Tailwind
+      layer excluded) so the playground satisfies the `--nc-lab:750` guard. README/CLAUDE updated.
+- [x] **Bug — F-3 regression** (caught by verify): `--nc-screw-*` tokens existed in
+      `lab.tokens.css` but were missing from `derive.ts`, so the static flatten left
+      `calc()`/`--nc-seed-` unresolved. Added all 6 screw rows (light+dark) → F-3 PASS.
+- [x] **Bug — Tauri crate mismatch** (caught while renaming): `main.rs` called
+      `generator_app_lib::run()` but the lib was `enclosure_generator_lib`. Aligned both to
+      `lab_generator_lib`; renamed productName/identifier/title and the package to Lab.
+- [x] **Cosmetic text refs**: generator-app code comments + UI copy (ShowcaseArchitecture/Chat,
+      ExpandButton, index/example titles), `lab-vue` README + dev playground, `lab/CLAUDE.md`
+      (rewrote the stale vendored-style.css section), `lab/PRODUCT.md`, `lab/DESIGN.md` heading,
+      `brand/ETHOS.md` C8.1 + checklist, root `CLAUDE.md`/`AGENTS.md` ("enclosure CSS" → "Lab").
+      Generic English uses of the word "enclosure" (machined enclosure, etc.) intentionally kept.
+
+### Phase 1 — still deferred
+- [ ] **On-surface contract**: contextual `--nc-ctl-*` vars so controls auto-adapt to
+      `.nc-monitor` without `--variant`. Mechanism settled; needs a render pass to tune
       dark-control visuals. Not Mirror-blocking (interview dark side is readout-only).
-- [ ] **Cosmetic text refs** still saying "enclosure"/"Enclosure": `lab/generator-app` code
-      comments (derive.ts/useTheme.ts/flatten.ts mention `enclosure.tokens.css` etc.) + UI
-      copy (Header.vue, ShowcaseArchitecture/Chat), `lab/lab-vue/README.md`, `lab/PRODUCT.md`,
-      `lab/generator-app/index.html` title.
-- [ ] **Generator-app Tauri identifiers** (`src-tauri/Cargo.toml`, `tauri.conf.json`) still
-      use `enclosure` — renaming the Rust crate/bundle id is a separate, riskier change.
-- [ ] **Regenerate** a distributable flattened `lab.css` artifact if consumers need one.
+- [ ] **Regenerate** a distributable flattened `lab.css` artifact if/when an external consumer
+      needs one. (Mirror currently vendors its own copy — addressed in Phase 4.)
+- [ ] **Root `CLAUDE.md` data-philosophy line** still says "never sold, never trains anything"
+      (pre-reconciliation absolutism); BRAND.md/ETHOS.md now say "integrity, not absolutism".
+      Out of Phase-1 CSS scope — fold into a docs pass.
 
 ## Phase 2 — New components (CSS + lab-vue)
 - [ ] Diagram/instrument CSS: `.nc-plate` exists; add `.nc-schematic-box`, `.nc-path`,

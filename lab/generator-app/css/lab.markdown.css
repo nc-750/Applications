@@ -1,6 +1,6 @@
 /* ============================================================
    DOCS PROSE
-   Reading layout for markdown content. Uses enclosure tokens.
+   Reading layout for markdown content. Uses Lab tokens.
    ============================================================ */
 .nc-prose {
     max-width: 70ch;

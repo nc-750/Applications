@@ -134,7 +134,7 @@ absolute line — **user data is never sold.**
 ## 8. Visual & Naming Surface
 
 - **C8.1** Products MUST follow the serialization architecture (`NODE/UNIT/CORE-XX`)
-  and use the Enclosure design system per `lab/DESIGN.md`.
+  and use the Lab design system per `lab/DESIGN.md`.
 - **C8.2** The `0x00` mark certifies a zero-person-tracking environment; it MUST NOT be
   applied to any surface that violates Sections 1–2.
 - **C8.3** Accessibility: WCAG 2.1 AA minimum, keyboard navigable, `prefers-reduced-motion`
@@ -154,4 +154,4 @@ absolute line — **user data is never sold.**
 - [ ] No dark patterns; features gated, core not crippled; claims literally true (C5)
 - [ ] Org buyers see seats, never content (C6)
 - [ ] No misused crypto terms; docs match reality (C7)
-- [ ] Serialization, Enclosure system, `0x00`, WCAG AA (C8)
+- [ ] Serialization, Lab system, `0x00`, WCAG AA (C8)

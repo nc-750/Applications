@@ -4,10 +4,10 @@
    radius. Panels are simpler standalone surfaces.
 
    For the bento grid layout (cells joined by seams), see
-   enclosure.layout.css — .nc-band + .nc-cell.
+   lab.layout.css — .nc-band + .nc-cell.
    ============================================================ */
 
-/* The device chassis (.nc-chassis) lives in enclosure.layout.css — it is the
+/* The device chassis (.nc-chassis) lives in lab.layout.css — it is the
    vertical flex container that frames header / bands / footer. */
 
 /* Panel — standalone surface, hairline border, subtle bevel */

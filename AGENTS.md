@@ -13,7 +13,7 @@ NC-750 monorepo — three independent packages with no npm workspaces, Turborepo
 ## Cross-cutting conventions
 
 - `CLAUDE.md` at the repo root covers conventions shared across all packages
-- **No Tailwind** in enclosure component CSS — pure custom properties only
+- **No Tailwind** in Lab design-system CSS — pure custom properties only
 - TypeScript strict mode with `noUnusedLocals` and `noUnusedParameters` throughout
 
 ## Key reference docs
