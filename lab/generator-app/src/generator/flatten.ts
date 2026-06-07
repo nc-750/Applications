@@ -18,17 +18,17 @@ import tokensRaw from "../../css/lab.tokens.css?raw";
 import fontsRaw from "../../css/lab.fonts.css?raw";
 import resetRaw from "../../css/lab.reset.css?raw";
 import buttonsRaw from "../../css/lab.buttons.css?raw";
-import chatRaw from "../../css/lab.chat.css?raw";
 import consoleRaw from "../../css/lab.console.css?raw";
 import controlsRaw from "../../css/lab.controls.css?raw";
 import datadisplayRaw from "../../css/lab.datadisplay.css?raw";
 import decorationRaw from "../../css/lab.decoration.css?raw";
+import diagramRaw from "../../css/lab.diagram.css?raw";
 import feedbackRaw from "../../css/lab.feedback.css?raw";
 import inputsRaw from "../../css/lab.inputs.css?raw";
+import instrumentRaw from "../../css/lab.instrument.css?raw";
 import layoutRaw from "../../css/lab.layout.css?raw";
 import markdownRaw from "../../css/lab.markdown.css?raw";
 import navigationRaw from "../../css/lab.navigation.css?raw";
-import surfacesRaw from "../../css/lab.surfaces.css?raw";
 import typographyRaw from "../../css/lab.typography.css?raw";
 
 /** Strip nested `@import ...;` lines from a raw chunk. */
@@ -43,17 +43,17 @@ const HEADER =
 // Component sheets in lab.css order (post-tokens/fonts/reset).
 const COMPONENT_CHUNKS = [
     buttonsRaw,
-    chatRaw,
     consoleRaw,
     controlsRaw,
     datadisplayRaw,
     decorationRaw,
+    diagramRaw,
     feedbackRaw,
     inputsRaw,
+    instrumentRaw,
     layoutRaw,
     markdownRaw,
     navigationRaw,
-    surfacesRaw,
     typographyRaw,
 ];
 

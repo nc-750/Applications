@@ -12,7 +12,7 @@ import SectionWrapper from "./SectionWrapper.vue";
         <div class="flex flex-col gap-6">
             <div>
                 <span class="nc-label block mb-2">Display / Numeral</span>
-                <div class="nc-readout">128</div>
+                <div class="nc-display">128</div>
             </div>
             <div>
                 <span class="nc-label block mb-2">Heading 1</span>

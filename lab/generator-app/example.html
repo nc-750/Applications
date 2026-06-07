@@ -17,27 +17,18 @@
                  ======================================================== -->
             <div class="nc-band">
 
-                <!-- Row 1 · Col 1–2: Terminal -->
+                <!-- Row 1 · Col 1–2: Engine log on the dark monitor surface -->
                 <div class="nc-cell col-span-2">
                     <div class="flex flex-col gap-4">
                         <span class="nc-label">DSP Engine Log</span>
-                        <div class="nc-terminal">
-                            <div class="nc-terminal__bar">
-                                <div class="nc-terminal__dots">
-                                    <div class="nc-terminal__dot nc-terminal__dot--red"></div>
-                                    <div class="nc-terminal__dot nc-terminal__dot--amber"></div>
-                                    <div class="nc-terminal__dot nc-terminal__dot--green"></div>
-                                </div>
-                                <span class="nc-terminal__title">console.log</span>
-                            </div>
-                            <div class="nc-terminal__body">
-                                <pre>[12:34:56] Initialising DSP engine
+                        <div class="nc-monitor" style="padding: var(--nc-space-4); border-radius: var(--nc-radius-md);">
+                            <span class="nc-lcd-sub" style="display: block; margin-bottom: var(--nc-space-2);">console.log</span>
+                            <pre style="font-family: var(--nc-font-mono); font-size: var(--nc-text-sm); line-height: var(--nc-leading-relaxed); color: var(--nc-ink-invert); white-space: pre-wrap; margin: 0;">[12:34:56] Initialising DSP engine
 [12:34:56] Loading patch <span class="nc-text--accent">"Reese Bass"</span>
 [12:34:57] Oscillator sync lock <span class="nc-badge nc-badge--success">OK</span>
 [12:34:57] Envelope routing set to ADSR-2
 [12:34:58] Voice allocation: 8/16 active
 [12:34:58] <span class="nc-text--accent">&gt; _</span></pre>
-                            </div>
                         </div>
                     </div>
                 </div>

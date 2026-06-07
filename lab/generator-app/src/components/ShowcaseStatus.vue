@@ -64,7 +64,7 @@ import SectionWrapper from "./SectionWrapper.vue";
         </div>
 
         <!-- Data Table -->
-        <div class="nc-panel nc-panel--raised rounded-[var(--nc-radius-lg)] p-0 overflow-auto mt-4">
+        <div class="nc-table-wrapper mt-4">
             <table class="nc-table">
                 <thead>
                     <tr>

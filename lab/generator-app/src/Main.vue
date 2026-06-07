@@ -2,7 +2,6 @@
 import ShowcaseColor from "./components/ShowcaseColor.vue";
 import ShowcaseTypography from "./components/ShowcaseTypography.vue";
 import ShowcaseButtons from "./components/ShowcaseButtons.vue";
-import ShowcaseChat from "./components/ShowcaseChat.vue";
 import ShowcaseControls from "./components/ShowcaseControls.vue";
 import ShowcaseInputs from "./components/ShowcaseInputs.vue";
 import ShowcaseDisplays from "./components/ShowcaseDisplays.vue";
@@ -31,9 +30,6 @@ import ShowcaseArchitecture from "./components/ShowcaseArchitecture.vue";
         <div class="grid grid-cols-3">
             <div class="nc-cell col-span-3">
                 <ShowcaseButtons />
-            </div>
-            <div class="nc-cell col-span-3">
-                <ShowcaseChat />
             </div>
             <div class="nc-cell col-span-2">
                 <ShowcaseControls />

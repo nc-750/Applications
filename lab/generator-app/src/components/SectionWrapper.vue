@@ -18,7 +18,7 @@ defineProps<{
     <p class="nc-caption mb-6">
         {{ desc }}
     </p>
-    <div class="nc-panel nc-panel--inset">
+    <div class="nc-plate">
         <slot />
     </div>
 </template>

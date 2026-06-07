@@ -25,16 +25,16 @@ const { complianceScore } = useTheme();
             </div>
         </div>
 
-        <!-- Knob Cell -->
+        <!-- Brushed metal cell -->
         <div class="nc-cell nc-cell--brushed flex items-center justify-center">
-            <div class="nc-knob" :style="{ '--nc-knob-angle': '38deg' }"></div>
+            <span class="nc-label nc-label--accent">NC-750</span>
         </div>
 
         <!-- Accent cell -->
         <div class="nc-cell nc-cell--accent flex flex-col">
             <div class="nc-hatch h-6"></div>
             <div class="flex items-baseline justify-between">
-                <div class="nc-readout">{{ complianceScore }}</div>
+                <div class="nc-display">{{ complianceScore }}</div>
                 <div class="nc-mono">% COMPLIANT</div>
             </div>
         </div>
