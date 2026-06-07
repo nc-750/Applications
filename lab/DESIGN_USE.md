@@ -85,7 +85,7 @@ edge. Drop/ambient shadows, glow-as-elevation, and floating cards are forbidden.
 
 ## 5. Cell anatomy
 
-A cell (`.nc-cell` / `.nc-panel`) has a consistent header and a body.
+A cell (`.nc-cell`) has a consistent header and a body.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -118,13 +118,13 @@ This is the operational form of constitution principle **P4 (recession holds con
 
 | Content type | Surface | Why |
 |---|---|---|
-| Controls, specs, tables, navigation, status | **Raised panel** (`.nc-panel`, polished/brushed) | Dense chrome sits close to the user |
+| Controls, specs, tables, navigation, status | **Cell** (`.nc-cell`, polished/brushed) | Dense chrome sits close to the user |
 | Diagrams, schematics, exploded views, readouts to study | **Recessed drafting plate** (a cell interior on `--nc-inset` with `--nc-edge-inset`) | The cut-in surface says "study this"; it may breathe |
 
 **Rule SF1 — The cell frame is always chassis grammar; only the interior may open.** A
 diagram cell still has its seam, header, and spec-detail. Inside, it drops to a recessed
-drafting plate where whitespace is permitted. *The panel contains the whitespace; the
-whitespace never dissolves the panel.*
+drafting plate where whitespace is permitted. *The cell contains the whitespace; the
+whitespace never dissolves the cell.*
 
 **Rule SF2 — Whitespace is bounded.** Open, breathing layout is allowed **only** inside a
 drafting plate. Chrome cells stay packed. A screen that is open everywhere has become a
@@ -133,6 +133,49 @@ marketing page; a screen that is dense everywhere is the old mistake.
 **Rule SF3 — Live readouts use the cavity.** Anything that updates in real time (an
 analyzer, a status console, an LCD value) sits on the dark cavity surface, not a light
 panel. Dark = alive/measuring; light = static/operable.
+
+#### What a readout looks like — one example
+
+A readout is not a CSS class. It is an application-level composition of existing
+primitives assembled inside a `.nc-monitor` cavity. The collection of parts (live
+listings, meters, labels) is application-owned; the Lab provides the surface and the
+data-display pieces, not a pre-built "readout" widget.
+
+> **This is one illustrative example — not a fixed template.** Different products compose
+> different readouts from the same primitives. Do not copy-paste the markup below; derive
+> your readout from the instrument's actual measurements.
+
+```
+┌─ cell (nc-cell, keeps its seam/header) ─────────────────────┐
+│ CELL HEADER                         SPEC // INSTRUMENT       │
+│ ┌─ nc-monitor (the dark cavity) ───────────────────────────┐ │
+│ │                                                           │ │
+│ │  PATTERNS DETECTED                      CONFIDENCE        │ │
+│ │  ▸ Cross-team facilitation               ████░░  78%      │ │
+│ │  ▸ Deep-work bias                        ██░░░  42%      │ │
+│ │  ▸ …                                                     │ │
+│ │                                                           │ │
+│ │  EVIDENCE POINTS: 7                                       │ │
+│ │  STATUS: ACQUIRING …          ·nc-led--rec ·              │ │
+│ │                                                           │ │
+│ └───────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────┘
+```
+
+The parts used:
+- **`.nc-cell`** — the chassis frame (header + spec-detail keep the machine-annotation voice).
+- **`.nc-monitor`** — the dark cavity surface (`.nc-console` background, inverted text).
+- **`.nc-facet`** — labels the measurement category (`PATTERNS DETECTED`).
+- **`.nc-coverage`** — per-item saturation bars, filling toward "locked."
+- **`.nc-lcd`** / **`.nc-lcd-sub`** — the mono typography and orange glow for live values.
+- **`.nc-led--rec`** — the recording/acquiring indicator dot.
+- **App-owned layout** — flexbox grid of pattern rows, evidence counter, status bar.
+  None of this layout is a Lab class; it is the application's job.
+
+The constitution defines *Readout* in the glossary as "the live measurement surface that
+accumulates as the user feeds the instrument" (VISUAL_IDENTITY.md §5). This composition is
+what that looks like. It is not a class to import — it is the dark cavity, filled with
+honest instrument data.
 
 ---
 

@@ -146,7 +146,7 @@ This system explicitly rejects: floating cards, box-shadow elevation, gradients 
 - Metal materials: gradients, textures, and edge bevels simulate machined metal, not elevation
 - Safety orange: the single chromatic signal — loud, industrial, used on ≤10% of any screen
 - Extreme type contrast: enormous tight display against tiny wide-tracked monospace labels
-- Hardware controls: knobs, switches, faders, keycaps, toggles — the interface feels operable
+- Hardware controls: keycaps, toggles, segmented controls — the interface feels operable
 
 ## 2. Colors: The Metal + Signal Palette
 
@@ -177,8 +177,8 @@ Every color is derived from the seed channels. Changing `--nc-seed-h` from 214 (
 
 These tokens invert in the dark theme to become the surface ramp, but in the light theme they serve a single purpose: the black cavity of a display screen.
 
-- **LCD Cavity** (#16181D, hsl(220, 16%, 10%)): Deep near-black with a cool blue cast. The background for console surfaces, terminal windows, and the masthead bar.
-- **LCD Border** (#21242A, hsl(220, 14%, 15%)): Slightly lighter console variant. Terminal title bars, console-2 cells.
+- **LCD Cavity** (#16181D, hsl(220, 16%, 10%)): Deep near-black with a cool blue cast. The background for console surfaces, monitor displays, and the masthead bar.
+- **LCD Border** (#21242A, hsl(220, 14%, 15%)): Slightly lighter console variant. Used for monitor borders, console-2 cells.
 - **LCD Seam** (#3A3E45, hsl(220, 12%, 26%)): Borders and lines within console surfaces.
 
 ### Neutral: Ink (Text Hierarchy)
@@ -188,7 +188,7 @@ These tokens invert in the dark theme to become the surface ramp, but in the lig
 - **Silkscreen Grey** (#6B727B, hsl(216, 9%, 46%)): Tertiary text. Help text, placeholder text, disabled states, part numbers.
 - **Faded Mark** (#8D949C, hsl(216, 9%, 60%)): Quaternary text. The faintest readable ink. Breadcrumb separators, inactive LED dots.
 - **White on Black** (#E8ECF1, hsl(210, 18%, 93%)): Primary text on console/LCD surfaces. Near-white with a cool cast.
-- **Dim Console Text** (#949BA3, hsl(212, 10%, 62%)): Secondary text on console surfaces. LCD subtitles, terminal titles.
+- **Dim Console Text** (#949BA3, hsl(212, 10%, 62%)): Secondary text on console surfaces. LCD subtitles, monitor labels.
 - **On Ink White** (#F7F9FB, hsl(210, 22%, 98%)): Text on solid ink (primary button) backgrounds.
 
 ### Neutral: Seams & Lines
@@ -202,7 +202,7 @@ These tokens invert in the dark theme to become the surface ramp, but in the lig
 
 - **Signal Green** (#3D8C62, hsl(150, 42%, 36%)): Success states. Badge text, alert border, progress bar fill, the "online" LED glow.
 - **Signal Amber** (#D4950E, hsl(38, 92%, 45%)): Warning states. Badge text, alert border, progress bar fill, the warning LED glow.
-- **Signal Red** (#D13B3B, hsl(4, 78%, 50%)): Error and danger states. Danger button background, error badge text, alert border, the error LED glow, terminal close-dot.
+- **Signal Red** (#D13B3B, hsl(4, 78%, 50%)): Error and danger states. Danger button background, error badge text, alert border, the error LED glow.
 - **Signal Blue** (#3B7DBF, hsl(206, 64%, 44%)): Info states. Info badge text, alert border.
 
 Each semantic color has a `-subtle` variant at ~12% opacity for badge and alert backgrounds.
@@ -214,7 +214,7 @@ Each semantic color has a `-subtle` variant at ~12% opacity for badge and alert 
 - **Brushed Disc** (`--nc-metal-brushed`): A radial + conic gradient composite that simulates the circular brushing on a rotary knob.
 - **Brushed Grain** (`--nc-grain-brushed`): A 2px repeating linear gradient overlay that adds horizontal grain to raised panels.
 - **Fractal Noise** (`--nc-texture-noise`): An SVG turbulence filter overlaid on the page body at 5% opacity. Breaks flat color fields on the aluminium background.
-- **Edge Raised** (`--nc-edge-raised`): A 1px top catch-light + subtle bottom shadow. Applied as `box-shadow` to buttons, keys, knobs, and raised panels.
+- **Edge Raised** (`--nc-edge-raised`): A 1px top catch-light + subtle bottom shadow. Applied as `box-shadow` to buttons, keys, and raised panels.
 - **Edge Inset** (`--nc-edge-inset`): A 1–2px top inner shadow + subtle bottom catch-light. Applied to inputs, toggle tracks, inset panels, and pressed buttons.
 
 ### Named Rules
@@ -265,7 +265,7 @@ Lab conveys depth through **panel assembly**, not shadow elevation. Surfaces but
 
 Box-shadow is permitted only as **edge lighting** — the way light catches a machined bevel on physical hardware. Two bevel tokens serve the entire system:
 
-- **Edge Raised** (`--nc-edge-raised`): `inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12)`. A bright top catch-light and a subtle bottom shadow. Applied to buttons, keycaps, knobs, raised panels, and avatars. Simulates a convex surface catching overhead light.
+- **Edge Raised** (`--nc-edge-raised`): `inset 0 1px 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 hsl(220 20% 30% / 0.12)`. A bright top catch-light and a subtle bottom shadow. Applied to buttons, keycaps, and raised panels. Simulates a convex surface catching overhead light.
 - **Edge Inset** (`--nc-edge-inset`): `inset 0 1px 2px hsl(220 20% 20% / 0.16), inset 0 -1px 0 hsl(0 0% 100% / 0.5)`. A dark top shadow and a subtle bottom catch-light. Applied to input fields, toggle tracks, inset panels, and the segmented control background. Simulates a concave recess.
 
 These bevels **flip on press**: a button uses Edge Raised at rest and Edge Inset on `:active`, simulating physical depression. This is the system's primary tactile feedback mechanism.
@@ -303,9 +303,6 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 **Character:** Hardware-feeling input controls that simulate physical components. Each has a distinct mechanical metaphor.
 
 - **Toggle (.nc-toggle):** 40×22px track with an 18px circular thumb. Recessed Well track with Edge Inset bevel. Thumb uses Metal Key gradient with Edge Raised bevel. Checked state fills the track with Safety Orange and snaps the thumb 18px right (120ms press transition with slight overshoot: `cubic-bezier(0.34, 1.56, 0.64, 1)`).
-- **Switch (.nc-switch):** 38×62px vertical slot with a 26px lever. Recessed Well background with Edge Inset. Lever in Metal Key gradient with Edge Raised. The `.is-on` state moves the lever from top (4px) to bottom (28px) and fills it with Safety Orange. Simulates a physical rocker or slide switch.
-- **Knob (.nc-knob):** 72×72px circular control. Brushed Disc conic+radial gradient background, Edge Raised bevel, subtle drop shadow for physical presence. A 3px Safety Orange indicator line rotates via `--nc-knob-angle` (CSS custom property, default -120deg). Inner disc (14px inset) with recessed bevel. Grab/grabbing cursor.
-- **Fader (.nc-fader):** Vertical range input 26×110px. Custom track (6px wide, Recessed Well with Edge Inset) and thumb (26×16px, Metal Key gradient with Edge Raised). Writing-mode: vertical-lr.
 - **Segmented Control (.nc-segment):** Inline-flex of fused buttons inside a 3px-padded Recessed Well with Edge Inset. Inactive segments are transparent with Silkscreen Grey text; active segment gets the Polished White Panel background with Edge Raised bevel. Mono font, uppercase, wide-tracked.
 
 ### Inputs & Forms
@@ -338,26 +335,18 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 - **Chassis (.nc-chassis):** Machined Aluminium Field background, 1.5px Ink Seam border, 16px border radius (xl), overflow hidden. A vertical flexbox column holding the header, bands, and footer. The outermost container — the framed device.
 - **Band (.nc-band):** A horizontal flexbox row of cells. The 1px flex `gap` shows through as the Panel Seam color, creating the seam between cells. Cells default to equal width; spans are expressed as flex ratios.
 - **Cell (.nc-cell):** Polished White Panel background, 20px padding. Variants: `--2` (Brushed Aluminium), `--dark` (LCD Cavity with inverted text), `--accent` (Safety Orange solid with noise texture overlay), `--brushed` (Brushed Disc gradient).
-- **Panel (.nc-panel):** Polished White Panel background, 1px Panel Seam border, 5px radius (md), 16px padding, Edge Raised bevel. The standard standalone surface.
-- **Panel Raised (.nc-panel--raised):** Same background with Brushed Grain texture overlay.
-- **Panel Inset (.nc-panel--inset):** Recessed Well background, Hairline Seam border, Edge Inset bevel.
-- **Panel Interactive (.nc-panel--interactive):** Cursor pointer. Hover shifts to Warm Aluminium background and Structural Seam border. Active shifts to Pressed Aluminium.
+- **Cell Header (.nc-cell-head):** Cell-header anatomy — a baseline-aligned flex row, title left / spec-detail right, with a bottom margin. `__title` is an author-chosen heading (`.nc-heading-*` / `.nc-label`); `__spec` is a right-aligned, no-wrap mono spec-detail (joins the mono-meta core, Silkscreen Grey). Gives every cell a consistent header without re-inventing flex.
 
-### Console / LCD
+### Monitor / LCD
 
-**Character:** The black display cavity. A separate visual world for readouts, terminals, and status displays.
+**Character:** The black display cavity. A separate visual world for readouts and status displays.
 
 - **Monitor (.nc-monitor):** LCD Cavity background, White on Black text. The dark "screen" surface; compose it onto a cell or bar — box chrome (border, radius, padding) comes from the cell/plate so it layers cleanly.
-- **Scanline (.nc-monitor--scan):** A `::after` pseudo-element with a repeating horizontal line pattern (transparent 0–2px, 18% black 2–3px) overlays the content. Simulates a CRT scanline.
-- **LCD Text (.nc-lcd):** Monospace, medium weight, 0.04em tracking, Safety Orange color with an 8px orange text-shadow glow. Tabular-nums. Large variant (`--lg`) at 2.25rem with line-height 1. Green variant swaps to a green phosphor color.
-- **LCD Subtitle (.nc-lcd-sub):** Monospace, 11px, uppercase, wide-tracked, Dim Console Text. Labels beneath LCD readouts.
-- **Terminal (.nc-terminal):** LCD Cavity background with a title bar (LCD Border, traffic-light dots in Signal Red/Amber/Green, mono title). Body with mono pre-formatted text in White on Black. Amber and green color variants.
-- **Dot Matrix (.nc-matrix):** CSS Grid of circular dots (3px gap). Dots are LCD Seam color by default; `.is-on` dots glow Safety Orange with an orange box-shadow. Used for animated waveforms.
-- **Bar Meters (.nc-meters):** Inline-flex of vertical bars (7px wide). Plain bars are Etched Black (auto-invert to White on Black inside consoles). Accent bars are Safety Orange.
+- **LCD Text (.nc-lcd):** Monospace, medium weight, 0.04em tracking, Safety Orange color with an 8px orange text-shadow glow. Tabular-nums. Large variant (`--lg`) at 2.25rem with line-height 1.
+- **LCD Subtitle (.nc-lcd-sub):** Joins the label core (mono, 11px, uppercase, wide-tracked); Dim Console Text colour. Labels beneath LCD readouts.
 
 ### Data Display
 
-- **Readout (.nc-readout):** Giant display numerals. ClashDisplay Bold at 6xl size (clamp(5rem, 14vw, 11rem)), line-height 1.0, tracking -0.035em, tabular-nums. Accent variant in Burnt Orange Ink. Vertical variant rotates 180deg via writing-mode.
 - **Spec (.nc-spec):** A labelled value pair. Label: mono 11px uppercase wide-tracked Silkscreen Grey. Value: mono 16px medium Etched Black, tabular-nums. Used in the spec strip pattern.
 - **Spec Strip (.nc-spec-strip):** Horizontal flex row of spec cells separated by 1px vertical Panel Seam hairlines with a top border. Reads as an engineering specification block.
 - **LED (.nc-led):** Inline status indicator. 9px circular dot with optional glow. Variants: on (Signal Green + glow), rec (Safety Orange + glow), warn (Signal Amber + glow), err (Signal Red + glow). Label in mono 12px.
@@ -392,7 +381,7 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 - **Drafting Plate (.nc-plate):** Recessed Well background, Hairline Seam border, Edge Inset bevel, generous padding. The cut-in surface a diagram breathes on. It sits inside a cell that keeps its seam and header — the panel contains the whitespace, the whitespace never dissolves the panel.
 - **Schematic Box (.nc-schematic-box):** A labelled node in a diagram. Polished White Panel fill, 1.5px Etched Black stroke, md radius. Carries a mono part-number label and a name. Represents a real component (a device, a provider).
 - **Data Path (.nc-path):** A 2px Safety Orange line with a triangular arrowhead, marking the one live route through a diagram (e.g. an encrypted request). The only place the signal appears inside a schematic.
-- **Null Box (.nc-null):** A node drawn as a dashed Structural Seam rectangle stamped `0x00`, representing a component deliberately *not* in the path (e.g. the NC-750 server). Usually paired with the Sever Mark.
+- **Null Mark (.nc-null):** The `0x00` null stamp — a small inline-flex mono mark (text-2xs, medium, wide-tracked) in Safety Orange, certifying a zero/none/null state. Markup convention `<span class="nc-null">0x00</span>`. The one sanctioned signal use for null (P8).
 - **Sever Mark (.nc-sever):** A small Signal Red ✕ on a dashed line, marking a connection that does not exist. The visual proof of a negative claim.
 - **Leader / Callout (.nc-leader):** A thin Structural Seam line from a diagram element to a mono label at the margin. Annotates without crowding the figure.
 - **Exploded View (.nc-exploded):** A stack of isometric plates pulled apart along a dashed assembly axis, each with a leader to a part-numbered label. A deliberate set-piece (hero, onboarding, privacy page), hand-built per subject — not a per-screen element.
@@ -406,10 +395,11 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 
 ### Instrument
 
-**Character:** Surfaces for products *operated as instruments* rather than browsed as apps. These are live-readout surfaces, not chat or form components. See `DESIGN_USE.md` §10 for the interaction model and the rules on when it applies (foreground vs background work).
+**Character:** Surfaces for products *operated as instruments* rather than browsed as apps. These are not chat or form components. See `DESIGN_USE.md` §10 for the interaction model and the rules on when it applies (foreground vs background work).
+
+The *Readout* (as defined by the constitution glossary — "the live measurement surface that accumulates as the user feeds the instrument") is not a CSS class. It is an application composition of existing primitives assembled inside an `.nc-monitor` cavity: `.nc-facet` labels, `.nc-coverage` meters, `.nc-lcd` typography, `.nc-led` indicators, and app-owned flex layout. See `DESIGN_USE.md` §6 for an illustrative example.
 
 - **Facet Tag (.nc-facet):** A small mono uppercase label marking what an instrument is currently measuring (`OBSERVATION · PATTERNS`). Recessed Well background, Structural Seam border, Burnt Orange Ink text, sm radius.
-- **Live Readout (.nc-readout-live):** The accumulating measurement surface — patterns, evidence count, confidence — rendered in the dark Console cavity. The hero of an instrument interaction; it grows and revises as the user feeds it.
 - **Coverage Meter (.nc-coverage):** A saturation bar, not a step counter. Recessed Well track with Edge Inset; the fill rises from Faded Mark toward Signal Green and reads "locked" when sufficient. For open-ended processes of unknown length.
 - **Acquisition (.nc-acquire):** The working state. Instead of a spinner, an animating waveform and an `ANALYZING …` readout show the signal being read. Used only for foreground/blocking work (see `DESIGN_USE.md` Rule I1); background work uses a quiet ambient indicator instead.
 - **Session Log (.nc-log):** Prior exchanges collapsed into terse, re-openable entries (`OBS 01 ▸ ANSWERED`) — a flight recorder, not a chat feed. Append-only.
@@ -420,7 +410,6 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 
 ### Misc
 
-- **Avatar (.nc-avatar):** 36px circle. Display font initials, Metal Key gradient background, 1px Structural Seam border, Edge Raised bevel. Supports `<img>` with object-fit cover. Sizes: sm (26px), md (36px), lg (46px).
 - **Tooltip (.nc-tooltip):** Pure CSS via `::after` on `data-tooltip`. Etched Black background, White on Black text, 3px radius, 4×8px padding. Positioned centered above trigger with 6px gap. Fades in via opacity transition.
 - **Row / Stack (.nc-row, .nc-stack):** Flex layout utilities. Row: horizontal with 12px gap and wrap. Stack: vertical column with gap variants (2: 8px, 3: 12px, 4: 16px, 6: 24px).
 
@@ -458,7 +447,7 @@ Every component adapts to the dark theme automatically through the token system.
 - **Don't** use gradients decoratively. The metal gradients (`--nc-metal-key`, `--nc-metal-brushed`, `--nc-grain-brushed`) simulate machined surfaces. No gradient washes, no gradient text, no gradient backgrounds for visual effect.
 - **Don't** use glassmorphism, backdrop-filter blur, or transparency effects. The interface is opaque aluminium, not glass.
 - **Don't** add decorative motion. Transitions serve state changes only. No page-load choreography, no hover bounce (the overshoot curve on toggle/button press is mechanical feedback, not decoration), no scroll-triggered reveals.
-- **Don't** use rounded corners above 16px (xl) except for fully round elements (badge pills, avatars, knobs). The system is machined, not molded. Tight radii read as precision manufacturing.
+- **Don't** use rounded corners above 16px (xl) except for fully round elements (badge pills). The system is machined, not molded. Tight radii read as precision manufacturing.
 - **Don't** hardcode a color value in any component rule. Every visual decision flows through CSS custom properties. Hardcoded hexes or HSL values in component CSS are a bug.
 - **Don't** use ClashDisplay in buttons, inputs, labels, or operational text. Display fonts in functional UI read as a branding mistake.
 - **Don't** use the accent color as decoration. It marks primary actions, current selection, focus, and the active signal. Nothing else earns it.
