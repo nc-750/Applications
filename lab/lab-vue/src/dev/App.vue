@@ -8,7 +8,7 @@ import {
   Heading,
   Text,
   Divider,
-  Panel,
+  Null,
   Input,
   Select,
   Textarea,
@@ -17,30 +17,13 @@ import {
   Field,
   ButtonGroup,
   Segmented,
-  Switch,
-  Knob,
-  Fader,
   ExpandButton,
-  Transcript,
-  Message,
-  MessageHeader,
-  MessageBody,
-  MessageActions,
-  Composer,
-  TypingIndicator,
-  ThinkingBlock,
+  CellHead,
 } from "../index";
 import type { ExpandAction } from "../index";
 
-// Behavioral state
-const sw1 = ref(true);
-const sw2 = ref(false);
-const gainAngle = ref(-120);
-const mixAngle = ref(90);
+// Controls state
 const activeSeg = ref(0);
-const vol = ref(70);
-const tone = ref(40);
-const fx = ref(85);
 
 // Form state
 const name = ref("TP-7 / UNIT-065");
@@ -61,18 +44,6 @@ const fileActions: ExpandAction[] = [
   { label: "Open…", action: () => console.log("Open") },
   { label: "Save as…", action: () => console.log("Save") },
 ];
-
-// Chat state
-const composerText = ref("");
-const thinkingOpen = ref(false);
-const messages = ref([
-  { variant: "assistant" as const, name: "Lab AI", time: "12:01", body: "Welcome to the chat demo. This transcript showcases all message variants in the Lab design language." },
-  { variant: "user" as const, name: "You", time: "12:02", body: "Looks clean. Show me what else it can do." },
-  { variant: "assistant" as const, name: "Lab AI", time: "12:02", body: "Here is a code sample:" },
-]);
-function onSend(text: string) {
-  messages.value.push({ variant: "user", name: "You", time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), body: text });
-}
 </script>
 
 <template>
@@ -84,8 +55,11 @@ function onSend(text: string) {
     </header>
 
     <!-- Typography & badges -->
-    <Panel>
-      <Heading :level="3">Typography &amp; Badges</Heading>
+    <section class="nc-cell">
+      <CellHead>
+        <template #title><Heading :level="3">Typography &amp; Badges</Heading></template>
+        <span class="nc-partno">TYPO-001</span>
+      </CellHead>
       <Divider />
       <Heading :level="2">Heading 2</Heading>
       <Heading :level="4">Heading 4</Heading>
@@ -94,19 +68,23 @@ function onSend(text: string) {
       <Text tone="muted">Muted tone.</Text>
       <Text tone="accent">Accent tone.</Text>
       <Divider subtle />
-      <div style="display: flex; gap: var(--nc-space-3); flex-wrap: wrap">
+      <div style="display: flex; gap: var(--nc-space-3); flex-wrap: wrap; align-items: center">
         <Badge>Default</Badge>
         <Badge variant="accent">Accent</Badge>
         <Badge variant="success">Success</Badge>
         <Badge variant="warning">Warning</Badge>
         <Badge variant="error">Error</Badge>
         <Badge variant="info">Info</Badge>
+        <Null />
       </div>
-    </Panel>
+    </section>
 
     <!-- Buttons & keys -->
-    <Panel>
-      <Heading :level="3">Buttons &amp; Keys</Heading>
+    <section class="nc-cell">
+      <CellHead>
+        <template #title><Heading :level="3">Buttons &amp; Keys</Heading></template>
+        <span class="nc-partno">CTRL-002</span>
+      </CellHead>
       <Divider />
       <Label>Variants</Label>
       <div style="display: flex; gap: var(--nc-space-4); flex-wrap: wrap; align-items: center; margin-top: var(--nc-space-3)">
@@ -147,54 +125,27 @@ function onSend(text: string) {
         <ExpandButton label="File" :actions="fileActions" variant="primary" />
         <ExpandButton label="More" :actions="fileActions" variant="secondary" />
       </div>
-    </Panel>
+    </section>
 
-    <!-- Tactile controls -->
-    <Panel>
-      <Heading :level="3">Tactile Controls</Heading>
-      <Divider />
-      <div style="display: flex; gap: var(--nc-space-12); flex-wrap: wrap; align-items: flex-end">
-        <div style="display: flex; flex-direction: column; gap: var(--nc-space-3)">
-          <Label>Switches</Label>
-          <div style="display: flex; gap: var(--nc-space-3)">
-            <Switch v-model="sw1" />
-            <Switch v-model="sw2" />
-          </div>
-          <Text size="xs" tone="muted">sw1={{ sw1 }} · sw2={{ sw2 }}</Text>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: var(--nc-space-3)">
-          <Label>Rotary</Label>
-          <div style="display: flex; gap: var(--nc-space-5)">
-            <div style="display: flex; flex-direction: column; gap: var(--nc-space-2); align-items: center">
-              <Knob v-model="gainAngle" />
-              <span class="nc-partno">GAIN {{ gainAngle }}&deg;</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: var(--nc-space-2); align-items: center">
-              <Knob v-model="mixAngle" />
-              <span class="nc-partno">MIX {{ mixAngle }}&deg;</span>
-            </div>
-          </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: var(--nc-space-3)">
-          <Label>Faders</Label>
-          <div style="display: flex; gap: var(--nc-space-4)">
-            <Fader v-model="vol" label="VOL" />
-            <Fader v-model="tone" label="TONE" />
-            <Fader v-model="fx" label="FX" />
-          </div>
-          <Text size="xs" tone="muted">{{ vol }} / {{ tone }} / {{ fx }}</Text>
-        </div>
-      </div>
+    <!-- Controls -->
+    <section class="nc-cell">
+      <CellHead>
+        <template #title><Heading :level="3">Controls</Heading></template>
+        <span class="nc-partno">SEG-003</span>
+      </CellHead>
       <Divider />
       <Label>Segmented control (index {{ activeSeg }})</Label>
       <div style="margin-top: var(--nc-space-3)">
         <Segmented v-model="activeSeg" :options="['Mono', 'Stereo', 'Multi']" />
       </div>
-    </Panel>
+    </section>
 
     <!-- Forms & inputs -->
-    <Panel>
-      <Heading :level="3">Forms &amp; Inputs</Heading>
+    <section class="nc-cell">
+      <CellHead>
+        <template #title><Heading :level="3">Forms &amp; Inputs</Heading></template>
+        <span class="nc-partno">FORM-004</span>
+      </CellHead>
       <Divider />
       <div style="display: flex; gap: var(--nc-space-8); flex-wrap: wrap">
         <div style="width: 340px; display: flex; flex-direction: column; gap: var(--nc-space-4)">
@@ -226,74 +177,6 @@ function onSend(text: string) {
           <Radio v-model="rate" name="sample-rate" value="96">96 kHz</Radio>
         </div>
       </div>
-    </Panel>
-
-    <!-- Chat -->
-    <Panel>
-      <Heading :level="3">Chat</Heading>
-      <Divider />
-      <Transcript style="max-height: 420px;">
-        <Message
-          v-for="(msg, i) in messages"
-          :key="i"
-          :variant="msg.variant"
-        >
-          <MessageHeader :name="msg.name" :time="msg.time" />
-          <MessageBody>
-            <p>{{ msg.body }}</p>
-          </MessageBody>
-        </Message>
-
-        <!-- Code block example -->
-        <Message variant="assistant">
-          <MessageHeader name="Lab AI" time="12:03" />
-          <MessageBody>
-            <p>Here is a code sample:</p>
-            <pre><code>const chat = new LabChat();
-chat.send("Hello, world!");</code></pre>
-            <p>Inline <code>--nc-accent</code> tokens work too.</p>
-          </MessageBody>
-          <MessageActions>
-            <Button variant="ghost" size="sm">Copy</Button>
-            <Button variant="ghost" size="sm">Edit</Button>
-          </MessageActions>
-        </Message>
-
-        <!-- System message -->
-        <Message variant="system">Model changed to <strong>Opus 4.8</strong></Message>
-
-        <!-- Thinking block -->
-        <Message variant="assistant">
-          <MessageHeader name="Lab AI" time="12:04" />
-          <ThinkingBlock v-model:open="thinkingOpen" label="THINKING">
-            <p>Let me analyze this request step by step. The user wants to understand the component architecture. I should explain the CSS token system, the Vue facade pattern, and how they compose together.</p>
-          </ThinkingBlock>
-          <MessageBody>
-            <p>The Lab design system uses a two-layer architecture: CSS custom properties define the visual language, and Vue components emit class strings mapped to typed props.</p>
-          </MessageBody>
-        </Message>
-
-        <!-- Error message -->
-        <Message variant="error">
-          <MessageHeader name="System" time="12:05" />
-          <MessageBody>
-            <p><strong>Connection lost.</strong> The model endpoint returned a 503 error. Retrying in 3 seconds…</p>
-          </MessageBody>
-        </Message>
-
-        <!-- Typing indicator -->
-        <Message variant="assistant">
-          <MessageHeader name="Lab AI" />
-          <TypingIndicator label="ASSISTANT TYPING" />
-        </Message>
-      </Transcript>
-
-      <Divider subtle />
-      <Composer
-        v-model="composerText"
-        placeholder="Type a message… (Enter to send, Shift+Enter for newline)"
-        @send="onSend"
-      />
-    </Panel>
+    </section>
   </main>
 </template>

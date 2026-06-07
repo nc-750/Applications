@@ -13,7 +13,7 @@ export { default as Badge } from "./components/Badge.vue";
 export { default as Heading } from "./components/Heading.vue";
 export { default as Text } from "./components/Text.vue";
 export { default as Divider } from "./components/Divider.vue";
-export { default as Panel } from "./components/Panel.vue";
+export { default as Null } from "./components/Null.vue";
 export { default as Input } from "./components/Input.vue";
 export { default as Select } from "./components/Select.vue";
 export { default as Textarea } from "./components/Textarea.vue";
@@ -26,18 +26,18 @@ export { default as ButtonGroup } from "./components/ButtonGroup.vue";
 export { default as Segmented } from "./components/Segmented.vue";
 export { default as ExpandButton } from "./components/ExpandButton.vue";
 export type { ExpandAction } from "./components/ExpandButton.vue";
+export { default as CellHead } from "./components/CellHead.vue";
 
-// Chat
-export { default as Transcript } from "./components/Transcript.vue";
-export { default as Message } from "./components/Message.vue";
-export { default as MessageHeader } from "./components/MessageHeader.vue";
-export { default as MessageBody } from "./components/MessageBody.vue";
-export { default as MessageActions } from "./components/MessageActions.vue";
-export { default as Composer } from "./components/Composer.vue";
-export { default as TypingIndicator } from "./components/TypingIndicator.vue";
-export { default as ThinkingBlock } from "./components/ThinkingBlock.vue";
+// Diagram
+export { default as SchematicBox } from "./components/SchematicBox.vue";
+export { default as Path } from "./components/Path.vue";
+export { default as Sever } from "./components/Sever.vue";
+export { default as Leader } from "./components/Leader.vue";
+export { default as Exploded } from "./components/Exploded.vue";
+export { default as Glyph } from "./components/Glyph.vue";
 
-// Behavioral
-export { default as Switch } from "./components/Switch.vue";
-export { default as Knob } from "./components/Knob.vue";
-export { default as Fader } from "./components/Fader.vue";
+// Instrument
+export { default as Facet } from "./components/Facet.vue";
+export { default as Coverage } from "./components/Coverage.vue";
+export { default as Acquire } from "./components/Acquire.vue";
+export { default as SessionLog } from "./components/SessionLog.vue";

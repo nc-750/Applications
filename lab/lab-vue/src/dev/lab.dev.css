@@ -12,15 +12,15 @@
 @import "../../../generator-app/css/lab.fonts.css";
 @import "../../../generator-app/css/lab.reset.css";
 @import "../../../generator-app/css/lab.buttons.css";
-@import "../../../generator-app/css/lab.chat.css";
 @import "../../../generator-app/css/lab.console.css";
 @import "../../../generator-app/css/lab.controls.css";
 @import "../../../generator-app/css/lab.datadisplay.css";
 @import "../../../generator-app/css/lab.decoration.css";
+@import "../../../generator-app/css/lab.diagram.css";
 @import "../../../generator-app/css/lab.feedback.css";
 @import "../../../generator-app/css/lab.inputs.css";
+@import "../../../generator-app/css/lab.instrument.css";
 @import "../../../generator-app/css/lab.layout.css";
 @import "../../../generator-app/css/lab.markdown.css";
 @import "../../../generator-app/css/lab.navigation.css";
-@import "../../../generator-app/css/lab.surfaces.css";
 @import "../../../generator-app/css/lab.typography.css";
