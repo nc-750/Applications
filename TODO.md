@@ -1,4 +1,4 @@
-# TODO — Lab design system rollout
+﻿# TODO — Lab design system rollout
 
 Tracks the work after the documentation pass. Reference docs (source of truth):
 `brand/VISUAL_IDENTITY.md` (constitution), `lab/DESIGN.md` (tokens + components,
@@ -26,51 +26,85 @@ design.md format, lint-clean), `lab/DESIGN_USE.md` (application rules),
 - [x] Path references `enclosure/`→`lab/` in monorepo + brand docs; name in CLAUDE files. `99621a3`
 - [x] `lab/DESIGN.md` design.md lint: **0 errors** (24 benign warnings).
 
-### Phase 1 — remaining ✓
-- [x] **Build verification** (deps installed, both packages build):
-      `lab/lab-vue` → `npm run build` (vue-tsc ✓ + vite ✓; emits es+umd, **no style.css**).
-      `lab/generator-app` → `npm run verify` (**F-1 WCAG-AA all pass; F-3 static flatten PASS**)
-      and `npm run build` (vue-tsc ✓ + vite ✓).
-- [x] **Bug — broken `@import`** (caught by build): `lab.tailwind.css` imported the renamed-away
-      `enclosure.tokens.css` → fixed to `lab.tokens.css`.
-- [x] **Bug — dead dev import** (caught by build): `lab-vue/src/dev/main.ts` imported the deleted
-      `../style.css`. Added `src/dev/lab.dev.css` (loads the canonical modular sheets, Tailwind
-      layer excluded) so the playground satisfies the `--nc-lab:750` guard. README/CLAUDE updated.
-- [x] **Bug — F-3 regression** (caught by verify): `--nc-screw-*` tokens existed in
-      `lab.tokens.css` but were missing from `derive.ts`, so the static flatten left
-      `calc()`/`--nc-seed-` unresolved. Added all 6 screw rows (light+dark) → F-3 PASS.
-- [x] **Bug — Tauri crate mismatch** (caught while renaming): `main.rs` called
-      `generator_app_lib::run()` but the lib was `enclosure_generator_lib`. Aligned both to
-      `lab_generator_lib`; renamed productName/identifier/title and the package to Lab.
-- [x] **Cosmetic text refs**: generator-app code comments + UI copy (ShowcaseArchitecture/Chat,
-      ExpandButton, index/example titles), `lab-vue` README + dev playground, `lab/CLAUDE.md`
-      (rewrote the stale vendored-style.css section), `lab/PRODUCT.md`, `lab/DESIGN.md` heading,
-      `brand/ETHOS.md` C8.1 + checklist, root `CLAUDE.md`/`AGENTS.md` ("enclosure CSS" → "Lab").
-      Generic English uses of the word "enclosure" (machined enclosure, etc.) intentionally kept.
-
-### Phase 1 — still deferred
-- [ ] **On-surface contract**: contextual `--nc-ctl-*` vars so controls auto-adapt to
-      `.nc-monitor` without `--variant`. Mechanism settled; needs a render pass to tune
+### Phase 1 — remaining (not yet done)
+- [x] **Build verification**: `lab/lab-vue npm run build` ✔, `lab/generator-app npm run verify` ✔,
+      `lab/generator-app npm run build` ✔ (validated during Phase 2).
+- [x] **On-surface contract**: contextual `--nc-ctl-*` vars so controls auto-adapt
+      to `.nc-monitor` without `--variant`. Mechanism settled; needs a render pass to tune
       dark-control visuals. Not Mirror-blocking (interview dark side is readout-only).
-- [ ] **Regenerate** a distributable flattened `lab.css` artifact if/when an external consumer
-      needs one. (Mirror currently vendors its own copy — addressed in Phase 4.)
-- [ ] **Root `CLAUDE.md` data-philosophy line** still says "never sold, never trains anything"
-      (pre-reconciliation absolutism); BRAND.md/ETHOS.md now say "integrity, not absolutism".
-      Out of Phase-1 CSS scope — fold into a docs pass.
+- [ ] **Cosmetic text refs** still saying "enclosure"/"Enclosure": `lab/generator-app` code
+      comments (derive.ts/useTheme.ts/flatten.ts) + UI copy (Header.vue), `lab/lab-vue/README.md`,
+      `lab/PRODUCT.md`, `lab/generator-app/index.html` title.
+- [ ] **Generator-app Tauri identifiers** (`src-tauri/Cargo.toml`, `tauri.conf.json`) still
+      use `enclosure` — renaming the Rust crate/bundle id is a separate, riskier change.
+- [ ] **Regenerate** a distributable flattened `lab.css` artifact if consumers need one.
 
-## Phase 2 — New components (CSS + lab-vue)
-- [ ] Diagram/instrument CSS: `.nc-plate` exists; add `.nc-schematic-box`, `.nc-path`,
-      `.nc-null`, `.nc-sever`, `.nc-leader`, `.nc-exploded`, `.nc-glyph`, `.nc-facet`,
-      `.nc-readout-live`, `.nc-coverage`, `.nc-acquire`, `.nc-log` (see DESIGN.md §5).
-- [ ] lab-vue facades for the above (class-string facade convention).
+## Phase 2 — CSS audit, consolidation & vocabulary cleanup ✓
 
-## Phase 3 — Production reference examples
-- [ ] Component showcase + desktop + mobile app mocks (shipped-quality) → become the
-      canonical visual tie-breaker referenced by the docs.
+Per `lab/PHASE2_PLAN.md`. Guiding goal: simplest CSS possible — easy to read, maintain,
+extend — and a Lab UI kit that is NOT bloated.
 
-## Phase 4 — Apply to products
-- [ ] **Mirror** (`mirror/app`): migrate from its vendored `enclosure.css` to the Lab
-      system; rebuild the interview as the instrument model (DESIGN_USE §10). Mirror's
+- [x] **Chat sheet removed** (`lab.chat.css` deleted; chat components purged from lab-vue).
+- [x] **Synth-era flourishes removed**: terminal (+ traffic-light dots, amber/green), scanlines,
+      knob, fader, switch, meters (ADSR bars), dot-matrix, `lcd--green`, `readout--vertical`.
+- [x] **Duplicated recipes consolidated**: silkscreen-label core, mono-meta core, display-numeral
+      core, inline-code core — one definition each, shared via grouped selectors.
+- [x] **`nc-panel` class removed**; `--nc-panel` color token stays (used by `nc-cell`, etc.).
+      `lab.surfaces.css` deleted; `nc-screw` moved into `lab.layout.css`.
+- [x] **Additions**: `nc-null` (0x00 null mark), `nc-cell-head` (cell-header anatomy) + lab-vue
+      facades (`Null.vue`, `CellHead.vue`).
+- [x] **lab-vue removals**: Transcript, Message*, Composer, TypingIndicator, ThinkingBlock (chat);
+      Switch, Knob, Fader (synth); Panel. Exports cleaned in `index.ts`.
+- [x] **Generator-app showcase**: ShowcaseChat deleted; knob/fader/switch/meters/matrix/terminal
+      demos removed; `nc-terminal`→`nc-monitor`+`<pre>` in Architecture; `nc-panel`→`nc-plate`
+      in SectionWrapper.
+- [x] **Docs updated**: `DESIGN.md` (removed terminal/synth/avatar/chat refs), `DESIGN_USE.md`
+      (`.nc-panel`→`.nc-cell`).
+- [x] **All verifications pass**: WCAG-AA (F-1), static flatten (F-3), generator-app build
+      (vue-tsc + vite), lab-vue build (vue-tsc + vite). Zero straggler class hits.
+
+### Deferred from Phase 2 → Mirror phase
+Instrument/interview components explicitly out of scope: `nc-probe`, `nc-acquire`,
+`nc-readout-live`, `nc-coverage`, `nc-dropzone`, `nc-facet`, `nc-schematic-box`/`nc-path`/
+`nc-sever`, `nc-glyph`. Decide per item during Mirror refactor whether it belongs in Lab
+or is composed app-locally.
+
+## Phase 3 — New diagram/instrument CSS + lab-vue facades ✓
+- [x] Diagram/instrument CSS: `.nc-schematic-box`, `.nc-path`, `.nc-sever`, `.nc-leader`,
+      `.nc-exploded`, `.nc-glyph`, `.nc-facet`, `.nc-coverage`,
+      `.nc-acquire`, `.nc-log` (see DESIGN.md §5).
+- [x] lab-vue facades for the above (class-string facade convention).
+- [x] **Remove `.nc-readout`** — the existing class is redundant with `.nc-display` (they
+      share the display-numeral core consolidated in Phase 2). The constitution reserves
+      "Readout" for the live instrument surface (DESIGN_USE §6), which is an application
+      composition, not a CSS class. Replace `.nc-readout` usages in generator-app showcase
+      with `.nc-display`; delete the class from `lab.typography.css` and
+      `lab.datadisplay.css`. Also remove `.nc-readout-live` from all design docs — it was
+      a planned class for Phase 3 that is now recognised as a composition pattern, not a
+      standalone component.
+
+## Phase 4 — Production reference examples ✓
+- [x] Generator-app restructured to proper Lab grammar (single `.nc-chassis`, bands, cells)
+- [x] Three views: Component Catalog, Inspect (task instrument), Brand (marketing)
+- [x] Catalog view — existing showcase refactored into `nc-band` rows
+- [x] Inspect view — interactive task inspector with project selector, coverage meters,
+      dependency schematic, signal trace cavity, acquisition state, and session log
+- [x] Brand view — NC-750 manifesto page using document grammar (hero, product family,
+      principles table, anti-patterns, certification, CTA)
+- [x] View switcher using `nc-segment`; single chassis, content swaps
+- [x] Desktop/tablet/mobile responsive via existing `nc-band` media queries
+- [x] All builds + verifications pass
+
+### Option B (kept for reference)
+Writing Analysis Instrument — "Scope". Paste prose → instrument measures readability,
+tone, structure, and voice. Bands: Input cell (nc-textarea + facet tag), Readout cavity
+(waveform, nc-lcd score, nc-led tone), Metrics table, Coverage meters (Clarity,
+Conciseness, Structure, Voice), Session log. Interactive: paste → Analyze → nc-acquire
+→ readout populates.
+
+## Phase 5 — Apply to products
+- [ ] **Mirror** (`mirror/app`): migrate from its vendored CSS to the Lab system;
+      rebuild the interview as the instrument model (DESIGN_USE §10). Mirror's
       references were intentionally left untouched by the design-system rename.
 
 ## Constraints (do-not)
