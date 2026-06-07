@@ -19,7 +19,7 @@
     display: flex;
     justify-content: center;
     background: var(--nc-bg);
-    background-image: var(--nc-texture-noise);
+    background-image: var(--nc-grain-brushed);
     padding: var(--nc-space-6);
 }
 @media (max-width: 640px) {
