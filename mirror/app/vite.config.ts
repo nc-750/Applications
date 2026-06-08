@@ -4,7 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig(async () => ({
@@ -61,7 +60,10 @@ export default defineConfig(async () => ({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(__dirname, "./src"),
+      // Point at live source so rebuilding lab/* is instantly picked up.
+      "@nc-750/lab-vue": path.resolve(__dirname, "../../lab/vue/dist/lab-vue.js"),
+      "@nc-750/lab-css": path.resolve(__dirname, "../../lab/css/lab.css"),
     }
   }
 }));

@@ -12,7 +12,7 @@ import {
   emptyCoverage,
   mergeCoverage,
 } from "../types/interview";
-import { useSettingsStore } from "./settingsStore";
+import { useSettingsStore } from "./settingsStore.ts.old";
 import { useLicenseStore } from "./licenseStore";
 import { createLLMProvider } from "../llm";
 import type { LLMProvider, Message } from "../llm/types";

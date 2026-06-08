@@ -26,6 +26,11 @@ export { default as Textarea } from "./components/Textarea.vue";
 export { default as Checkbox } from "./components/Checkbox.vue";
 export { default as Radio } from "./components/Radio.vue";
 
+// Forms
+export { default as Form } from "./components/Form.vue";
+export { default as FormField } from "./components/FormField.vue";
+export { default as TextField } from "./components/TextField.vue";
+
 // Composed
 export { default as Field } from "./components/Field.vue";
 export { default as ButtonGroup } from "./components/ButtonGroup.vue";

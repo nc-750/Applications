@@ -659,6 +659,10 @@ pre {
     font-family: var(--nc-font-mono);
 }
 
+fieldset {
+    border: none;
+}
+
 ::selection {
     background: var(--nc-accent);
     color: var(--nc-on-accent);

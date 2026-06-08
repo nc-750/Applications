@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { wipePersonaData, wipeAiProvider, wipeServiceWorker, factoryReset } from "../../lib/wipe";
 import { usePersonaStore } from "../../stores/personaStore";
 import { useInterviewStore } from "../../stores/interviewStore";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore } from "../../stores/settingsStore.ts.old";
 import { useLicenseStore } from "../../stores/licenseStore";
 
 // Mock keyStore.clearApiKey

@@ -18,7 +18,7 @@ import {
     Moon,
     Monitor,
 } from "lucide-vue-next";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore } from "../../stores/settingsStore.ts.old";
 import { usePersonaStore } from "../../stores/personaStore";
 import { useLicenseStore } from "../../stores/licenseStore";
 import { useLogStore } from "../../stores/logStore";

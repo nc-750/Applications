@@ -16,7 +16,7 @@ import { wipeIndexedDBDatabase } from "../db/schema";
 import { clearApiKey } from "./keyStore";
 import { usePersonaStore } from "../stores/personaStore";
 import { useInterviewStore } from "../stores/interviewStore";
-import { useSettingsStore } from "../stores/settingsStore";
+import { useSettingsStore } from "../stores/settingsStore.ts.old";
 import { useLicenseStore } from "../stores/licenseStore";
 import { logger } from "../logger";
 

@@ -15,7 +15,7 @@ import ReadoutPanel from "./ReadoutPanel.vue";
 import ProbeCell from "./ProbeCell.vue";
 import SessionLogCell from "./SessionLogCell.vue";
 import ConcludeCell from "./ConcludeCell.vue";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore } from "../../stores/settingsStore.ts.old";
 import { usePersonaStore } from "../../stores/personaStore";
 import { useInterviewStore } from "../../stores/interviewStore";
 import { useLicenseStore } from "../../stores/licenseStore";

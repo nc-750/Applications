@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { MessageSquare, Upload } from "lucide-vue-next";
+import { MessageSquare, Import, BrainCircuit } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
-defineEmits<{
-    start: [];
-    import: [];
-    openPrivacy: [];
-}>();
+import { useSettingsStore } from "../stores/settingsStore.ts";
+
+const settingsStore = useSettingsStore();
+
 </script>
 
 <template>
@@ -24,12 +23,13 @@ defineEmits<{
 
                 <!-- Actions -->
                 <div class="flex flex-col">
-                    <button class="nc-btn nc-btn--accent nc-btn--lg mb-2" @click="$emit('start')">
-                        <MessageSquare :size="15" aria-hidden="true" />
-                        Probe
+                    <button class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                        <MessageSquare :size="15" aria-hidden="true" v-if="settingsStore.isLLMConfigured"/>
+                        <BrainCircuit :size="15" aria-hidden="true" v-else/>
+                        {{ settingsStore.isLLMConfigured ? "Probe" : "Configure AI" }}
                     </button>
-                    <button class="nc-btn nc-btn--secondary nc-btn--lg" @click="$emit('import')">
-                        <Upload :size="15" aria-hidden="true" />
+                    <button class="nc-btn nc-btn--secondary nc-btn--lg">
+                        <Import :size="15" aria-hidden="true" />
                         Import your persona
                     </button>
                 </div>
@@ -48,7 +48,7 @@ defineEmits<{
                 <p class="nc-text-xs nc-text-muted mb-2">
                     Your messages are sent to your AI provider.
                 </p>
-                <button class="nc-btn nc-btn--ghost w-fit" @click="$emit('openPrivacy')">
+                <button class="nc-btn nc-btn--ghost w-fit">
                     Read the privacy details →
                 </button>
             </div>

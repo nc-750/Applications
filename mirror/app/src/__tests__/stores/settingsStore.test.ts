@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore } from "../../stores/settingsStore.ts.old";
 import { getDB } from "../../db/schema";
 
 // Mock keyStore — individual tests configure return values
