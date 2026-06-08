@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { ChassisHeader, ChassisFooter } from "lab-vue";
+import { ChassisHeader, ChassisFooter } from "@nc-750/lab-vue";
 // import AppShell from "./components/layout/AppShell.vue";
 // import InterviewInstrument from "./components/interview/InterviewInstrument.vue";
 // import InsightView from "./components/insight/InsightView.vue";

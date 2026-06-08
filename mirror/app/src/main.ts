@@ -1,11 +1,12 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { Lab } from "lab-vue";
+import { Lab } from "@nc-750/lab-vue";
+import { logger } from "./logger";
+
+import "./styles/app.css";
 
 import App from "./App.vue";
 import Router from "./router";
-import "./styles/app.css";
-import { logger } from "./logger";
 
 // Capture unhandled errors and rejections into the debug log
 window.addEventListener("error", (event) => {
@@ -30,7 +31,7 @@ window.addEventListener("unhandledrejection", (event) => {
 // Lab plugin runs the fail-loud guard (probes the --nc-lab:750 sentinel that
 // lab.css sets) after first paint.
 createApp(App)
-  .use(Router)
   .use(createPinia())
+  .use(Router)
   .use(Lab)
   .mount("#root");

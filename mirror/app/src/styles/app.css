@@ -14,7 +14,7 @@
 
 /* Tailwind v4 — layout utilities only. Preflight is intentionally NOT imported;
    lab.css (unlayered) wins over these layers, exactly as before. */
-@import "lab.css" layer(lab);
+@import "@nc-750/lab-css" layer(lab);
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 

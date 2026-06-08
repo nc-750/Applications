@@ -1,0 +1,9 @@
+{
+  "name": "@nc-750/lab-css",
+  "version": "0.1.0",
+  "description": "The Lab design system as CSS rules",
+  "type": "module",
+  "exports": {
+    ".": "./lab.css"
+  }
+}

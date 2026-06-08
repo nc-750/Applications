@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MessageSquare, Upload } from "lucide-vue-next";
-import { Band, Cell } from "lab-vue";
+import { Band, Cell } from "@nc-750/lab-vue";
 import { usePersonaStore } from "../stores/personaStore";
 
 defineEmits<{

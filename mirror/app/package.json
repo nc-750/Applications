@@ -13,11 +13,12 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@nc-750/lab-css": "file:../../lab/css",
+    "@nc-750/lab-vue": "file:../../lab/vue",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-store": "^2.4.3",
     "idb": "^8.0.3",
-    "lab-vue": "link:lab-vue",
     "lucide-vue-next": "^0.563.0",
     "pdfjs-dist": "^5.7.284",
     "pinia": "^2.2.6",
