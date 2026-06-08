@@ -1,0 +1,9 @@
+{
+    "name": "@NC-750/lab",
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": "./vue/index.ts",
+        "./lab.css": "./css/lab.css"
+    }
+}
