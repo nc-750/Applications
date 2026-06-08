@@ -1,0 +1,3 @@
+<template>
+Insight
+</template>

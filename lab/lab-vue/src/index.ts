@@ -5,6 +5,12 @@
 import "./guard";
 export { Lab, assertLabCss } from "./guard";
 
+// Layout
+export { default as ChassisHeader } from "./components/ChassisHeader.vue";
+export { default as ChassisFooter } from "./components/ChassisFooter.vue";
+export { default as Band } from "./components/Band.vue";
+export { default as Cell } from "./components/Cell.vue";
+
 // Primitives
 export { default as Button } from "./components/Button.vue";
 export { default as Key } from "./components/Key.vue";

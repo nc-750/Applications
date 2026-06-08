@@ -2093,6 +2093,7 @@ pre {
 /* ── Chassis: the framed device — vertical flex column ───── */
 .nc-chassis {
     width: 100%;
+    min-height: 100vh;
     max-width: 72rem;
     display: flex;
     flex-direction: column;
@@ -2101,12 +2102,31 @@ pre {
     border: var(--nc-border-ink) solid var(--nc-line-ink);
     border-radius: var(--nc-radius-xl);
     overflow: hidden;
+    /* justify-content: space-between; */
+}
+
+.nc-chassis-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--nc-console);
+    padding: var(--nc-space-3) var(--nc-space-6) var(--nc-space-3) var(--nc-space-6);
+}
+
+.nc-chassis-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: var(--nc-console);
+    padding: var(--nc-space-3) var(--nc-space-6) var(--nc-space-3) var(--nc-space-6);
 }
 
 /* ── Band: a horizontal row of cells ─────────────────────── */
 .nc-band {
     display: flex;
     flex-direction: row;
+    flex: 0 0 auto;
     gap: var(--nc-seam-width);
     background: var(--nc-seam-fill);
     min-width: 0;
@@ -2116,6 +2136,18 @@ pre {
     .nc-band {
         flex-direction: column;
     }
+}
+
+.nc-band--grow-1 {
+    flex: 1 1 auto;
+}
+
+.nc-band--grow-2 {
+    flex: 2 1 auto;
+}
+
+.nc-band--grow-3 {
+    flex: 3 1 auto;
 }
 
 /* ── Cell: a flex child; interior is app-owned ───────────── */
