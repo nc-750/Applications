@@ -6,7 +6,7 @@ const props = withDefaults(
     // Optional override of the rendered tag; defaults to h{level}.
     as?: string;
   }>(),
-  { level: 2 },
+  { level: 1 },
 );
 const tag = computed(() => props.as ?? `h${props.level}`);
 const classes = computed(() => [`nc-heading-${props.level}`]);

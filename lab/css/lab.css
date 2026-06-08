@@ -2104,7 +2104,7 @@ fieldset {
     background: var(--nc-seam-fill);
     border: var(--nc-border-ink) solid var(--nc-line-ink);
     border-radius: var(--nc-radius-xl);
-    overflow: hidden;
+    overflow: auto;
     /* justify-content: space-between; */
 }
 
@@ -2115,6 +2115,8 @@ fieldset {
     align-items: center;
     background: var(--nc-console);
     padding: var(--nc-space-3) var(--nc-space-6) var(--nc-space-3) var(--nc-space-6);
+    /* position: sticky;
+    top: 0; */
 }
 
 .nc-chassis-footer {
@@ -2563,8 +2565,10 @@ fieldset {
     color: var(--nc-ink-3);
 }
 .nc-label--accent {
-    line-height: 1.4;
     color: var(--nc-accent-ink);
+}
+.nc-label--danger {
+    color: var(--nc-error);
 }
 
 /* Mono-meta core — inline/interactive meta labels (mono + track-mono).

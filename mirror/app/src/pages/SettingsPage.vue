@@ -9,6 +9,7 @@ import {
 } from "@nc-750/lab-vue";
 
 import { useSettingsStore } from "../stores/settingsStore";
+import { Heading } from "lucide-vue-next";
 
 const settingsStore = useSettingsStore();
 
@@ -44,6 +45,18 @@ function saveLLMConfig() {
                     <Button variant="accent">Save</Button>
                 </div>
             </Form>
+        </Cell>
+        <Cell title="DATA" spec="CFG // 0x02">
+            <div class="flex gap-4 justify-between mb-4">
+                <Button>Import persona</Button>
+                <Button>Export persona</Button>
+            </div>
+            <h3 class="nc-label nc-label--danger">Danger Zone</h3>
+            <div class="flex flex-wrap gap-2">
+                <Button variant="danger" class="flex-1">Delete persona</Button>
+                <Button variant="danger" class="flex-1">Clear LLM Config</Button>
+                <Button variant="danger" class="flex-2">Factory reset</Button>
+            </div>
         </Cell>
     </Band>
 </template>
