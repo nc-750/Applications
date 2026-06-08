@@ -6,6 +6,11 @@ import { useSettingsStore } from "../stores/settingsStore.ts";
 
 const settingsStore = useSettingsStore();
 
+const primaryButton = {
+    target: settingsStore.isLLMConfigured ? "/interview" : "/settings",
+    label: settingsStore.isLLMConfigured ? "Probe" : "Configure AI",
+}
+
 </script>
 
 <template>
@@ -23,11 +28,11 @@ const settingsStore = useSettingsStore();
 
                 <!-- Actions -->
                 <div class="flex flex-col">
-                    <button class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                    <a :href="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
                         <MessageSquare :size="15" aria-hidden="true" v-if="settingsStore.isLLMConfigured"/>
-                        <BrainCircuit :size="15" aria-hidden="true" v-else/>
-                        {{ settingsStore.isLLMConfigured ? "Probe" : "Configure AI" }}
-                    </button>
+                        <BrainCircuit :size="15" aria-hidden="true" v-else />
+                        {{ primaryButton.label }} 
+                    </a>
                     <button class="nc-btn nc-btn--secondary nc-btn--lg">
                         <Import :size="15" aria-hidden="true" />
                         Import your persona
