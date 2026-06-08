@@ -1,10 +1,64 @@
 <script setup lang="ts">
+import { MessageSquare, Upload } from "lucide-vue-next";
 import { Band, Cell } from "lab-vue";
+import { usePersonaStore } from "../stores/personaStore";
+
+defineEmits<{
+    start: [];
+    import: [];
+    openPrivacy: [];
+}>();
+
+const personaStore = usePersonaStore();
 </script>
 
 <template>
     <Band :grow="1">
         <Cell title="WELCOME" spec="WLC // 0x01">
+            <div class="h-full flex flex-col items-center justify-center text-center">
+                <h1 class="nc-heading-3 mb-4">
+                    {{ personaStore.persona ? "Run a new interview" : "Welcome to Mirror" }}
+                </h1>
+
+                <p class="nc-text-secondary nc-text-sm max-w-lg mb-4">
+                    {{
+                        personaStore.persona
+                            ? `You have a persona for ${personaStore.persona.data.persona.identity.name}. Start a new interview
+                    to update it, or import an existing persona.json.`
+                            : "Your AI-powered personal profile analyzer. Run a short interview and get a private insight document plus a public-ready profile."
+                    }}
+                </p>
+
+                <!-- Actions -->
+                <div class="flex flex-col">
+                    <button class="nc-btn nc-btn--accent nc-btn--lg mb-2" @click="$emit('start')">
+                        <MessageSquare :size="15" aria-hidden="true" />
+                        {{ personaStore.persona ? "New interview" : "Start interview" }}
+                    </button>
+                    <button class="nc-btn nc-btn--secondary nc-btn--lg" @click="$emit('import')">
+                        <Upload :size="15" aria-hidden="true" />
+                        Import persona.json
+                    </button>
+                </div>
+            </div>
+        </Cell>
+    </Band>
+    <Band>
+        <Cell title="PRIVACY" spec="WLC // 0x02" surface="2">
+            <div class="flex flex-col text-center">
+                <p class="nc-text-xs nc-text-muted">
+                    All data stays on your device.
+                </p>
+                <p class="nc-text-xs nc-text-muted">
+                    Bring your own API key.
+                </p>
+                <p class="nc-text-xs nc-text-muted mb-2">
+                    Your messages are sent to your AI provider.
+                </p>
+                <button class="nc-btn nc-btn--ghost" @click="$emit('openPrivacy')">
+                    Read the privacy details →
+                </button>
+            </div>
         </Cell>
     </Band>
 </template>

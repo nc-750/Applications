@@ -17,6 +17,8 @@
             <span class="nc-label">{{ title }}</span>
             <span class="nc-label">{{ spec }}</span>
         </header>
-        <slot />
+        <div class="nc-cell-content">
+            <slot />
+        </div>
     </div>
 </template>

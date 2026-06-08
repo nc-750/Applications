@@ -2093,7 +2093,6 @@ pre {
 /* ── Chassis: the framed device — vertical flex column ───── */
 .nc-chassis {
     width: 100%;
-    min-height: 100vh;
     max-width: 72rem;
     display: flex;
     flex-direction: column;
@@ -2153,6 +2152,8 @@ pre {
 /* ── Cell: a flex child; interior is app-owned ───────────── */
 .nc-cell {
     flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     background: var(--nc-panel);
     padding: var(--nc-space-5);
@@ -2212,6 +2213,11 @@ pre {
     letter-spacing: var(--nc-track-mono);
     color: var(--nc-ink-3);
     white-space: nowrap;
+}
+
+.nc-cell-content {
+    flex: 1;
+    min-height: 0;
 }
 
 /* ── Corner screws — decorative fasteners for chassis corners ─ */

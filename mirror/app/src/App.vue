@@ -47,15 +47,5 @@ import { ChassisHeader, ChassisFooter } from "lab-vue";
     <ChassisHeader title="NC-750 // MIRROR // NODE-0M" subtitle="0x00"/>
       <RouterView /> 
     <ChassisFooter title="NC-750 // MIRROR // NODE-0M"/>
-  <!-- <AppShell :section="section" @section="section = $event" @open-privacy="openPrivacy">
-    <InterviewInstrument
-      v-if="section === 'interview'"
-      @complete="handleInterviewComplete"
-      @open-privacy="openPrivacy"
-    />
-    <InsightView v-else-if="section === 'insight'" />
-    <ProfileView v-else-if="section === 'profile'" />
-    <PrivacyView v-else-if="section === 'privacy'" @back="section = 'interview'" />
-  </AppShell> -->
 </template>
 ``

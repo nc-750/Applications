@@ -8,8 +8,7 @@
 // form-factor branch.
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Loader2 } from "lucide-vue-next";
-import { CellHead } from "lab-vue";
-import WelcomeScreen from "./WelcomeScreen.vue";
+import { Band, Cell, CellHead } from "lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";
@@ -198,7 +197,8 @@ async function handleRestart() {
 </script>
 
 <template>
-  <!-- Pre-interview flows are full-width (no chassis) -->
+  <Band>
+    <!-- Pre-interview flows are full-width (no chassis) -->
   <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
 
   <div
@@ -209,13 +209,6 @@ async function handleRestart() {
     <Loader2 :size="24" class="animate-spin" style="color: var(--nc-accent);" />
     <p class="nc-text-sm">Analyzing your background…</p>
   </div>
-
-  <WelcomeScreen
-    v-else-if="status === 'idle' || !interview"
-    @start="handleStart"
-    @import="handleImport"
-    @open-privacy="emit('openPrivacy')"
-  />
 
   <!-- The instrument (bands fill the shell's content area) -->
   <div v-else class="mr-interview">
@@ -297,4 +290,5 @@ async function handleRestart() {
       <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
     </div>
   </div>
+  </Band>
 </template>

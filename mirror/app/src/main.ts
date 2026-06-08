@@ -4,10 +4,7 @@ import { Lab } from "lab-vue";
 
 import App from "./App.vue";
 import Router from "./router";
-// Lab design system first (tokens + components + fonts + reset), then the app's
-// own stylesheet (Tailwind layout utilities + component inner-layouts).
-import "./styles/lab.css";
-// import "./styles/app.css";
+import "./styles/app.css";
 import { logger } from "./logger";
 
 // Capture unhandled errors and rejections into the debug log
