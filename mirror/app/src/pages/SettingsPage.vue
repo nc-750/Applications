@@ -42,8 +42,9 @@ function saveLLMConfig() {
                 </FormField>
                 <div class="flex gap-4 justify-between">
                     <Button variant="secondary">Test Connection</Button>
-                    <Button variant="accent">Save</Button>
+                    <Button variant="accent" submit>Save</Button>
                 </div>
+                <Button variant="ghost">Read the privacy details →</Button>
             </Form>
         </Cell>
         <Cell title="DATA" spec="CFG // 0x02">
