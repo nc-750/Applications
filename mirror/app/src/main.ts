@@ -1,4 +1,4 @@
-// Sync data-theme before first paint (enclosure.css uses [data-theme="dark"]).
+// Sync data-theme before first paint (lab.css uses [data-theme="dark"]).
 // Respects a manual override stored in localStorage ("system" | "light" | "dark");
 // falls back to OS preference when absent or set to "system".
 (function () {
@@ -24,9 +24,12 @@
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { Lab } from "lab-vue";
 import App from "./App.vue";
-import "enclosure-vue/style.css";
-import "./index.css";
+// Lab design system first (tokens + components + fonts + reset), then the app's
+// own stylesheet (Tailwind layout utilities + component inner-layouts).
+import "./styles/lab.css";
+import "./styles/app.css";
 import { logger } from "./logger";
 
 // Capture unhandled errors and rejections into the debug log
@@ -44,4 +47,6 @@ window.addEventListener("unhandledrejection", (event) => {
   });
 });
 
-createApp(App).use(createPinia()).mount("#root");
+// Lab plugin runs the fail-loud guard (probes the --nc-lab:750 sentinel that
+// lab.css sets) after first paint.
+createApp(App).use(createPinia()).use(Lab).mount("#root");

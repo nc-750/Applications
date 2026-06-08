@@ -2,6 +2,26 @@ import "fake-indexeddb/auto";
 import { beforeEach, afterEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 
+// Satisfy the lab-vue guard (probes the --nc-lab:750 sentinel that lab.css
+// sets). Tests don't load lab.css, so set it here or lab-vue fails loud.
+if (typeof document !== "undefined") {
+  document.documentElement.style.setProperty("--nc-lab", "750");
+}
+
+// jsdom does not implement matchMedia; several stores read prefers-color-scheme.
+if (typeof window !== "undefined" && !window.matchMedia) {
+  window.matchMedia = ((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia;
+}
+
 // Every test gets a fresh Pinia so stores start from their initial state.
 beforeEach(() => {
   setActivePinia(createPinia());

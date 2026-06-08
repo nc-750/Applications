@@ -2,6 +2,7 @@ import { openDB, DBSchema, IDBPDatabase } from "idb";
 import type { StoredPersona } from "../types/persona";
 import type { Provider } from "../llm/types";
 import type { LicenseRecord } from "../types/license";
+import type { CoverageMap, ProbeSignal, FacetKey } from "../types/interview";
 
 export type { Provider };
 export type { LicenseRecord };
@@ -39,6 +40,12 @@ export interface InterviewRecord {
   /** Whether the initialData was condensed via LLM digest (true = digested, false/absent = verbatim). */
   wasDigested?: boolean;
   messages: InterviewMessage[];
+  /** Cumulative coverage saturation per facet (0..1), monotonic. Drives the readout. */
+  coverage?: CoverageMap;
+  /** Most recent probe-depth read from the per-turn analysis call. */
+  probeSignal?: ProbeSignal;
+  /** Facet of the current/active probe — drives the nc-facet tag. */
+  currentFacet?: FacetKey;
   createdAt: string;
   updatedAt: string;
 }
@@ -69,10 +76,22 @@ let dbInstance: IDBPDatabase<PersonaDB> | null = null;
 
 /**
  * One-time migration: copies data from the old "persona-db" into the new
- * "mirror-db", then deletes the old database. Runs on first `getDB()` call.
- * Failures are logged but never thrown — a fresh start is better than a crash.
+ * "mirror-db" (passed in, already open), then deletes the old database. Runs
+ * once from `getDB()` AFTER the new DB is open. Failures are logged but never
+ * thrown — a fresh start is better than a crash.
+ *
+ * Important: this must NOT call `getDB()` (it would recurse forever, since
+ * `getDB` awaits this before assigning `dbInstance`). The new DB is provided by
+ * the caller. We also probe for the old DB without creating it.
  */
-async function migrateFromOldDB(): Promise<void> {
+async function migrateFromOldDB(db: IDBPDatabase<PersonaDB>): Promise<void> {
+  // Detect the old DB without creating it (indexedDB.open would create it,
+  // making the migration run pointlessly on every fresh start).
+  if (typeof indexedDB.databases === "function") {
+    const present = (await indexedDB.databases()).some((d) => d.name === OLD_DB_NAME);
+    if (!present) return;
+  }
+
   const oldReq = indexedDB.open(OLD_DB_NAME);
   const oldExists = await new Promise<boolean>((resolve) => {
     oldReq.onsuccess = () => resolve(true);
@@ -82,8 +101,10 @@ async function migrateFromOldDB(): Promise<void> {
 
   try {
     const oldDB = oldReq.result;
-    const storeNames = Array.from(oldDB.objectStoreNames);
-    const db = await getDB();
+    type StoreName = "settings" | "persona" | "interview" | "license";
+    const storeNames = Array.from(oldDB.objectStoreNames).filter((n) =>
+      db.objectStoreNames.contains(n as StoreName),
+    );
     for (const name of storeNames) {
       const tx = oldDB.transaction(name, "readonly");
       const store = tx.objectStore(name);
@@ -110,7 +131,6 @@ async function migrateFromOldDB(): Promise<void> {
 
 export async function getDB(): Promise<IDBPDatabase<PersonaDB>> {
   if (dbInstance) return dbInstance;
-  await migrateFromOldDB();
   dbInstance = await openDB<PersonaDB>(DB_NAME, 2, {
     upgrade(db, oldVersion) {
       if (oldVersion < 1) {
@@ -123,6 +143,8 @@ export async function getDB(): Promise<IDBPDatabase<PersonaDB>> {
       }
     },
   });
+  // Migrate legacy data into the now-open DB (best-effort; never recurses).
+  await migrateFromOldDB(dbInstance);
   return dbInstance;
 }
 

@@ -14,6 +14,9 @@
  *  - "free" — shorter surface interview (2–3 questions). Same JSON shape, shallower.
  */
 
+import type { FacetKey } from "../types/interview";
+import { FACETS } from "../types/interview";
+
 export type InterviewTier = "free" | "pro";
 
 /** Emitted by the model when the interview is over; detected by the app to
@@ -135,6 +138,73 @@ export function buildSystemPrompt(initialData: string, tier: InterviewTier = "pr
 ${dataSection(initialData)}${process}
 
 ${completionContract()}
+
+${languageRule()}
+
+${toneSection()}`;
+}
+
+// ── Probe stage (Call A — instrument model) ──────────────────────────────────
+//
+// The instrument asks ONE facet-scoped question per turn. The facet and whether
+// to follow-up vs advance are decided by the analysis call (Call B); this prompt
+// just renders the next question in probe voice. It does NOT plan ahead, list
+// questions, or decide completion — the store concludes from coverage.
+
+/** Per-facet guidance for what a probe on that facet should dig into. */
+const FACET_PROBE_GUIDE: Record<FacetKey, string> = {
+  story:
+    "Excavate lived experience: pick a specific role, project, or non-professional activity and ask what it was actually like — what they built, what went wrong, what isn't on the CV.",
+  strengths:
+    "Surface a demonstrated strength with evidence: ask for a concrete example where a particular ability clearly showed, or what others rely on them for.",
+  hidden:
+    "Find the undervalued: ask about something they find easy that others visibly struggle with, or a skill they don't think to mention.",
+  growth:
+    "Explore growth honestly: ask where they last felt out of their depth, what they find hard, and whether they stayed in it or routed around it.",
+  drivers:
+    "Go transversal (not answerable from a CV): values, what motivates them, how they prefer to work, what they want next, or how they handle pressure or disagreement.",
+};
+
+export interface ProbePromptOptions {
+  initialData: string;
+  tier: InterviewTier;
+  /** The facet this probe targets. */
+  facet: FacetKey;
+  /** "follow_up" = dig the same thread deeper; "advance" = open the facet fresh. */
+  action: "follow_up" | "advance";
+  /** True for the very first probe (open with a brief warm summary). */
+  isFirst: boolean;
+}
+
+export function buildProbePrompt(opts: ProbePromptOptions): string {
+  const { initialData, tier, facet, action, isFirst } = opts;
+  const facetMeta = FACETS.find((f) => f.key === facet);
+  const guide = FACET_PROBE_GUIDE[facet];
+
+  const opening = isFirst
+    ? `This is the FIRST probe. Open with a brief warm summary of what you already understood from the data (1–2 sentences), then ask your single question.`
+    : action === "follow_up"
+      ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. Acknowledge their answer in one short line, then ask one sharper follow-up.`
+      : `Move on to the "${facetMeta?.label}" facet. Acknowledge the last answer in one short line, then ask your single new question.`;
+
+  const depth =
+    tier === "free"
+      ? "Keep it light and on the surface — one clear question, no long threads."
+      : "You may probe with depth, but still only ONE question this turn.";
+
+  return `${philosophyIntro()}
+
+${dataSection(initialData)}You are the instrument's probe stage. You ask exactly ONE question per turn — never compound, never a list. You do not plan ahead and you do not decide when the interview ends; the instrument decides that from the reading.
+
+## This turn
+Target facet: ${facetMeta?.label} (${facet}) — ${facetMeta?.blurb}
+What to dig into: ${guide}
+
+${opening}
+
+${depth}
+
+Output only the message to the user (acknowledgement + the single question). Do not output JSON, labels, or any control token.
 
 ${languageRule()}
 

@@ -62,68 +62,60 @@ const personaLabel = computed(
 </script>
 
 <template>
-  <div class="relative h-screen overflow-hidden" style="background: var(--nc-bg); padding: var(--nc-space-3);">
-    <!-- One screwed-down faceplate: header / content / status strip -->
-    <div
-      class="nc-faceplate grid h-full overflow-hidden"
-      style="grid-template-rows: auto minmax(0, 1fr) auto; border-radius: var(--nc-radius-md);"
-    >
-      <!-- Header: brand · segment nav · settings -->
-      <header class="nc-cell flex flex-wrap items-center" style="gap: var(--nc-space-3) var(--nc-space-4);">
-        <div class="flex items-center" style="gap: var(--nc-space-3);">
-          <div style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: var(--nc-radius-md); background: var(--nc-metal-key); border: var(--nc-border-width) solid var(--nc-line-strong); box-shadow: var(--nc-edge-raised);">
-            <LogoMark :size="18" />
+  <!-- nc-lab: the textured field. nc-chassis: the one framed device. -->
+  <div class="nc-lab mr-shell">
+    <div class="nc-chassis mr-shell__chassis">
+      <!-- Header band: brand · segment nav · settings -->
+      <div class="nc-band">
+        <header class="nc-cell mr-shell__head">
+          <div class="mr-shell__brand">
+            <span class="mr-shell__logo"><LogoMark :size="18" /></span>
+            <span class="nc-font-semibold" style="color: var(--nc-ink); letter-spacing: var(--nc-track-tight);">Mirror</span>
           </div>
-          <span class="nc-font-semibold" style="color: var(--nc-ink); letter-spacing: var(--nc-track-tight);">Mirror</span>
-        </div>
 
-        <nav class="nc-segment" aria-label="Main navigation" style="margin: 0 auto;">
-          <button
-            v-for="item in NAV_ITEMS"
-            :key="item.id"
-            :class="{ 'is-active': section === item.id }"
-            :disabled="isLocked(item.id)"
-            :aria-current="section === item.id ? 'page' : undefined"
-            :style="{
-              opacity: isLocked(item.id) ? 0.45 : 1,
-              cursor: isLocked(item.id) ? 'default' : 'pointer',
-            }"
-            @click="navTo(item.id)"
-          >
-            {{ item.label }}
+          <nav class="nc-segment mr-shell__nav" aria-label="Main navigation">
+            <button
+              v-for="item in NAV_ITEMS"
+              :key="item.id"
+              :class="{ 'is-active': section === item.id }"
+              :disabled="isLocked(item.id)"
+              :aria-current="section === item.id ? 'page' : undefined"
+              @click="navTo(item.id)"
+            >
+              {{ item.label }}
+            </button>
+          </nav>
+
+          <button class="nc-btn nc-btn--ghost nc-btn--icon" aria-label="Open settings" @click="settingsOpen = true">
+            <Settings :size="18" aria-hidden="true" />
           </button>
-        </nav>
+        </header>
+      </div>
 
-        <button class="nc-btn nc-btn--ghost nc-btn--icon" aria-label="Open settings" @click="settingsOpen = true">
-          <Settings :size="18" aria-hidden="true" />
-        </button>
-      </header>
-
-      <!-- Content: the active view fills this cell -->
-      <div
-        class="min-h-0 overflow-hidden"
-        style="background: var(--nc-panel); box-shadow: inset 1px 1px 0 var(--nc-seam-highlight), inset -1px -1px 0 var(--nc-seam-shadow);"
-      >
+      <!-- Content: the active view fills this area -->
+      <div class="mr-shell__content">
         <slot />
       </div>
 
-      <!-- Status strip -->
-      <footer class="nc-cell" style="padding: 0;">
-        <div class="nc-spec-strip" style="border-top: none;">
-          <div class="nc-spec">
-            <span class="nc-spec__label">Section</span>
-            <span class="nc-spec__value">{{ sectionLabel }}</span>
+      <!-- Status band -->
+      <div class="nc-band">
+        <footer class="nc-cell mr-shell__status">
+          <div class="nc-spec-strip" style="border-top: none;">
+            <div class="nc-spec">
+              <span class="nc-spec__label">Section</span>
+              <span class="nc-spec__value">{{ sectionLabel }}</span>
+            </div>
+            <div class="nc-spec">
+              <span class="nc-spec__label">Status</span>
+              <span class="nc-spec__value">{{ statusLabel }}</span>
+            </div>
+            <div class="nc-spec">
+              <span class="nc-spec__label">Mirror</span>
+              <span class="nc-spec__value">{{ personaLabel }}</span>
+            </div>
           </div>
-          <div class="nc-spec">
-            <span class="nc-spec__label">Status</span>
-            <span class="nc-spec__value">{{ statusLabel }}</span>
-          </div>
-          <div class="nc-spec">
-            <span class="nc-spec__label">Mirror</span>
-            <span class="nc-spec__value">{{ personaLabel }}</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
 
     <SettingsPanel :open="settingsOpen" @close="settingsOpen = false" @open-privacy="handleOpenPrivacyFromSettings" />

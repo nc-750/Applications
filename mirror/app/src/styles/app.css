@@ -1,0 +1,243 @@
+/* app.css — Mirror's own stylesheet.
+ *
+ * The Lab design system (lab.css) is imported separately in main.ts and owns
+ * all .nc-* tokens, components, fonts, and the element reset. This file holds
+ * ONLY app-owned concerns:
+ *   - Tailwind LAYOUT utilities (no preflight — lab.reset owns element styling)
+ *   - root sizing + scrollbar chrome
+ *   - inner layouts of app-specific components (the meter rows inside the
+ *     readout, the probe footer, etc.)
+ *
+ * It may REFERENCE Lab tokens (var(--nc-*)) but must never redefine Lab base
+ * vars or components. Layout of chassis/band/cell uses Lab classes, never here.
+ */
+
+/* Tailwind v4 — layout utilities only. Preflight is intentionally NOT imported;
+   lab.css (unlayered) wins over these layers, exactly as before. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+html,
+body,
+#root {
+    height: 100%;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--nc-line);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--nc-ink-3);
+}
+
+/* ---------------------------------------------------------------------------
+   Component inner-layouts live below this line (added by feature workstreams).
+   Each block is the INSIDE of one app component (e.g. .mr-readout__rows); the
+   chassis/band/cell grid that contains the component stays in Lab classes.
+   --------------------------------------------------------------------------- */
+
+/* ── Interview: ReadoutPanel (inside an nc-monitor cavity) ─────────────────── */
+.mr-readout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+}
+.mr-readout__heading {
+    margin-bottom: var(--nc-space-1);
+}
+.mr-readout__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-2);
+}
+.mr-cov-row {
+    display: grid;
+    grid-template-columns: 84px 1fr 40px;
+    align-items: center;
+    gap: var(--nc-space-3);
+}
+.mr-cov-row__meter {
+    min-width: 0;
+}
+.mr-cov-row__pct {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    text-align: right;
+    color: var(--nc-ink-3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Interview: ProbeCell ──────────────────────────────────────────────────── */
+.mr-probe {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+    height: 100%;
+    min-height: 0;
+}
+.mr-probe__q {
+    margin: 0;
+}
+.mr-probe__caret {
+    color: var(--nc-accent);
+    margin-left: 2px;
+}
+.mr-probe__input {
+    flex: 1 1 auto;
+    min-height: 120px;
+    resize: none;
+}
+.mr-probe__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nc-space-3);
+}
+.mr-probe__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--nc-panel) 92%, transparent);
+}
+
+/* ── Interview: SessionLog / Conclude ──────────────────────────────────────── */
+.mr-log-empty {
+    color: var(--nc-ink-faint);
+}
+.mr-conclude {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-3);
+}
+.mr-conclude__q {
+    margin: var(--nc-space-2) 0 0;
+}
+.mr-conclude__note {
+    color: var(--nc-ink-2);
+    max-width: 56ch;
+}
+.mr-conclude__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nc-space-3);
+    margin-top: var(--nc-space-3);
+}
+.mr-conclude__phase {
+    color: var(--nc-ink-3);
+    margin-top: var(--nc-space-2);
+}
+
+/* ── AppShell: the chassis fills the field; content area holds the view ────── */
+.mr-shell {
+    height: 100vh;
+    overflow: hidden;
+}
+.mr-shell__chassis {
+    height: 100%;
+    min-height: 0;
+}
+.mr-shell__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nc-space-3) var(--nc-space-4);
+}
+.mr-shell__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-3);
+}
+.mr-shell__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--nc-radius-md);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    box-shadow: var(--nc-edge-raised);
+}
+.mr-shell__nav {
+    margin: 0 auto;
+}
+/* The content area sits between the header and status bands and grows to fill.
+   Interview bands (seam-fill bg) render directly inside; other views sit on the
+   panel surface. */
+.mr-shell__content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--nc-panel);
+}
+
+/* ── Interview: bands fill the content area ────────────────────────────────── */
+.mr-interview {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-seam-width);
+    background: var(--nc-seam-fill);
+}
+/* Working band grows to fill; log band sits beneath with a capped height. */
+.mr-band-work {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.mr-band-log {
+    flex: 0 0 auto;
+    max-height: 32%;
+}
+.mr-band-log .nc-cell {
+    overflow-y: auto;
+}
+/* Each working cell stacks its CellHead above the component, which then fills. */
+.mr-cell-readout,
+.mr-cell-probe {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+    min-height: 0;
+    overflow: hidden;
+}
+.mr-cell-probe > .mr-probe,
+.mr-cell-readout > .mr-readout {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.mr-interview__abort {
+    position: absolute;
+    right: var(--nc-space-4);
+    bottom: var(--nc-space-4);
+    z-index: 5;
+}
+
+/* Mobile (matches Lab's nc-band stacking at 640px): readout above probe, log
+   below. The readout renders its condensed `minimal` variant. */
+@media (max-width: 640px) {
+    .mr-band-work > .mr-cell-readout {
+        flex: 0 0 auto;
+    }
+    .mr-band-work > .mr-cell-probe {
+        flex: 1 1 auto;
+    }
+    .mr-band-log {
+        max-height: 40%;
+    }
+}

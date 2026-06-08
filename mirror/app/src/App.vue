@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import AppShell from "./components/layout/AppShell.vue";
-import InterviewView from "./components/interview/InterviewView.vue";
+import InterviewInstrument from "./components/interview/InterviewInstrument.vue";
 import InsightView from "./components/insight/InsightView.vue";
 import ProfileView from "./components/profile/ProfileView.vue";
 import PrivacyView from "./components/privacy/PrivacyView.vue";
@@ -43,7 +43,7 @@ function openPrivacy() {
 
 <template>
   <AppShell :section="section" @section="section = $event" @open-privacy="openPrivacy">
-    <InterviewView
+    <InterviewInstrument
       v-if="section === 'interview'"
       @complete="handleInterviewComplete"
       @open-privacy="openPrivacy"
