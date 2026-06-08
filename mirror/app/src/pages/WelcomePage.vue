@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { MessageSquare, Upload } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
-import { usePersonaStore } from "../stores/personaStore";
 
 defineEmits<{
     start: [];
     import: [];
     openPrivacy: [];
 }>();
-
-const personaStore = usePersonaStore();
 </script>
 
 <template>
@@ -17,27 +14,23 @@ const personaStore = usePersonaStore();
         <Cell title="WELCOME" spec="WLC // 0x01">
             <div class="h-full flex flex-col items-center justify-center text-center">
                 <h1 class="nc-heading-3 mb-4">
-                    {{ personaStore.persona ? "Run a new interview" : "Welcome to Mirror" }}
+                    Personal<b class="nc-text nc-text--accent">·</b>Private
                 </h1>
 
                 <p class="nc-text-secondary nc-text-sm max-w-lg mb-4">
-                    {{
-                        personaStore.persona
-                            ? `You have a persona for ${personaStore.persona.data.persona.identity.name}. Start a new interview
-                    to update it, or import an existing persona.json.`
-                            : "Your AI-powered personal profile analyzer. Run a short interview and get a private insight document plus a public-ready profile."
-                    }}
+                    Your AI-powered personal profile analyzer.<br/>
+                    Uncover insights about yourself and get a career-ready public profile.
                 </p>
 
                 <!-- Actions -->
                 <div class="flex flex-col">
                     <button class="nc-btn nc-btn--accent nc-btn--lg mb-2" @click="$emit('start')">
                         <MessageSquare :size="15" aria-hidden="true" />
-                        {{ personaStore.persona ? "New interview" : "Start interview" }}
+                        Probe
                     </button>
                     <button class="nc-btn nc-btn--secondary nc-btn--lg" @click="$emit('import')">
                         <Upload :size="15" aria-hidden="true" />
-                        Import persona.json
+                        Import your persona
                     </button>
                 </div>
             </div>

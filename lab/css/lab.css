@@ -2207,7 +2207,6 @@ pre {
     gap: var(--nc-space-3);
     margin-bottom: var(--nc-space-4);
 }
-.nc-cell-head__title { /* a heading; author picks nc-heading-* / nc-label in markup */ }
 .nc-cell-head__spec  { /* right-aligned mono spec-detail — joins the mono-meta core */
     font-family: var(--nc-font-mono);
     letter-spacing: var(--nc-track-mono);
