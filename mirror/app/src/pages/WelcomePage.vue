@@ -45,7 +45,7 @@ const personaStore = usePersonaStore();
     </Band>
     <Band>
         <Cell title="PRIVACY" spec="WLC // 0x02" surface="2">
-            <div class="flex flex-col text-center">
+            <div class="flex flex-col text-center justify-center items-center">
                 <p class="nc-text-xs nc-text-muted">
                     All data stays on your device.
                 </p>
@@ -55,7 +55,7 @@ const personaStore = usePersonaStore();
                 <p class="nc-text-xs nc-text-muted mb-2">
                     Your messages are sent to your AI provider.
                 </p>
-                <button class="nc-btn nc-btn--ghost" @click="$emit('openPrivacy')">
+                <button class="nc-btn nc-btn--ghost w-fit" @click="$emit('openPrivacy')">
                     Read the privacy details →
                 </button>
             </div>
