@@ -1,15 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
 import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
 import { richPersona, minimalPersona } from "../factories/persona";
-import type { LLMProvider } from "../../llm/types";
+import type { LLMClient } from "@nc-750/llm-ts";
 
-function createMockLLM(completeResponse: string): LLMProvider {
+function createMockLLM(messageResponse: string): LLMClient {
   return {
-    streamChat: vi.fn(),
-    complete: vi.fn().mockResolvedValue(completeResponse),
-    structuredComplete: vi.fn(),
-    listModels: vi.fn(),
-    healthCheck: vi.fn(),
+    message: vi.fn().mockResolvedValue({ ok: true, value: messageResponse }),
+    stream: vi.fn(),
   };
 }
 
@@ -67,7 +64,7 @@ describe("profileSynthesizer", () => {
       const llm = createMockLLM('["Works best with autonomy."]');
       await synthesizeHowIWorkBest(richPersona(), llm);
 
-      const completeCall = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0];
+      const completeCall = (llm.message as ReturnType<typeof vi.fn>).mock.calls[0];
       const messages = completeCall[0];
       const prompt = messages[0].content as string;
       expect(prompt).toContain("Over-engineering");
@@ -78,7 +75,7 @@ describe("profileSynthesizer", () => {
       const llm = createMockLLM('["Works best with autonomy."]');
       await synthesizeHowIWorkBest(richPersona(), llm);
 
-      const completeCall = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0];
+      const completeCall = (llm.message as ReturnType<typeof vi.fn>).mock.calls[0];
       const prompt = (completeCall[0] as Array<{ content: string }>)[0].content;
       expect(prompt).toContain("Openness");
       expect(prompt).toContain("Conscientiousness");
@@ -88,7 +85,7 @@ describe("profileSynthesizer", () => {
       const llm = createMockLLM('["Works best with autonomy."]');
       await synthesizeHowIWorkBest(richPersona(), llm);
 
-      const completeCall = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0];
+      const completeCall = (llm.message as ReturnType<typeof vi.fn>).mock.calls[0];
       const prompt = (completeCall[0] as Array<{ content: string }>)[0].content;
       expect(prompt).toContain("Craftsmanship");
     });
@@ -106,8 +103,9 @@ describe("profileSynthesizer", () => {
       const controller = new AbortController();
       await synthesizeHowIWorkBest(richPersona(), llm, controller.signal);
 
-      const completeCall = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(completeCall[1]).toBe(controller.signal);
+      const completeCall = (llm.message as ReturnType<typeof vi.fn>).mock.calls[0];
+      // Signal is now passed inside options: llm.message(messages, { signal })
+      expect(completeCall[1]).toEqual({ signal: controller.signal });
     });
   });
 });

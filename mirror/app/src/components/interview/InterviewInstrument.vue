@@ -15,10 +15,9 @@ import ReadoutPanel from "./ReadoutPanel.vue";
 import ProbeCell from "./ProbeCell.vue";
 import SessionLogCell from "./SessionLogCell.vue";
 import ConcludeCell from "./ConcludeCell.vue";
+import { createLLMClient, type LLMClient } from "@nc-750/llm-ts";
 import { useMirrorStore } from "../../stores/mirror";
 import { useInterview } from "../../composables/useInterview";
-import { createLLMProvider } from "../../llm";
-import type { LLMProvider } from "../../llm/types";
 import { synthesizePersona } from "../../skills/synthesize";
 import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
 import { prepareInputBrief } from "../../skills/dataDigest";
@@ -63,15 +62,17 @@ const activeQuestion = computed(() => mirrorStore.streamingContent || lastAssist
 const questionStreaming = computed(() => mirrorStore.isThinking || !!mirrorStore.streamingContent);
 const showConclude = computed(() => mirrorStore.concluded && !keepGoing.value);
 
-function makeLLM(): LLMProvider {
+function makeLLM(): LLMClient {
   const config = mirrorStore.llmConfig;
   if (!config) throw new Error("LLM not configured");
-  return createLLMProvider({
+  const result = createLLMClient({
     provider: config.provider,
     model: config.model,
-    apiKey: config.apiKey,
-    endpoint: config.endpoint,
+    keyProvider: async () => config.apiKey,
+    baseUrl: config.endpoint,
   });
+  if (!result.ok) throw new Error(`Failed to create LLM client: ${result.error.message}`);
+  return result.value;
 }
 
 async function handleDataContinue(rawData: string, inputText: string, fileNames: string[]) {
@@ -102,7 +103,7 @@ async function handleContinue() {
   await interviewApi.probeMore();
 }
 
-async function finalizePersona(persona: PersonaJSON, llm: LLMProvider, signal?: AbortSignal) {
+async function finalizePersona(persona: PersonaJSON, llm: LLMClient, signal?: AbortSignal) {
   const rec = interview.value;
   const withSource: PersonaJSON = {
     ...persona,

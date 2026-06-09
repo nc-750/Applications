@@ -5,8 +5,7 @@
  * Takes a `mirrorStore` obtained via `useMirrorStore()` and returns
  * `{ beginInterview, submitAnswer, probeMore, abort, finishEarly }`.
  */
-import type { LLMProvider, Message } from "../llm/types";
-import { createLLMProvider } from "../llm";
+import { createLLMClient, type LLMClient, type Message } from "@nc-750/llm-ts";
 import { buildProbePrompt } from "../skills/interviewPrompt";
 import {
   buildAnalysisSystemPrompt,
@@ -32,15 +31,17 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
   let lastAction: NextAction = "advance";
   let abortRef: AbortController | null = null;
 
-  function makeLLM(): LLMProvider {
+  function makeLLM(): LLMClient {
     const config = mirrorStore.llmConfig;
     if (!config) throw new Error("LLM not configured");
-    return createLLMProvider({
+    const result = createLLMClient({
       provider: config.provider,
       model: config.model,
-      apiKey: config.apiKey,
-      endpoint: config.endpoint,
+      keyProvider: async () => config.apiKey,
+      baseUrl: config.endpoint,
     });
+    if (!result.ok) throw new Error(`Failed to create LLM client: ${result.error.message}`);
+    return result.value;
   }
 
   function transcriptOf(rec: InterviewRecord): string {
@@ -105,11 +106,18 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
     ];
 
     let raw: unknown;
-    try {
-      raw = await llm.structuredComplete(messages, ANALYSIS_JSON_SCHEMA, ANALYSIS_SCHEMA_NAME);
-    } catch {
-      const text = await llm.complete(messages);
-      raw = extractFencedJSON(text);
+    const structuredResult = await llm.message(messages, {
+      structured: { name: ANALYSIS_SCHEMA_NAME, schema: ANALYSIS_JSON_SCHEMA, strict: true },
+    });
+    if (structuredResult.ok) {
+      raw = structuredResult.value;
+    } else {
+      // Fall back to plain completion + lenient JSON extraction
+      const plainResult = await llm.message(messages);
+      if (!plainResult.ok) {
+        throw new Error(`Analysis failed: ${plainResult.error.message}`);
+      }
+      raw = extractFencedJSON(plainResult.value as string);
     }
     const parsed = TurnAnalysisSchema.safeParse(raw);
     if (!parsed.success) {
@@ -134,12 +142,31 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
     const controller = new AbortController();
     abortRef = controller;
     mirrorStore.setThinking(true);
+
+    const streamResult = await llm.stream(
+      [{ role: "system", content: sys }, ...history],
+      { signal: controller.signal },
+    );
+
+    if (!streamResult.ok) {
+      abortRef = null;
+      mirrorStore.setThinking(false);
+      // Don't add an error message for aborted requests
+      if (!streamResult.error.isAborted) {
+        mirrorStore.setStreaming("");
+        await mirrorStore.addMessage({
+          role: "assistant",
+          content: streamResult.error.message,
+          timestamp: new Date().toISOString(),
+          isError: true,
+        });
+      }
+      return;
+    }
+
     let acc = "";
     try {
-      for await (const chunk of llm.streamChat(
-        [{ role: "system", content: sys }, ...history],
-        controller.signal,
-      )) {
+      for await (const chunk of streamResult.value) {
         acc += chunk;
         mirrorStore.setStreaming(acc);
       }

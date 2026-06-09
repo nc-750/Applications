@@ -5,14 +5,12 @@ import {
   DIGEST_THRESHOLD_CHARS,
   DIGEST_CHUNK_CHARS,
 } from "../../skills/dataDigest";
-import type { LLMProvider } from "../../llm/types";
+import type { LLMClient } from "@nc-750/llm-ts";
 
-function createMockLLM(completeResponse: string): LLMProvider {
+function createMockLLM(messageResponse: string): LLMClient {
   return {
-    streamChat: vi.fn(),
-    complete: vi.fn().mockResolvedValue(completeResponse),
-    structuredComplete: vi.fn(),
-    listModels: vi.fn(),
+    message: vi.fn().mockResolvedValue({ ok: true, value: messageResponse }),
+    stream: vi.fn(),
   };
 }
 
@@ -44,7 +42,7 @@ describe("dataDigest", () => {
       expect(result.brief).toBe(smallData);
       expect(result.wasDigested).toBe(false);
       // LLM should not have been called
-      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.message).not.toHaveBeenCalled();
     });
 
     it("digests data when over threshold", async () => {

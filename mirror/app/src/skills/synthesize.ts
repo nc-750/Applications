@@ -33,7 +33,7 @@ import {
 import { extractFencedJSON } from "./interviewExtractor";
 import { logger } from "../logger";
 import { stripNulls, type PersonaJSON } from "../types/persona";
-import type { Message, LLMProvider } from "../llm/types";
+import type { Message, LLMClient } from "@nc-750/llm-ts";
 import type { InterviewMessage } from "../db/schema";
 
 export type SynthesisPhase = "extracting" | "analyzing" | "polishing" | "finalizing";
@@ -51,7 +51,7 @@ function unwrapCallOutput(raw: unknown, requiredField: string): unknown {
 }
 
 async function synthesisCall(
-  llm: LLMProvider,
+  llm: LLMClient,
   systemPrompt: string,
   userPrompt: string,
   schema: Record<string, unknown>,
@@ -63,26 +63,35 @@ async function synthesisCall(
     { role: "user", content: userPrompt },
   ];
 
-  try {
-    const raw = await llm.structuredComplete(messages, schema, schemaName, signal);
+  const structuredResult = await llm.message(messages, {
+    structured: { name: schemaName, schema, strict: true },
+    signal,
+  });
+
+  if (structuredResult.ok) {
+    const raw = structuredResult.value;
     if (raw != null && typeof raw === "object") return stripNulls(raw);
-  } catch (e) {
-    if (signal?.aborted) throw e;
-    logger.warn("synthesis", `structured output failed (${schemaName}), falling back to plain completion`, { error: e instanceof Error ? e : undefined });
+    // Fall through to plain-text fallback if structured returned unusable data
+  } else {
+    if (signal?.aborted) throw structuredResult.error;
+    logger.warn("synthesis", `structured output failed (${schemaName}), falling back to plain completion`, { data: { message: structuredResult.error.message } });
   }
 
-  const text = await llm.complete(
+  const textResult = await llm.message(
     [...messages.slice(0, -1), { role: "user" as const, content: userPrompt + FALLBACK_FORMAT_SUFFIX }],
-    signal,
+    { signal },
   );
-  const raw = extractFencedJSON(text);
+
+  if (!textResult.ok) throw textResult.error;
+
+  const raw = extractFencedJSON(textResult.value as string);
   if (raw != null && typeof raw === "object") return stripNulls(raw);
 
-  throw new Error(`${schemaName}: both structured-output and plain-text fallback failed. Raw response: ${text.slice(0, 300)}`);
+  throw new Error(`${schemaName}: both structured-output and plain-text fallback failed. Raw response: ${(textResult.value as string).slice(0, 300)}`);
 }
 
 async function synthesisCallWithRetry(
-  llm: LLMProvider,
+  llm: LLMClient,
   systemPrompt: string,
   userPrompt: string,
   schema: Record<string, unknown>,
@@ -99,7 +108,7 @@ async function synthesisCallWithRetry(
 }
 
 export interface SynthesizeOptions {
-  llm: LLMProvider;
+  llm: LLMClient;
   initialData: string;
   messages: InterviewMessage[];
   signal?: AbortSignal;

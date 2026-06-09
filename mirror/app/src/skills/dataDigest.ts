@@ -1,4 +1,4 @@
-import type { LLMProvider } from "../llm/types";
+import type { LLMClient } from "@nc-750/llm-ts";
 
 // Characters of raw input before the map-reduce digest pre-pass fires (≈170k tokens at 3.5 chars/token)
 export const DIGEST_THRESHOLD_CHARS: number = Number(
@@ -64,7 +64,7 @@ ${combinedExtracts}`;
 
 export async function prepareInputBrief(
   rawData: string,
-  llm: LLMProvider,
+  llm: LLMClient,
   signal?: AbortSignal
 ): Promise<{ brief: string; wasDigested: boolean }> {
   if (rawData.length <= DIGEST_THRESHOLD_CHARS) {
@@ -76,21 +76,28 @@ export async function prepareInputBrief(
     chunks.push(rawData.slice(start, start + DIGEST_CHUNK_CHARS));
   }
 
-  const chunkExtracts = await Promise.all(
-    chunks.map((chunk, i) =>
-      llm.complete([{ role: "user", content: MAP_PROMPT(chunk, i, chunks.length) }], signal)
-    )
+  const chunkResults = await Promise.all(
+    chunks.map(async (chunk, i) => {
+      const result = await llm.message(
+        [{ role: "user", content: MAP_PROMPT(chunk, i, chunks.length) }],
+        { signal },
+      );
+      if (!result.ok) throw result.error;
+      return result.value as string;
+    })
   );
 
-  if (chunkExtracts.length === 1) {
-    return { brief: chunkExtracts[0], wasDigested: true };
+  if (chunkResults.length === 1) {
+    return { brief: chunkResults[0], wasDigested: true };
   }
 
-  const combinedExtracts = chunkExtracts.join("\n\n---\n\n");
-  const brief = await llm.complete(
-    [{ role: "user", content: REDUCE_PROMPT(combinedExtracts, chunkExtracts) }],
-    signal
+  const combinedExtracts = chunkResults.join("\n\n---\n\n");
+  const briefResult = await llm.message(
+    [{ role: "user", content: REDUCE_PROMPT(combinedExtracts, chunkResults) }],
+    { signal },
   );
 
-  return { brief, wasDigested: true };
+  if (!briefResult.ok) throw briefResult.error;
+
+  return { brief: briefResult.value as string, wasDigested: true };
 }

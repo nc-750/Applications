@@ -1,4 +1,4 @@
-import type { LLMProvider } from "../llm/types";
+import type { LLMClient } from "@nc-750/llm-ts";
 import type { PersonaJSON } from "../types/persona";
 
 /**
@@ -9,7 +9,7 @@ import type { PersonaJSON } from "../types/persona";
  */
 export async function synthesizeHowIWorkBest(
   persona: PersonaJSON,
-  llm: LLMProvider,
+  llm: LLMClient,
   signal?: AbortSignal
 ): Promise<string[]> {
   const p = persona.persona;
@@ -51,13 +51,15 @@ Values: ${valuesLine || "Not provided"}
 Example output:
 ["I do my best thinking with uninterrupted focus time, then validate with the team.", "I thrive when I can own a problem end-to-end rather than execute on someone else's solution.", "I work best with a small, trusted team where direct feedback is the norm."]`;
 
-  const response = await llm.complete(
+  const responseResult = await llm.message(
     [{ role: "user", content: prompt }],
-    signal
+    { signal },
   );
 
+  if (!responseResult.ok) throw responseResult.error;
+
   // Parse JSON array from response
-  const trimmed = response.trim();
+  const trimmed = (responseResult.value as string).trim();
   const match = trimmed.match(/\[[\s\S]*\]/);
   if (match) {
     try {
