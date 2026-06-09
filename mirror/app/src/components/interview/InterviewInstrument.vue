@@ -9,7 +9,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Loader2 } from "lucide-vue-next";
-import { Band, CellHead } from "lab-vue";
+import { Band, CellHead } from "@nc-750/lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";

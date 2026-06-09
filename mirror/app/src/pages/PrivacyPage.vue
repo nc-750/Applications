@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, Shield, ExternalLink } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
-import { openExternal } from "../lib/utils";
 
 interface ProviderPolicy {
   name: string;
@@ -19,11 +17,6 @@ const PROVIDER_POLICIES: ProviderPolicy[] = [
     name: "Anthropic",
     summary: "Requests are not used for training by default.",
     url: "https://www.anthropic.com/legal/privacy",
-  },
-  {
-    name: "Mistral",
-    summary: "Mistral may retain prompts. Review their data policy before sending sensitive content.",
-    url: "https://mistral.ai/terms",
   },
   {
     name: "OpenAI-compatible",
@@ -47,7 +40,7 @@ const LOCAL_ITEMS: LocalItem[] = [
       "The current interview's status, message history, and the background data you provided up front.",
   },
   {
-    term: "Keys",
+    term: "API Keys",
     description:
       "Desktop only. Stored in your operating system's credential store (Windows Credential Manager on Windows, macOS Keychain on macOS). Encrypted by the OS; not accessible to other user accounts.",
   },
@@ -63,147 +56,129 @@ const SENT_ITEMS = [
 </script>
 
 <template>
-  <Band :grow="1" class="overflow-y-auto">
-    <Cell title="PRIVACY" spec="// 0x00">
-      <div class="privacy-page">
-        <!-- Back -->
-        <router-link to="/" class="privacy-back">
-          <ArrowLeft :size="14" aria-hidden="true" />
-          Back
-        </router-link>
-
-        <!-- Header -->
-        <div class="privacy-header">
-          <div class="privacy-header__icon">
-            <Shield :size="18" aria-hidden="true" />
-          </div>
-          <div>
-            <h1 class="nc-heading-3 privacy-header__title">Privacy details</h1>
-            <p class="nc-text-sm nc-text-muted privacy-header__subtitle">
-              A plain-words breakdown of what stays on your device and what leaves it.
-            </p>
-          </div>
+  <Band>
+    <Cell title="DATA POLICY" spec="PRV // 0x01">
+      <section>
+        <div class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+          <span class="nc-label nc-label--accent">01.</span>
+          <h4 class="nc-heading-4 flex-auto">What stays on your device</h4>
         </div>
-
-        <!-- 1. What stays on your device -->
-        <section class="privacy-section">
-          <h2 class="nc-heading-4 privacy-section__heading">What stays on your device</h2>
-          <p class="nc-text-sm nc-text-muted privacy-section__intro">
-            Mirror keeps your data local. None of the items below are uploaded to a Mirror-owned server. Mirror has
-            no server.
-          </p>
-          <dl class="privacy-dl">
+        <p class="nc-text-sm nc-text-muted mb-6">
+          Mirror keeps your data local. None of the items below are uploaded to a Mirror-owned server. Mirror has
+          no server.
+        </p>
+          <dl>
             <div v-for="item in LOCAL_ITEMS" :key="item.term">
-              <dt class="privacy-dl__term">
+              <dt>
                 <code class="nc-code">{{ item.term }}</code>
               </dt>
-              <dd class="nc-text-sm nc-text-secondary privacy-dl__desc">
+              <dd class="nc-text-sm nc-text-secondary mb-2">
                 {{ item.description }}
               </dd>
             </div>
           </dl>
         </section>
-
-        <hr class="nc-divider" />
-
-        <!-- 2. What is sent -->
-        <section class="privacy-section">
-          <h2 class="nc-heading-4 privacy-section__heading">What is sent to your AI provider</h2>
-          <p class="nc-text-sm nc-text-secondary privacy-section__intro">
-            When you run an interview, the app calls your AI provider's API directly from this device. Every one of the
-            following is POSTed over HTTPS to the provider you chose:
-          </p>
-          <ul class="privacy-sent-list">
-            <li v-for="item in SENT_ITEMS" :key="item" class="privacy-sent-item">
-              <span class="privacy-sent-item__dash">–</span>
-              <span>{{ item }}</span>
-            </li>
-          </ul>
-          <p class="nc-text-sm nc-text-muted privacy-note">
-            The provider sees everything required to generate a response. Treat this as if you were pasting the content
-            into their official web app.
-          </p>
-        </section>
-
-        <hr class="nc-divider" />
-
-        <!-- 3. Provider data policies -->
-        <section class="privacy-section">
-          <h2 class="nc-heading-4 privacy-section__heading">Provider data policies</h2>
-          <p class="nc-text-sm nc-text-muted privacy-section__intro">
-            Each provider has its own retention and training policy. Mirror does not control or alter these.
-          </p>
-          <ul class="privacy-provider-list">
-            <li v-for="p in PROVIDER_POLICIES" :key="p.name">
-              <p class="nc-text-sm nc-font-semibold privacy-provider__name">{{ p.name }}</p>
-              <p class="nc-text-sm nc-text-secondary privacy-provider__summary">
-                {{ p.summary }}
-              </p>
-              <button
-                class="privacy-provider__link nc-text-sm"
-                @click="openExternal(p.url)"
-              >
-                {{ p.name }} policy
-                <ExternalLink :size="11" aria-hidden="true" />
-              </button>
-            </li>
-          </ul>
-        </section>
-
-        <hr class="nc-divider" />
-
-        <!-- 4. Hard-delete behavior -->
-        <section class="privacy-section">
-          <h2 class="nc-heading-4 privacy-section__heading">Hard-delete behavior</h2>
-          <p class="nc-text-sm nc-text-muted privacy-section__intro">
-            The Settings panel's Danger Zone exposes three destructive actions. Each one removes data permanently; there
-            is no undo and no remote backup.
-          </p>
-          <dl class="privacy-dl">
-            <div>
-              <dt class="nc-text-sm nc-font-semibold privacy-dl__term--strong">
-                Clear mirror data
-              </dt>
-              <dd class="nc-text-sm nc-text-secondary privacy-dl__desc">
-                Wipes the <code class="nc-code">persona</code> and <code class="nc-code">interview</code> stores. Your
-                provider settings and API key are kept.
-              </dd>
-            </div>
-            <div>
-              <dt class="nc-text-sm nc-font-semibold privacy-dl__term--strong">
-                Clear AI provider
-              </dt>
-              <dd class="nc-text-sm nc-text-secondary privacy-dl__desc">
-                Clears the API key from the app. Your mirror data and interview data are kept.
-              </dd>
-            </div>
-            <div>
-              <dt class="nc-text-sm nc-font-semibold privacy-dl__term--strong">
-                Factory reset
-              </dt>
-              <dd class="nc-text-sm nc-text-secondary privacy-dl__desc">
-                Full wipe: all mirror data, interview, and API key data is deleted. The app then reloads to its first-run
-                state.
-              </dd>
-            </div>
-          </dl>
-        </section>
-
-        <hr class="nc-divider" />
-
-        <!-- 5. Known limitations -->
-        <section class="privacy-section">
-          <h2 class="nc-heading-4 privacy-section__heading">Known limitations</h2>
-          <p class="nc-text-sm nc-text-secondary privacy-limitation">
-            <span class="nc-font-semibold privacy-limitation__label">
-              Permissive CSP for openai-compatible endpoints.
-            </span>
-            The Content Security Policy includes a broad <code class="nc-code">https:</code> clause in
-            <code class="nc-code">connect-src</code> so any user-supplied endpoint can be reached. A future enhancement
-            will narrow this to the exact endpoint configured in Settings.
-          </p>
-        </section>
-      </div>
+    </Cell>
+    <Cell title="AI PROVIDER" spec="PRV // 0x02">
+      <section>
+        <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+          <span class="nc-label nc-label--accent">02.</span>
+          <h4 class="nc-heading-4 flex-auto">What is sent to your AI provider</h4>
+        </header>
+        <p class="nc-text-sm nc-text-secondary mb-6">
+          When you run an interview, the app calls your AI provider's API directly from this device. Every one of the
+          following is POSTed over HTTPS to the provider you chose:
+        </p>
+        
+        <ul class="privacy-sent-list">
+          <li v-for="item in SENT_ITEMS" :key="item" class="privacy-sent-item">
+            <span class="privacy-sent-item__dash">–</span>
+            <span>{{ item }}</span>
+          </li>
+        </ul>
+        <p class="nc-text-sm nc-text-muted privacy-note">
+          The provider sees everything required to generate a response. Treat this as if you were pasting the content
+          into their official web app.
+        </p>
+      </section>
+    </Cell>      
+  </Band>
+  <Band>
+    <Cell title="PROVIDER POLICY" spec="PRV // 0x03">
+      <section>
+        <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+          <span class="nc-label nc-label--accent">03.</span>
+          <h4 class="nc-heading-4 flex-auto">Provider data policies</h4>
+        </header>
+          
+        <p class="nc-text-sm nc-text-muted mb-6">
+          Each provider has its own retention and training policy. Mirror does not control or alter these.
+        </p>
+        <ul class="ml-4">
+          <li class="mb-4" v-for="p in PROVIDER_POLICIES" :key="p.name">
+            <a class="nc-text-sm nc-font-semibold" :href="p.url">{{ p.name }}</a>
+            <p class="nc-text-sm nc-text-secondary">{{ p.summary }}</p>
+          </li>
+        </ul>
+      </section>
+    </Cell>
+  </Band>
+  <Band>
+    <Cell title="DELETION" spec="PRV // 0x04" :grow="2">
+      <section>
+        <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+          <span class="nc-label nc-label--accent">03.</span>
+          <h4 class="nc-heading-4">Hard-delete behavior</h4>
+        </header>
+        <p class="nc-text-sm nc-text-muted mb-6">
+          The Settings panel's Danger Zone exposes three destructive actions. Each one removes data permanently; there
+          is no undo and no remote backup.
+        </p>
+        <dl>
+          <div>
+            <dt class="nc-text-sm nc-font-semibold">
+              Clear mirror data
+            </dt>
+            <dd class="nc-text-sm nc-text-secondary mb-2">
+              Wipes the <code class="nc-code">persona</code> and <code class="nc-code">interview</code> stores. Your
+              provider settings and API key are kept.
+            </dd>
+          </div>
+          <div>
+            <dt class="nc-text-sm nc-font-semibold">
+              Clear AI provider
+            </dt>
+            <dd class="nc-text-sm nc-text-secondary mb-2">
+              Clears the API key from the app. Your mirror data and interview data are kept.
+            </dd>
+          </div>
+          <div>
+            <dt class="nc-text-sm nc-font-semibold">
+              Factory reset
+            </dt>
+            <dd class="nc-text-sm nc-text-secondary">
+              Full wipe: all mirror data, interview, and API key data is deleted. The app then reloads to its first-run
+              state.
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </Cell>
+    <Cell title="LIMITATIONS" spec="PRV // 0x05">
+      <section>
+        <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+          <span class="nc-label nc-label--accent">03.</span>
+          <h2 class="nc-heading-4 flex-auto">Known limitations</h2>
+        </header>
+        <p class="nc-text-sm nc-text-secondary">
+          <span class="nc-font-semibold">
+            Permissive CSP for openai-compatible endpoints.
+          </span>
+          The Content Security Policy includes a broad <code class="nc-code">https:</code> clause in
+          <code class="nc-code">connect-src</code> so any user-supplied endpoint can be reached. A future enhancement
+          will narrow this to the exact endpoint configured in Settings.
+        </p>
+      </section>
     </Cell>
   </Band>
 </template>

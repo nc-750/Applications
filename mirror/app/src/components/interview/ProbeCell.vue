@@ -4,7 +4,7 @@
 // box). While the analysis runs (acquiring), an nc-acquire overlay takes the
 // cell — the wait shown as the signal being read, not a spinner (Rule I1).
 import { ref, computed } from "vue";
-import { Facet, Acquire } from "lab-vue";
+import { Facet, Acquire } from "@nc-750/lab-vue";
 import { FACETS, type FacetKey } from "../../types/interview";
 
 const props = withDefaults(

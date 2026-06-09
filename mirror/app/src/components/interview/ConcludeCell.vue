@@ -2,7 +2,7 @@
 // Conclusion state — shown when the reading has converged (coverage saturated).
 // The length is genuinely unknown, so this is an offer, not a wall: generate
 // now, or keep feeding the instrument (append-only, no counter).
-import { Facet } from "lab-vue";
+import { Facet } from "@nc-750/lab-vue";
 
 defineProps<{
   /** Synthesis (Call C) running — disable actions and show progress text. */

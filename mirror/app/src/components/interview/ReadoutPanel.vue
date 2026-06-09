@@ -9,7 +9,7 @@
 // readout shows per-facet rows with percentages; mobile condenses to compact
 // meters. Same component, one v-if — not a second component.
 import { computed } from "vue";
-import { Coverage } from "lab-vue";
+import { Coverage } from "@nc-750/lab-vue";
 import { FACETS, type CoverageMap, type ProbeSignal } from "../../types/interview";
 import { SATURATION_LOCKED } from "../../skills/analysisPrompt";
 

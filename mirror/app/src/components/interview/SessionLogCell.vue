@@ -3,7 +3,7 @@
 // re-openable entries (the flight-recorder model). Each prior probe + answer
 // collapses to a terse line (OBS 01 · STORY ▸ ANSWERED) you can re-open.
 import { computed } from "vue";
-import { SessionLog } from "lab-vue";
+import { SessionLog } from "@nc-750/lab-vue";
 import type { InterviewMessage } from "../../db/schema";
 
 const props = defineProps<{
