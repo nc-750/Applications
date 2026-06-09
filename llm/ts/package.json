@@ -1,0 +1,19 @@
+{
+  "name": "@nc-750/llm-ts",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "openai": "^6.42.0",
+    "@anthropic-ai/sdk": "^0.59.0"
+  }
+}
