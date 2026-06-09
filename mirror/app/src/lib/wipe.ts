@@ -14,10 +14,7 @@
 
 import { wipeIndexedDBDatabase } from "../db/schema";
 import { clearApiKey } from "./keyStore";
-import { usePersonaStore } from "../stores/personaStore";
-import { useInterviewStore } from "../stores/interviewStore";
 import { useMirrorStore } from "../stores/mirror";
-import { useLicenseStore } from "../stores/licenseStore";
 import { logger } from "../logger";
 
 /**
@@ -25,8 +22,8 @@ import { logger } from "../logger";
  * model, API key) untouched. Both Pinia stores are reset in-memory.
  */
 export async function wipePersonaData(): Promise<void> {
-  await usePersonaStore().clear();
-  await useInterviewStore().clear();
+  await useMirrorStore().clearPersona();
+  await useMirrorStore().clearInterview();
 }
 
 /**
@@ -71,12 +68,6 @@ export async function wipeServiceWorker(): Promise<void> {
 export async function factoryReset(): Promise<void> {
   await wipePersonaData();
   await wipeAiProvider();
-  // Deactivate license — calls LS API (best-effort) and clears keyring + IDB record.
-  try {
-    await useLicenseStore().deactivate();
-  } catch (e) {
-    logger.warn("wipe", "license deactivate failed", { error: e instanceof Error ? e : undefined });
-  }
   await wipeServiceWorker();
   // Reset theme to system default
   localStorage.removeItem("mirror-theme");

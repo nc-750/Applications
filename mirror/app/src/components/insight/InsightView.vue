@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Download, BookOpen, Menu, X } from "lucide-vue-next";
-import { usePersonaStore } from "../../stores/personaStore";
+import { useMirrorStore } from "../../stores/mirror";
 import { renderInsight } from "../../skills/insightRenderer";
 import { downloadFile } from "../../lib/utils";
 import InsightHistoryPanel from "./InsightHistoryPanel.vue";
 
-const personaStore = usePersonaStore();
+const mirrorStore = useMirrorStore();
 
-const html = computed(() => (personaStore.persona ? renderInsight(personaStore.persona.data) : null));
+const html = computed(() => (mirrorStore.persona ? renderInsight(mirrorStore.persona.data) : null));
 
 function handleDownload() {
   if (!html.value) return;
   const name =
-    personaStore.persona?.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() ?? "mirror";
+    mirrorStore.persona?.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() ?? "mirror";
   downloadFile(html.value, `${name}-insight.html`, "text/html");
 }
 
@@ -23,7 +23,7 @@ const isMobile = ref(false);
 const showRightPanel = ref(false);
 
 const interviewHistory = computed(() =>
-  personaStore.persona?.data.source?.interview ?? [],
+  mirrorStore.persona?.data.source?.interview ?? [],
 );
 
 const navButtons = [
@@ -57,7 +57,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    v-if="!personaStore.persona || !html"
+    v-if="!mirrorStore.persona || !html"
     class="flex flex-col items-center justify-center text-center"
     style="gap: var(--nc-space-3); padding: var(--nc-space-12) var(--nc-space-6);"
   >

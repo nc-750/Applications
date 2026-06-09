@@ -8,33 +8,27 @@
 // form-factor branch.
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Loader2 } from "lucide-vue-next";
-import { Band, Cell, CellHead } from "lab-vue";
+import { Band, CellHead } from "lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";
 import ProbeCell from "./ProbeCell.vue";
 import SessionLogCell from "./SessionLogCell.vue";
 import ConcludeCell from "./ConcludeCell.vue";
-import { useSettingsStore } from "../../stores/settingsStore.ts.old";
-import { usePersonaStore } from "../../stores/personaStore";
-import { useInterviewStore } from "../../stores/interviewStore";
-import { useLicenseStore } from "../../stores/licenseStore";
+import { useMirrorStore } from "../../stores/mirror";
+import { useInterview } from "../../composables/useInterview";
 import { createLLMProvider } from "../../llm";
 import type { LLMProvider } from "../../llm/types";
-import type { InterviewTier } from "../../skills/interviewPrompt";
 import { synthesizePersona } from "../../skills/synthesize";
 import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
 import { prepareInputBrief } from "../../skills/dataDigest";
-import { readFileAsText } from "../../lib/utils";
 import { logger } from "../../logger";
 import type { PersonaJSON } from "../../types/persona";
 
 const emit = defineEmits<{ complete: [section: "insight" | "profile"]; openPrivacy: [] }>();
 
-const settings = useSettingsStore();
-const personaStore = usePersonaStore();
-const interviewStore = useInterviewStore();
-const licenseStore = useLicenseStore();
+const mirrorStore = useMirrorStore();
+const interviewApi = useInterview(mirrorStore);
 
 const showDataInput = ref(false);
 const isDigesting = ref(false);
@@ -55,9 +49,8 @@ onMounted(() => {
 });
 onUnmounted(() => window.removeEventListener("resize", onResize));
 
-const interview = computed(() => interviewStore.record);
+const interview = computed(() => mirrorStore.record);
 const status = computed(() => interview.value?.status ?? "idle");
-const tier = computed<InterviewTier>(() => (licenseStore.isPro ? "pro" : "free"));
 const showCompletion = computed(
   () => status.value === "synthesizing" || status.value === "completed" || status.value === "error",
 );
@@ -66,43 +59,19 @@ const showCompletion = computed(
 const lastAssistant = computed(
   () => [...(interview.value?.messages ?? [])].reverse().find((m) => m.role === "assistant" && !m.isError)?.content ?? "",
 );
-const activeQuestion = computed(() => interviewStore.streamingContent || lastAssistant.value);
-const questionStreaming = computed(() => interviewStore.isThinking || !!interviewStore.streamingContent);
-const showConclude = computed(() => interviewStore.concluded && !keepGoing.value);
+const activeQuestion = computed(() => mirrorStore.streamingContent || lastAssistant.value);
+const questionStreaming = computed(() => mirrorStore.isThinking || !!mirrorStore.streamingContent);
+const showConclude = computed(() => mirrorStore.concluded && !keepGoing.value);
 
 function makeLLM(): LLMProvider {
+  const config = mirrorStore.llmConfig;
+  if (!config) throw new Error("LLM not configured");
   return createLLMProvider({
-    provider: settings.provider,
-    model: settings.model,
-    apiKey: settings.apiKey,
-    endpoint: settings.endpoint || undefined,
+    provider: config.provider,
+    model: config.model,
+    apiKey: config.apiKey,
+    endpoint: config.endpoint,
   });
-}
-
-function handleStart() {
-  if (!settings.isConfigured()) {
-    alert("Please configure your AI provider in Settings before starting.");
-    return;
-  }
-  showDataInput.value = true;
-}
-
-async function handleImport() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
-  input.onchange = async () => {
-    const file = input.files?.[0];
-    if (!file) return;
-    try {
-      const text = await readFileAsText(file);
-      await personaStore.importFromJSON(text);
-      emit("complete", "insight");
-    } catch (e) {
-      alert(`Import failed: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  };
-  input.click();
 }
 
 async function handleDataContinue(rawData: string, inputText: string, fileNames: string[]) {
@@ -120,20 +89,20 @@ async function handleDataContinue(rawData: string, inputText: string, fileNames:
     return;
   }
   isDigesting.value = false;
-  await interviewStore.beginInterview(brief, inputText, fileNames, wasDigested);
+  await interviewApi.beginInterview(brief, inputText, fileNames, wasDigested);
 }
 
 async function handleSubmit(answer: string) {
   keepGoing.value = false;
-  await interviewStore.submitAnswer(answer);
+  await interviewApi.submitAnswer(answer);
 }
 
 async function handleContinue() {
   keepGoing.value = true;
-  await interviewStore.probeMore();
+  await interviewApi.probeMore();
 }
 
-async function finalizePersona(persona: PersonaJSON, llm: LLMProvider, t: InterviewTier, signal?: AbortSignal) {
+async function finalizePersona(persona: PersonaJSON, llm: LLMProvider, signal?: AbortSignal) {
   const rec = interview.value;
   const withSource: PersonaJSON = {
     ...persona,
@@ -144,54 +113,53 @@ async function finalizePersona(persona: PersonaJSON, llm: LLMProvider, t: Interv
     },
   };
   try {
-    const howIWorkBest = await synthesizeHowIWorkBest(withSource, llm, t, signal);
-    await personaStore.save(withSource, howIWorkBest);
+    const howIWorkBest = await synthesizeHowIWorkBest(withSource, llm, signal);
+    await mirrorStore.savePersona(withSource, howIWorkBest);
   } catch {
     if (signal?.aborted) return;
-    await personaStore.save(withSource, []);
+    await mirrorStore.savePersona(withSource, []);
   }
-  await interviewStore.setStatus("completed");
+  await mirrorStore.setStatus("completed");
 }
 
 async function runSynthesis() {
   const rec = interview.value;
   if (!rec) return;
-  await interviewStore.setStatus("synthesizing");
+  await mirrorStore.setStatus("synthesizing");
   const llm = makeLLM();
   const controller = new AbortController();
   synthAbort = controller;
   try {
     const persona = await synthesizePersona({
       llm,
-      tier: tier.value,
       initialData: rec.initialData,
       messages: rec.messages,
       signal: controller.signal,
-      onPhase: (p) => interviewStore.setSynthesisPhase(p),
+      onPhase: (p) => mirrorStore.setSynthesisPhase(p),
     });
-    await finalizePersona(persona, llm, tier.value, controller.signal);
+    await finalizePersona(persona, llm, controller.signal);
   } catch (e) {
     if (controller.signal.aborted) {
-      await interviewStore.failSynthesis("Synthesis was cancelled.");
+      await mirrorStore.failSynthesis("Synthesis was cancelled.");
       return;
     }
     logger.error("synthesis", "three-phase synthesis failed", { error: e instanceof Error ? e : undefined });
-    await interviewStore.failSynthesis(e instanceof Error ? e.message : "Unknown synthesis error");
+    await mirrorStore.failSynthesis(e instanceof Error ? e.message : "Unknown synthesis error");
   } finally {
     synthAbort = null;
-    interviewStore.setSynthesisPhase(null);
+    mirrorStore.setSynthesisPhase(null);
   }
 }
 
 function handleAbort() {
-  interviewStore.abort();
+  interviewApi.abort();
   synthAbort?.abort();
 }
 
 async function handleRestart() {
   if (confirm("Clear the interview and start over?")) {
     keepGoing.value = false;
-    await interviewStore.clear();
+    await mirrorStore.clearInterview();
   }
 }
 </script>
@@ -220,9 +188,9 @@ async function handleRestart() {
           <template #spec>// 0x00 · LIVE</template>
         </CellHead>
         <ReadoutPanel
-          :coverage="interviewStore.coverage"
-          :probe-signal="interviewStore.probeSignal"
-          :acquiring="interviewStore.acquiring"
+          :coverage="mirrorStore.coverage"
+          :probe-signal="mirrorStore.probeSignal"
+          :acquiring="mirrorStore.acquiring"
           :minimal="isMobile"
         />
       </section>
@@ -236,9 +204,9 @@ async function handleRestart() {
           </CellHead>
           <CompletionBanner
             :status="(status as 'synthesizing' | 'completed' | 'error')"
-            :persona-name="personaStore.persona?.data.persona.identity.name"
+            :persona-name="mirrorStore.persona?.data.persona.identity.name"
             :error-message="interview?.synthesisError"
-            :synthesis-phase="interviewStore.synthesisPhase"
+            :synthesis-phase="mirrorStore.synthesisPhase"
             @go-insight="emit('complete', 'insight')"
             @go-profile="emit('complete', 'profile')"
             @retry="runSynthesis"
@@ -252,22 +220,22 @@ async function handleRestart() {
             <template #title>
               <span class="nc-label">{{ showConclude ? "Converged" : "Active probe" }}</span>
             </template>
-            <template #spec>// {{ interviewStore.currentFacet.toUpperCase() }}</template>
+            <template #spec>// {{ mirrorStore.currentFacet.toUpperCase() }}</template>
           </CellHead>
 
           <ConcludeCell
             v-if="showConclude"
             :busy="status === 'synthesizing'"
-            :phase="interviewStore.synthesisPhase"
+            :phase="mirrorStore.synthesisPhase"
             @generate="runSynthesis"
             @continue="handleContinue"
           />
           <ProbeCell
             v-else
-            :facet="interviewStore.currentFacet"
+            :facet="mirrorStore.currentFacet"
             :question="activeQuestion"
             :streaming="questionStreaming"
-            :acquiring="interviewStore.acquiring"
+            :acquiring="mirrorStore.acquiring"
             @submit="handleSubmit"
           />
         </template>

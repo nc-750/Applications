@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useLogStore } from "../stores/logStore";
+import { useMirrorStore } from "../stores/mirror";
 import type { LogLevel } from "./types";
 
 const LEVEL_COLORS: Record<LogLevel, { bg: string; text: string }> = {
@@ -30,7 +30,7 @@ function formatTimeMs(iso: string): string {
   return `${formatTime(iso)}.${ms}`;
 }
 
-const logStore = useLogStore();
+const mirrorStore = useMirrorStore();
 
 const minLevel = ref<LogLevel>("debug");
 const search = ref("");
@@ -40,7 +40,7 @@ const levelIndex = (lvl: LogLevel) => LOG_LEVELS.indexOf(lvl);
 
 const filtered = computed(() => {
   const q = search.value.toLowerCase();
-  return logStore.entries.filter(
+  return mirrorStore.logEntries.filter(
     (e) =>
       levelIndex(e.level) >= levelIndex(minLevel.value) &&
       (q === "" || e.category.toLowerCase().includes(q) || e.message.toLowerCase().includes(q)),
@@ -59,7 +59,7 @@ function levelButtonLabel(lvl: LogLevel): string {
 <template>
   <!-- Empty state -->
   <div
-    v-if="logStore.entries.length === 0"
+    v-if="mirrorStore.logEntries.length === 0"
     :style="{
       borderRadius: 'var(--nc-radius-md)',
       border: 'var(--nc-border-width) solid var(--nc-line)',
@@ -249,8 +249,8 @@ function levelButtonLabel(lvl: LogLevel): string {
 
     <!-- Footer -->
     <p :style="{ fontSize: '10px', color: 'var(--nc-ink-3)', textAlign: 'right' }">
-      Showing {{ filtered.length }} of {{ logStore.entries.length }} entries
-      <span v-if="logStore.entries.length >= logStore.maxEntries" :style="{ color: 'var(--nc-accent)', marginLeft: 'var(--nc-space-1)' }"
+      Showing {{ filtered.length }} of {{ mirrorStore.logEntries.length }} entries
+      <span v-if="mirrorStore.logEntries.length >= mirrorStore.logMaxEntries" :style="{ color: 'var(--nc-accent)', marginLeft: 'var(--nc-space-1)' }"
         >(buffer full)</span
       >
     </p>

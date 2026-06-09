@@ -2,8 +2,7 @@
 import { ref, computed } from "vue";
 import { Settings } from "lucide-vue-next";
 import SettingsPanel from "../settings/SettingsPanel.vue";
-import { usePersonaStore } from "../../stores/personaStore";
-import { useInterviewStore } from "../../stores/interviewStore";
+import { useMirrorStore } from "../../stores/mirror";
 import LogoMark from "../ui/LogoMark.vue";
 
 type Section = "interview" | "insight" | "profile" | "privacy";
@@ -22,11 +21,10 @@ const NAV_ITEMS: { id: NavSection; label: string }[] = [
 ];
 
 const settingsOpen = ref(false);
-const personaStore = usePersonaStore();
-const interviewStore = useInterviewStore();
+const mirrorStore = useMirrorStore();
 
 function isLocked(id: NavSection): boolean {
-  return (id === "insight" || id === "profile") && !personaStore.persona;
+  return (id === "insight" || id === "profile") && !mirrorStore.persona;
 }
 
 function navTo(id: NavSection) {
@@ -55,9 +53,9 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const sectionLabel = computed(() => SECTION_LABELS[props.section]);
-const statusLabel = computed(() => STATUS_LABELS[interviewStore.record?.status ?? "idle"] ?? "Idle");
+const statusLabel = computed(() => STATUS_LABELS[mirrorStore.record?.status ?? "idle"] ?? "Idle");
 const personaLabel = computed(
-  () => personaStore.persona?.data.persona.identity.name ?? "None",
+  () => mirrorStore.persona?.data.persona.identity.name ?? "None",
 );
 </script>
 

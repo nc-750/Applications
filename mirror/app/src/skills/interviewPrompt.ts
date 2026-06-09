@@ -8,16 +8,10 @@
  *  2. Synthesis (non-streaming, three-phase) — three focused calls extract
  *     facts, analyze patterns, and polish professional text into a structured
  *     persona. See synthesisPrompts.ts and personaSchemas.ts.
- *
- * Two tiers steer the chat phase:
- *  - "pro"  — full excavation interview (5–8 questions, two layers, deep stories).
- *  - "free" — shorter surface interview (2–3 questions). Same JSON shape, shallower.
  */
 
 import type { FacetKey } from "../types/interview";
 import { FACETS } from "../types/interview";
-
-export type InterviewTier = "free" | "pro";
 
 /** Emitted by the model when the interview is over; detected by the app to
  *  trigger the synthesis call. Kept distinctive so it can't collide with prose. */
@@ -102,40 +96,10 @@ Rules:
 Once the user has answered your final question, follow the "Finishing the interview" instructions below. Do not synthesize anything yourself.`;
 }
 
-// ── Free process (surface interview) ──────────────────────────────────────────
-function freeProcess(): string {
-  return `## Your process
-
-### Step 1 — Quickly review the data (internal — do NOT show this to the user)
-Build a light profile map: current situation, headline strengths, obvious skills, career timeline, stated goals and values. Do not plan deep excavation.
-
-### Step 2 — Plan 2–3 questions
-Pick 2–3 straightforward questions that fill obvious gaps. At least ONE must be a transversal question — something NOT in the data that needs the person's own view (what they want next, how they like to work, what motivates them, or their values). Keep the others on the surface (current situation, a clarification).
-
-Do NOT plan deep excavation, multi-part questions, or long follow-up threads.
-
-### Step 3 — Conduct the interview
-Open with a brief warm summary of what you understood (1–2 sentences). Then ask your first question.
-
-Rules:
-- You MUST ask at least 2 questions before finishing — never fewer, even if the data already looks complete.
-- At least 1 of your questions must be a transversal question (not answerable from the data).
-- Ask ONE question at a time — never compound questions
-- Acknowledge each answer briefly before continuing
-- Do NOT chase tangents or open new threads — stay on your short plan
-- 3 questions maximum
-- If the user explicitly asks to stop, accept gracefully
-
-### Step 4 — Signal completion
-Once the user has answered your final question, follow the "Finishing the interview" instructions below. Do not synthesize anything yourself.`;
-}
-
-export function buildSystemPrompt(initialData: string, tier: InterviewTier = "pro"): string {
-  const process = tier === "free" ? freeProcess() : proProcess();
-
+export function buildSystemPrompt(initialData: string): string {
   return `${philosophyIntro()}
 
-${dataSection(initialData)}${process}
+${dataSection(initialData)}${proProcess()}
 
 ${completionContract()}
 
@@ -167,7 +131,6 @@ const FACET_PROBE_GUIDE: Record<FacetKey, string> = {
 
 export interface ProbePromptOptions {
   initialData: string;
-  tier: InterviewTier;
   /** The facet this probe targets. */
   facet: FacetKey;
   /** "follow_up" = dig the same thread deeper; "advance" = open the facet fresh. */
@@ -177,7 +140,7 @@ export interface ProbePromptOptions {
 }
 
 export function buildProbePrompt(opts: ProbePromptOptions): string {
-  const { initialData, tier, facet, action, isFirst } = opts;
+  const { initialData, facet, action, isFirst } = opts;
   const facetMeta = FACETS.find((f) => f.key === facet);
   const guide = FACET_PROBE_GUIDE[facet];
 
@@ -186,11 +149,6 @@ export function buildProbePrompt(opts: ProbePromptOptions): string {
     : action === "follow_up"
       ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. Acknowledge their answer in one short line, then ask one sharper follow-up.`
       : `Move on to the "${facetMeta?.label}" facet. Acknowledge the last answer in one short line, then ask your single new question.`;
-
-  const depth =
-    tier === "free"
-      ? "Keep it light and on the surface — one clear question, no long threads."
-      : "You may probe with depth, but still only ONE question this turn.";
 
   return `${philosophyIntro()}
 
@@ -202,7 +160,7 @@ What to dig into: ${guide}
 
 ${opening}
 
-${depth}
+You may probe with depth, but still only ONE question this turn.
 
 Output only the message to the user (acknowledgement + the single question). Do not output JSON, labels, or any control token.
 

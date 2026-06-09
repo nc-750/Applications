@@ -1,7 +1,7 @@
 /**
  * Call C — end-of-interview SYNTHESIS (unchanged three-phase pipeline).
  *
- * Pure orchestration: given an LLM, the tier, and the transcript, run the
+ * Pure orchestration: given an LLM and the transcript, run the
  * extract → analyze → polish calls and merge them into a validated PersonaJSON.
  * No store/persona coupling here — the caller persists the result.
  *
@@ -33,7 +33,6 @@ import {
 import { extractFencedJSON } from "./interviewExtractor";
 import { logger } from "../logger";
 import { stripNulls, type PersonaJSON } from "../types/persona";
-import type { InterviewTier } from "./interviewPrompt";
 import type { Message, LLMProvider } from "../llm/types";
 import type { InterviewMessage } from "../db/schema";
 
@@ -101,7 +100,6 @@ async function synthesisCallWithRetry(
 
 export interface SynthesizeOptions {
   llm: LLMProvider;
-  tier: InterviewTier;
   initialData: string;
   messages: InterviewMessage[];
   signal?: AbortSignal;
@@ -110,7 +108,7 @@ export interface SynthesizeOptions {
 
 /** Run the three-phase synthesis and return a validated PersonaJSON (no source attached). */
 export async function synthesizePersona(opts: SynthesizeOptions): Promise<PersonaJSON> {
-  const { llm, tier, initialData, messages, signal, onPhase } = opts;
+  const { llm, initialData, messages, signal, onPhase } = opts;
 
   const transcript = messages
     .filter((m) => !m.isError)
@@ -119,7 +117,7 @@ export async function synthesizePersona(opts: SynthesizeOptions): Promise<Person
 
   onPhase?.("extracting");
   const extractRaw = unwrapCallOutput(
-    await synthesisCallWithRetry(llm, buildExtractSystemPrompt(tier), buildExtractUserPrompt(initialData, transcript), EXTRACT_JSON_SCHEMA, EXTRACT_SCHEMA_NAME, signal),
+    await synthesisCallWithRetry(llm, buildExtractSystemPrompt(), buildExtractUserPrompt(initialData, transcript), EXTRACT_JSON_SCHEMA, EXTRACT_SCHEMA_NAME, signal),
     "identity",
   );
   const extract = ExtractDataSchema.safeParse(extractRaw);
@@ -130,7 +128,7 @@ export async function synthesizePersona(opts: SynthesizeOptions): Promise<Person
 
   onPhase?.("analyzing");
   const analyzeRaw = unwrapCallOutput(
-    await synthesisCallWithRetry(llm, buildAnalyzeSystemPrompt(tier), buildAnalyzeUserPrompt(initialData, transcript, extract.data as Record<string, unknown>), ANALYZE_JSON_SCHEMA, ANALYZE_SCHEMA_NAME, signal),
+    await synthesisCallWithRetry(llm, buildAnalyzeSystemPrompt(), buildAnalyzeUserPrompt(initialData, transcript, extract.data as Record<string, unknown>), ANALYZE_JSON_SCHEMA, ANALYZE_SCHEMA_NAME, signal),
     "strengths",
   );
   const analyze = AnalyzeDataSchema.safeParse(analyzeRaw);
@@ -141,7 +139,7 @@ export async function synthesizePersona(opts: SynthesizeOptions): Promise<Person
 
   onPhase?.("polishing");
   const polishRaw = unwrapCallOutput(
-    await synthesisCallWithRetry(llm, buildPolishSystemPrompt(tier), buildPolishUserPrompt(initialData, transcript, extract.data as Record<string, unknown>, analyze.data as Record<string, unknown>), POLISH_JSON_SCHEMA, POLISH_SCHEMA_NAME, signal),
+    await synthesisCallWithRetry(llm, buildPolishSystemPrompt(), buildPolishUserPrompt(initialData, transcript, extract.data as Record<string, unknown>, analyze.data as Record<string, unknown>), POLISH_JSON_SCHEMA, POLISH_SCHEMA_NAME, signal),
     "use_cases",
   );
   const polish = PolishDataSchema.safeParse(polishRaw);

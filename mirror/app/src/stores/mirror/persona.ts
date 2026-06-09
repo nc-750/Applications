@@ -1,8 +1,7 @@
-import { defineStore } from "pinia";
 import { ref, shallowRef } from "vue";
-import { getDB } from "../db/schema";
-import { parsePersonaJSON, type StoredPersona, type PersonaJSON } from "../types/persona";
-import { logger } from "../logger";
+import { getDB } from "../../db/schema";
+import { parsePersonaJSON, type StoredPersona, type PersonaJSON } from "../../types/persona";
+import { logger } from "../../logger";
 
 async function writePersona(data: PersonaJSON, howIWorkBest: string[]): Promise<StoredPersona> {
   const db = await getDB();
@@ -19,20 +18,20 @@ async function writePersona(data: PersonaJSON, howIWorkBest: string[]): Promise<
   return record;
 }
 
-export const usePersonaStore = defineStore("persona", () => {
+export function usePersonaModule() {
   // shallowRef: persona records are replaced wholesale and written to IndexedDB,
   // so avoid deep reactive proxies that structured clone can't serialize.
   const persona = shallowRef<StoredPersona | null>(null);
-  const loaded = ref(false);
+  const personaLoaded = ref(false);
 
-  async function load() {
+  async function loadPersona() {
     const db = await getDB();
     const record = await db.get("persona", "default");
     persona.value = record ?? null;
-    loaded.value = true;
+    personaLoaded.value = true;
   }
 
-  async function save(data: PersonaJSON, howIWorkBest: string[] = []) {
+  async function savePersona(data: PersonaJSON, howIWorkBest: string[] = []) {
     persona.value = await writePersona(data, howIWorkBest);
     logger.info("store", "Mirror saved");
   }
@@ -43,14 +42,14 @@ export const usePersonaStore = defineStore("persona", () => {
     persona.value = await writePersona(existing.data, howIWorkBest);
   }
 
-  async function clear() {
+  async function clearPersona() {
     const db = await getDB();
     await db.delete("persona", "default");
     persona.value = null;
     logger.info("wipe", "Mirror cleared");
   }
 
-  async function importFromJSON(json: string) {
+  async function importPersonaFromJSON(json: string) {
     // parsePersonaJSON validates every field against the Zod schema and throws
     // a single-line, field-pointing error on the first issue.
     const parsed = parsePersonaJSON(JSON.parse(json));
@@ -58,5 +57,13 @@ export const usePersonaStore = defineStore("persona", () => {
     logger.info("import", "Mirror imported successfully");
   }
 
-  return { persona, loaded, load, save, setDerived, clear, importFromJSON };
-});
+  return {
+    persona,
+    personaLoaded,
+    loadPersona,
+    savePersona,
+    setDerived,
+    clearPersona,
+    importPersonaFromJSON,
+  };
+}

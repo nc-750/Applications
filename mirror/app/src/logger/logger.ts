@@ -1,4 +1,4 @@
-import { useLogStore } from "../stores/logStore";
+import { useMirrorStore } from "../stores/mirror";
 import type { LogLevel, LogCategory, LogEntry } from "./types";
 
 // ── API key sanitization ──────────────────────────────────────────────
@@ -31,7 +31,7 @@ function redactKeys(value: unknown): unknown {
 // ── Core log function ─────────────────────────────────────────────────
 
 export function setDebugEnabled(enabled: boolean): void {
-  useLogStore().setDebugEnabled(enabled);
+  useMirrorStore().setDebugEnabled(enabled);
 }
 
 function log(
@@ -40,7 +40,7 @@ function log(
   message: string,
   opts?: { data?: unknown; error?: Error },
 ): void {
-  const store = useLogStore();
+  const store = useMirrorStore();
 
   // Debug-level entries are skipped entirely when the toggle is off
   if (level === "debug" && !store.debugEnabled) return;
@@ -75,7 +75,7 @@ function log(
   }
 
   // Push to in-memory ring buffer
-  store.append(entry);
+  store.appendLog(entry);
 }
 
 // ── Convenience logger object ─────────────────────────────────────────

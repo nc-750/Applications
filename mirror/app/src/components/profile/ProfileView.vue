@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Download, Globe, Menu, X } from "lucide-vue-next";
-import { usePersonaStore } from "../../stores/personaStore";
+import { useMirrorStore } from "../../stores/mirror";
 import { renderProfile } from "../../skills/profileRenderer";
 import { downloadFile } from "../../lib/utils";
 import ProfilePlaceholderPanel from "./ProfilePlaceholderPanel.vue";
 
-const personaStore = usePersonaStore();
+const mirrorStore = useMirrorStore();
 
 const html = computed(() =>
-  personaStore.persona ? renderProfile(personaStore.persona.data, personaStore.persona.derived.how_i_work_best) : null,
+  mirrorStore.persona ? renderProfile(mirrorStore.persona.data, mirrorStore.persona.derived.how_i_work_best) : null,
 );
 
 function handleDownload() {
   if (!html.value) return;
   const name =
-    personaStore.persona?.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() ?? "mirror";
+    mirrorStore.persona?.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() ?? "mirror";
   downloadFile(html.value, `${name}-profile.html`, "text/html");
 }
 
@@ -51,7 +51,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="!personaStore.persona || !html" class="flex flex-col items-center justify-center text-center" style="gap: var(--nc-space-4); padding: var(--nc-space-12) var(--nc-space-6);">
+  <div v-if="!mirrorStore.persona || !html" class="flex flex-col items-center justify-center text-center" style="gap: var(--nc-space-4); padding: var(--nc-space-12) var(--nc-space-6);">
     <div style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: var(--nc-radius-lg); background: var(--nc-metal-key); border: var(--nc-border-width) solid var(--nc-line-strong); box-shadow: var(--nc-edge-raised); margin-bottom: var(--nc-space-2);">
       <Globe :size="26" />
     </div>

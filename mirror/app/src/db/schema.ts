@@ -1,11 +1,9 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 import type { StoredPersona } from "../types/persona";
 import type { ProviderKind } from "@nc-750/llm-ts";
-import type { LicenseRecord } from "../types/license";
 import type { CoverageMap, ProbeSignal, FacetKey } from "../types/interview";
 
 export type { ProviderKind as Provider };
-export type { LicenseRecord };
 
 export interface SettingsRecord {
   id: "default";
@@ -63,10 +61,6 @@ interface PersonaDB extends DBSchema {
     key: string;
     value: InterviewRecord;
   };
-  license: {
-    key: string;
-    value: LicenseRecord;
-  };
 }
 
 export const DB_NAME = "mirror-db";
@@ -101,7 +95,7 @@ async function migrateFromOldDB(db: IDBPDatabase<PersonaDB>): Promise<void> {
 
   try {
     const oldDB = oldReq.result;
-    type StoreName = "settings" | "persona" | "interview" | "license";
+    type StoreName = "settings" | "persona" | "interview";
     const storeNames = Array.from(oldDB.objectStoreNames).filter((n) =>
       db.objectStoreNames.contains(n as StoreName),
     );
@@ -114,8 +108,8 @@ async function migrateFromOldDB(db: IDBPDatabase<PersonaDB>): Promise<void> {
         req.onerror = () => resolve([]);
       });
       // Need to handle keyPath vs auto-generated keys; these stores all have keyPath
-      const newTx = db.transaction(name as "settings" | "persona" | "interview" | "license", "readwrite");
-      const newStore = newTx.objectStore(name as "settings" | "persona" | "interview" | "license");
+      const newTx = db.transaction(name as "settings" | "persona" | "interview", "readwrite");
+      const newStore = newTx.objectStore(name as "settings" | "persona" | "interview");
       for (const item of items) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         newStore.put(item.value as any);
@@ -137,9 +131,6 @@ export async function getDB(): Promise<IDBPDatabase<PersonaDB>> {
         db.createObjectStore("settings", { keyPath: "id" });
         db.createObjectStore("persona", { keyPath: "id" });
         db.createObjectStore("interview", { keyPath: "id" });
-      }
-      if (oldVersion < 2) {
-        db.createObjectStore("license", { keyPath: "id" });
       }
     },
   });

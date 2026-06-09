@@ -1,20 +1,15 @@
 import type { LLMProvider } from "../llm/types";
 import type { PersonaJSON } from "../types/persona";
 
-export type SynthesisTier = "free" | "pro";
-
 /**
  * One-shot LLM call: derives "How I Work Best" from weaknesses, personality traits, values.
  * Called exactly once at interview completion. Result is cached in persona.derived.
  *
- * Tier controls depth only — the section is always produced (never empty):
- *  - "pro"  → 3–4 nuanced statements
- *  - "free" → 2 concise statements
+ * Produces 3–4 nuanced statements.
  */
 export async function synthesizeHowIWorkBest(
   persona: PersonaJSON,
   llm: LLMProvider,
-  tier: SynthesisTier = "pro",
   signal?: AbortSignal
 ): Promise<string[]> {
   const p = persona.persona;
@@ -29,8 +24,8 @@ export async function synthesizeHowIWorkBest(
 
   const valuesLine = (p.values ?? []).join(", ");
 
-  const count = tier === "free" ? "2" : "3–4";
-  const maxItems = tier === "free" ? 2 : 4;
+  const count = "3–4";
+  const maxItems = 4;
 
   const prompt = `You are helping write a professional "How I Work Best" section for ${p.identity.name}'s public profile.
 

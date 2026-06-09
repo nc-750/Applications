@@ -2,30 +2,10 @@
 // Each call gets a focused prompt that matches its subset schema — the model
 // has fewer fields to juggle and clearer expectations per call.
 
-import type { InterviewTier } from "./interviewPrompt";
-
 // ── Shared ────────────────────────────────────────────────────────────────────
 
 /** Appended to the user prompt on retry when the first attempt produces invalid / no JSON. */
 export const FALLBACK_FORMAT_SUFFIX = `\n\nReturn ONLY a single JSON object inside one \`\`\`json code block. Every required field must be present. Do not include any text outside the code block.`;
-
-function tierExtractDepth(tier: InterviewTier): string {
-  return tier === "free"
-    ? `Free tier — keep content concise: 2–4 skills, 1–2 non-professional activities, a one-line real_story for the most recent role only, short values list.`
-    : `Pro tier — populate richly: extract all skills mentioned or implied, list every role with a real excavated real_story, capture all non-professional activities with transferable skills.`;
-}
-
-function tierAnalyzeDepth(tier: InterviewTier): string {
-  return tier === "free"
-    ? `Free tier — keep concise: 2–3 strengths, 1–2 weaknesses, 1–2 hidden_assets, 1–2 personality_traits.`
-    : `Pro tier — populate richly: multiple evidence-backed strengths, fully developed weaknesses, thorough hidden_assets, 3–5 personality_traits.`;
-}
-
-function tierPolishDepth(_tier: InterviewTier): string {
-  // Use cases and metadata don't vary much by tier; the quality of the
-  // upstream data drives the output.  We keep a single instruction set.
-  return `Write professional-grade content suitable for LinkedIn, CVs, and interviews.`;
-}
 
 function hardRules(): string {
   return `HARD RULES:
@@ -41,12 +21,12 @@ function hardRules(): string {
 
 // ── Phase 1: Extraction ──────────────────────────────────────────────────────
 
-export function buildExtractSystemPrompt(tier: InterviewTier): string {
+export function buildExtractSystemPrompt(): string {
   return `You extract structured facts from a persona interview transcript. Be PRECISE and FAITHFUL to what was actually said — do not infer, paraphrase, or embellish. Every field must be grounded in the transcript or initial data.
 
 ${hardRules()}
 
-${tierExtractDepth(tier)}`;
+Populate richly: extract all skills mentioned or implied, list every role with a real excavated real_story, capture all non-professional activities with transferable skills.`;
 }
 
 export function buildExtractUserPrompt(initialData: string, transcript: string): string {
@@ -77,14 +57,14 @@ Produce the structured JSON now.`;
 
 // ── Phase 2: Analysis ────────────────────────────────────────────────────────
 
-export function buildAnalyzeSystemPrompt(tier: InterviewTier): string {
+export function buildAnalyzeSystemPrompt(): string {
   return `You analyze a persona interview to surface patterns, hidden strengths, and growth areas. Go BEYOND explicit statements — identify connections, name skills the person didn't label, and surface what's unspoken but present.
 
 CRITICAL: Every strength and weakness MUST cite specific evidence from the transcript. Use the format: "When discussing [topic], [specific observation]."
 
 ${hardRules()}
 
-${tierAnalyzeDepth(tier)}`;
+Populate richly: multiple evidence-backed strengths, fully developed weaknesses, thorough hidden_assets, 3–5 personality_traits.`;
 }
 
 export function buildAnalyzeUserPrompt(
@@ -128,12 +108,12 @@ Produce the structured JSON now.`;
 
 // ── Phase 3: Polish ──────────────────────────────────────────────────────────
 
-export function buildPolishSystemPrompt(tier: InterviewTier): string {
+export function buildPolishSystemPrompt(): string {
   return `You write polished, professional-grade content from a gathered persona profile. The output will be used on LinkedIn, in CVs, and in professional introductions. Write with confidence and clarity — help someone present their best professional self authentically.
 
 ${hardRules()}
 
-${tierPolishDepth(tier)}
+Write professional-grade content suitable for LinkedIn, CVs, and interviews.
 
 metadata.language must be the ISO 639-1 code of the user's language. metadata.generated_at must be the current ISO 8601 timestamp. metadata.version must be "1.0".`;
 }

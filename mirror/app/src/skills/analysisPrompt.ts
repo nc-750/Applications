@@ -15,23 +15,13 @@
  */
 
 import { z } from "zod";
-import type { InterviewTier } from "./interviewPrompt";
 import { FACETS, type FacetKey, type CoverageMap } from "../types/interview";
 
 /** A facet meter reads "locked" (green) at or above this saturation. */
 export const SATURATION_LOCKED = 0.8;
 
-/** The interview concludes once every facet reaches this saturation. Tier-tuned. */
-export const CONCLUDE_THRESHOLD: Record<InterviewTier, number> = {
-  free: 0.55,
-  pro: 0.75,
-};
-
-/** Hard safety cap on probes so the loop always terminates. Tier-tuned. */
-export const MAX_PROBES: Record<InterviewTier, number> = {
-  free: 4,
-  pro: 8,
-};
+/** The interview concludes once every facet reaches this saturation. */
+export const CONCLUDE_THRESHOLD = 0.75;
 
 const FACET_KEYS = FACETS.map((f) => f.key) as [FacetKey, ...FacetKey[]];
 
@@ -101,8 +91,8 @@ export const ANALYSIS_JSON_SCHEMA: Record<string, unknown> = {
 
 const facetGuide = FACETS.map((f) => `- ${f.key}: ${f.blurb}`).join("\n");
 
-export function buildAnalysisSystemPrompt(tier: InterviewTier): string {
-  const target = CONCLUDE_THRESHOLD[tier];
+export function buildAnalysisSystemPrompt(): string {
+  const target = Math.round(CONCLUDE_THRESHOLD * 100);
   return `You are the ANALYSIS stage of a persona interview instrument. You do not talk to the user. You read the latest answer and report an honest measurement of the interview's progress.
 
 You track five coverage facets (each 0..1 = how completely it is evidenced so far):
@@ -114,7 +104,7 @@ For every turn, return:
 3. next_action — "follow_up" to probe the same facet again (typically when probe_signal is "thin" and the facet is under-saturated), or "advance" to move on.
 4. next_facet — which facet the next probe should target. Prefer the least-saturated facet that still needs evidence, unless a follow-up on the current facet is clearly more valuable.
 
-This is a ${tier} interview: aim to reach roughly ${Math.round(target * 100)}% saturation across all facets before the reading is considered sufficient. Do not inflate numbers to finish early, and do not stall a facet that is genuinely covered.
+Aim to reach roughly ${target}% saturation across all facets before the reading is considered sufficient. Do not inflate numbers to finish early, and do not stall a facet that is genuinely covered.
 
 Output ONLY the structured result. No prose.`;
 }

@@ -1,8 +1,8 @@
-import { useLogStore } from "../stores/logStore";
+import { useMirrorStore } from "../stores/mirror";
 import { downloadFile } from "../lib/utils";
 
 export function exportDebugLog(): void {
-  const { entries } = useLogStore();
+  const { logEntries: entries } = useMirrorStore();
 
   const envelope = {
     exportedAt: new Date().toISOString(),
