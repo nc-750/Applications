@@ -9,13 +9,28 @@ import {
 } from "@nc-750/lab-vue";
 
 import { useSettingsStore } from "../stores/settingsStore";
-import { Heading } from "lucide-vue-next";
+import { LLMConfig, Provider, testConnection } from "../llm";
+
 
 const settingsStore = useSettingsStore();
+
+const llmConfigFormModel: LLMConfig = {
+    provider: "" as Provider,
+    model: "",
+    apiKey: "",
+    endpoint: ""
+}
 
 function saveLLMConfig() {
     console.log('llmconfig saved');
 }
+
+function onAIProviderSelected(_event: Event) {
+    llmConfigFormModel.model = "";
+    llmConfigFormModel.apiKey = "";
+    llmConfigFormModel.endpoint = "";
+}
+
 </script>
 
 <template>
@@ -23,25 +38,25 @@ function saveLLMConfig() {
         <Cell title="LLM CONFIG" spec="CFG // 0x01">
             <Form class="flex flex-col gap-4" @submit.prevent="saveLLMConfig">
                 <FormField label="AI Provider">
-                    <select class="nc-select">
-                        <option value="OpenAI">OpenAI</option>
-                        <option value="Anthropic">Anthropic</option>
-                        <option value="Mistral">Mistral</option>
-                        <option value="DeepSeek">DeepSeek</option>
-                        <option value="OpenAI-Compatible">OpenAI-Compatible (Groq, Together, Ollama, LM Studio...)</option>
+                    <select class="nc-select" v-model="llmConfigFormModel.provider" @change="onAIProviderSelected">
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="mistral">Mistral</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="openai-compatible">OpenAI-Compatible (Groq, Together, Ollama, LM Studio...)</option>
                     </select>
                 </FormField>
                 <FormField label="Model">
-                    <TextField type="text" placeholder="gpt-4o" />
+                    <input class="nc-input" type="text" placeholder="gpt-4o" v-model="llmConfigFormModel.model"/>
                 </FormField>
-                <FormField label="Model">
-                    <TextField type="url" placeholder="https://api.aiprovider.com" />
+                <FormField label="Endpoint">
+                    <input class="nc-input" type="url" placeholder="https://api.aiprovider.com" v-model="llmConfigFormModel.endpoint" />
                 </FormField>
                 <FormField label="API Key">
-                    <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" />
+                    <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" v-model="llmConfigFormModel.apiKey"/>
                 </FormField>
                 <div class="flex gap-4 justify-between">
-                    <Button variant="secondary">Test Connection</Button>
+                    <Button variant="secondary" @click="testConnection(llmConfigFormModel)">Test Connection</Button>
                     <Button variant="accent" submit>Save</Button>
                 </div>
                 <Button variant="ghost">Read the privacy details →</Button>

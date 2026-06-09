@@ -1,4 +1,4 @@
-import type { LLMProvider, LLMConfig, Message } from "./types";
+import type { LLMConfig, LLMProvider, Message } from ".";
 import { logger } from "../logger";
 
 // OpenAI-shape provider: the /chat/completions + /models wire format used by
@@ -139,5 +139,11 @@ export function openaiShape(config: LLMConfig, baseUrl: string): LLMProvider {
         .filter((id: unknown): id is string => typeof id === "string");
       return ids.sort();
     },
+
+    async healthCheck(): Promise<void | Error> {
+      await this.complete([{ role: "user", content: "Reply with the single word: ok" }]);
+    }
   };
+
+  
 }

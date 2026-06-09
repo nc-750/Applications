@@ -1,4 +1,4 @@
-import type { LLMProvider, LLMConfig, Message } from "./types";
+import type { LLMProvider, LLMConfig, Message } from ".";
 import { logger } from "../logger";
 
 const ANTHROPIC_VERSION = "2023-06-01";
@@ -139,5 +139,9 @@ export function anthropicShape(config: LLMConfig, baseUrl: string): LLMProvider 
         .filter((id: unknown): id is string => typeof id === "string");
       return ids.sort();
     },
+
+    async healthCheck(): Promise<void | Error> {
+      await this.complete([{ role: "user", content: "Reply with the single word: ok" }]);
+    }
   };
 }

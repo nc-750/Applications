@@ -32,3 +32,36 @@ export interface LLMConfig {
   apiKey: string;
   endpoint?: string;
 }
+
+export interface ProviderInfo {
+  name: string,
+  endpoint?: string,
+  policyLink?: string,
+  text?: string
+}
+
+const providerConfigs: { [key: string]: ProviderInfo } = {
+    openai: {
+        name: "OpenAI",
+        endpoint: "https://api.openai.com/v1",
+        policyLink: "https://openai.com/policies/api-data-usage-policies"
+    },
+    anthropic: {
+        name: "Anthropic",
+        endpoint: "https://api.anthropic.com/v1",
+        policyLink: "https://www.anthropic.com/legal/privacy"
+    },
+    mistral: {
+        name: "Mistral",
+        endpoint: "https://api.mistral.ai/v1",
+        policyLink: "https://mistral.ai/terms"
+    },
+    "openai-compatible": {
+        name: "OpenAI Compatible",
+        endpoint: "",
+        policyLink: "",
+        text: "Behavior depends on your endpoint. For maximum privacy, run a local model with Ollama or LM Studio."
+    }
+}
+
+export default providerConfigs;
