@@ -17,16 +17,6 @@ vi.mock("../../lib/keyStore", () => ({
   isTauri: () => mockIsTauri(),
 }));
 
-// Mock the old settingsStore (still referenced by interviewStore) to avoid
-// Vite/Rollup parse errors on the .ts.old extension.
-vi.mock("../../stores/settingsStore.ts.old", () => ({
-  useSettingsStore: vi.fn(() => ({
-    provider: "openai",
-    model: "gpt-4o",
-    apiKey: "",
-    endpoint: "",
-  })),
-}));
 
 /** Helper: trigger a click on the first button whose text contains the given string. */
 async function clickButton(w: VueWrapper, text: string) {

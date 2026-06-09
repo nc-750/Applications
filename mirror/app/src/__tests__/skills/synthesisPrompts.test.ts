@@ -21,27 +21,18 @@ describe("synthesisPrompts", () => {
   });
 
   describe("buildExtractSystemPrompt", () => {
-    it("contains pro tier instruction for pro", () => {
-      const prompt = buildExtractSystemPrompt("pro");
-      expect(prompt).toContain("Pro tier");
-      expect(prompt).toContain("populate richly");
+    it("contains rich population instruction", () => {
+      const prompt = buildExtractSystemPrompt();
+      expect(prompt).toContain("Populate richly");
+      expect(prompt).toContain("FAITHFUL to what was actually said");
     });
 
-    it("contains free tier instruction for free", () => {
-      const prompt = buildExtractSystemPrompt("free");
-      expect(prompt).toContain("Free tier");
-      expect(prompt).toContain("keep content concise");
-    });
-
-    it("contains hard rules in both tiers", () => {
-      const pro = buildExtractSystemPrompt("pro");
-      const free = buildExtractSystemPrompt("free");
-      for (const prompt of [pro, free]) {
-        expect(prompt).toContain("HARD RULES");
-        expect(prompt).toContain("Technical | Soft | Domain | Language | Transversal | Tool");
-        expect(prompt).toContain("Beginner | Intermediate | Advanced | Expert | Native");
-        expect(prompt).toContain("professional | personal | inferred");
-      }
+    it("contains hard rules", () => {
+      const prompt = buildExtractSystemPrompt();
+      expect(prompt).toContain("HARD RULES");
+      expect(prompt).toContain("Technical | Soft | Domain | Language | Transversal | Tool");
+      expect(prompt).toContain("Beginner | Intermediate | Advanced | Expert | Native");
+      expect(prompt).toContain("professional | personal | inferred");
     });
   });
 
@@ -69,19 +60,15 @@ describe("synthesisPrompts", () => {
 
   describe("buildAnalyzeSystemPrompt", () => {
     it("contains evidence requirement", () => {
-      const prompt = buildAnalyzeSystemPrompt("pro");
+      const prompt = buildAnalyzeSystemPrompt();
       expect(prompt).toContain("evidence");
       expect(prompt).toContain("cite specific");
     });
 
-    it("contains tier-specific depth", () => {
-      const pro = buildAnalyzeSystemPrompt("pro");
-      expect(pro).toContain("Pro tier");
-      expect(pro).toContain("3–5 personality_traits");
-
-      const free = buildAnalyzeSystemPrompt("free");
-      expect(free).toContain("Free tier");
-      expect(free).toContain("2–3 strengths");
+    it("contains personality_traits depth guidance", () => {
+      const prompt = buildAnalyzeSystemPrompt();
+      expect(prompt).toContain("3–5 personality_traits");
+      expect(prompt).toContain("multiple evidence-backed strengths");
     });
   });
 
@@ -103,14 +90,14 @@ describe("synthesisPrompts", () => {
   });
 
   describe("buildPolishSystemPrompt", () => {
-    it("contains tier-specific instruction", () => {
-      const prompt = buildPolishSystemPrompt("pro");
+    it("contains professional writing instruction", () => {
+      const prompt = buildPolishSystemPrompt();
       expect(prompt).toContain("LinkedIn");
       expect(prompt).toContain("CV");
     });
 
     it("contains metadata requirements", () => {
-      const prompt = buildPolishSystemPrompt("pro");
+      const prompt = buildPolishSystemPrompt();
       expect(prompt).toContain("ISO 639-1");
       expect(prompt).toContain("ISO 8601");
       expect(prompt).toContain('"1.0"');
@@ -135,12 +122,9 @@ describe("synthesisPrompts", () => {
   describe("tier-agnostic hard rules", () => {
     it("are present in all three phase system prompts", () => {
       const phases = [
-        buildExtractSystemPrompt("pro"),
-        buildAnalyzeSystemPrompt("pro"),
-        buildPolishSystemPrompt("pro"),
-        buildExtractSystemPrompt("free"),
-        buildAnalyzeSystemPrompt("free"),
-        buildPolishSystemPrompt("free"),
+        buildExtractSystemPrompt(),
+        buildAnalyzeSystemPrompt(),
+        buildPolishSystemPrompt(),
       ];
       for (const prompt of phases) {
         expect(prompt).toContain("HARD RULES");

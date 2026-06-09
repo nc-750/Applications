@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   TurnAnalysisSchema,
   CONCLUDE_THRESHOLD,
-  MAX_PROBES,
   SATURATION_LOCKED,
 } from "../../skills/analysisPrompt";
 import { mergeCoverage, emptyCoverage, FACETS } from "../../types/interview";
@@ -65,11 +64,8 @@ describe("mergeCoverage (monotonic)", () => {
 });
 
 describe("thresholds", () => {
-  it("pro requires more saturation than free, both below lock", () => {
-    expect(CONCLUDE_THRESHOLD.pro).toBeGreaterThan(CONCLUDE_THRESHOLD.free);
-    expect(CONCLUDE_THRESHOLD.pro).toBeLessThanOrEqual(SATURATION_LOCKED);
-  });
-  it("pro allows more probes than free", () => {
-    expect(MAX_PROBES.pro).toBeGreaterThan(MAX_PROBES.free);
+  it("conclude threshold is below saturation locked", () => {
+    expect(CONCLUDE_THRESHOLD).toBeLessThanOrEqual(SATURATION_LOCKED);
+    expect(CONCLUDE_THRESHOLD).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   buildSystemPrompt,
+  buildProbePrompt,
   INTERVIEW_COMPLETE_SENTINEL,
 } from "../../skills/interviewPrompt";
 
@@ -11,8 +12,8 @@ describe("interviewPrompt", () => {
     });
   });
 
-  describe("buildSystemPrompt — pro tier", () => {
-    const prompt = buildSystemPrompt("Some initial data", "pro");
+  describe("buildSystemPrompt", () => {
+    const prompt = buildSystemPrompt("Some initial data");
 
     it("contains philosophy intro", () => {
       expect(prompt).toContain("a CV is a shadow of a person");
@@ -51,28 +52,8 @@ describe("interviewPrompt", () => {
     });
   });
 
-  describe("buildSystemPrompt — free tier", () => {
-    const prompt = buildSystemPrompt("Some data", "free");
-
-    it("contains free process (surface interview)", () => {
-      expect(prompt).toContain("Step 1 — Quickly review the data");
-      expect(prompt).toContain("2–3 questions");
-      expect(prompt).toContain("at least 2 questions");
-      expect(prompt).toContain("3 questions maximum");
-    });
-
-    it("requires at least 1 transversal question", () => {
-      expect(prompt).toContain("At least ONE must be a transversal question");
-      expect(prompt).toContain("At least 1 of your questions must be a transversal question");
-    });
-
-    it("contains free tier constraints", () => {
-      expect(prompt).toContain("Do NOT plan deep excavation");
-    });
-  });
-
   describe("buildSystemPrompt — no initial data", () => {
-    const prompt = buildSystemPrompt("", "pro");
+    const prompt = buildSystemPrompt("");
 
     it("informs the model no data was provided", () => {
       expect(prompt).toContain("has not provided any initial data");
@@ -80,11 +61,36 @@ describe("interviewPrompt", () => {
     });
   });
 
-  describe("buildSystemPrompt — default tier", () => {
-    it("defaults to pro when tier is omitted", () => {
-      const prompt = buildSystemPrompt("data"); // no tier
-      expect(prompt).toContain("5–8 questions");
-      expect(prompt).toContain("Layer 1 — Experience excavation");
+  describe("buildProbePrompt", () => {
+    it("scopes the probe to the given facet", () => {
+      const prompt = buildProbePrompt({
+        initialData: "Some data",
+        facet: "strengths",
+        action: "advance",
+        isFirst: false,
+      });
+      expect(prompt).toContain("strengths");
+    });
+
+    it("includes a warm opening for the first probe", () => {
+      const prompt = buildProbePrompt({
+        initialData: "Some data",
+        facet: "story",
+        action: "advance",
+        isFirst: true,
+      });
+      expect(prompt).toContain("FIRST probe");
+      expect(prompt).toContain("warm summary");
+    });
+
+    it("uses follow_up wording when action is follow_up", () => {
+      const prompt = buildProbePrompt({
+        initialData: "Data",
+        facet: "growth",
+        action: "follow_up",
+        isFirst: false,
+      });
+      expect(prompt).toContain("Dig DEEPER");
     });
   });
 });
