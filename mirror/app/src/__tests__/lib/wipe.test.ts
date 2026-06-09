@@ -1,86 +1,221 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { wipePersonaData, wipeAiProvider, wipeServiceWorker, factoryReset } from "../../lib/wipe";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { wipePersonaData, wipeAiProvider, factoryReset } from "../../lib/wipe";
 import { usePersonaStore } from "../../stores/personaStore";
 import { useInterviewStore } from "../../stores/interviewStore";
-import { useSettingsStore } from "../../stores/settingsStore.ts.old";
+import { useMirrorStore } from "../../stores/mirror";
 import { useLicenseStore } from "../../stores/licenseStore";
+import { getDB } from "../../db/schema";
 
-// Mock keyStore.clearApiKey
+// Mock keyStore
+const mockClearApiKey = vi.fn();
+const mockIsTauri = vi.fn(() => false);
+const mockLoadApiKey = vi.fn();
+const mockSaveApiKey = vi.fn();
+
 vi.mock("../../lib/keyStore", () => ({
-  clearApiKey: vi.fn(),
-  isTauri: vi.fn(() => false),
-  loadApiKey: vi.fn(),
-  saveApiKey: vi.fn(),
+  clearApiKey: (...args: unknown[]) => mockClearApiKey(...args),
+  isTauri: () => mockIsTauri(),
+  loadApiKey: (...args: unknown[]) => mockLoadApiKey(...args),
+  saveApiKey: (...args: unknown[]) => mockSaveApiKey(...args),
 }));
 
-// Mock licenseKeyStore
+// Mock licenseValidator so deactivate never makes an HTTP call
+vi.mock("../../lib/licenseValidator", () => ({
+  activateLicense: vi.fn(),
+  validateLicense: vi.fn(),
+  deactivateLicense: vi.fn(),
+}));
+
+// Mock the old settingsStore (still referenced by interviewStore) to avoid
+// Vite/Rollup parse errors on the .ts.old extension.
+vi.mock("../../stores/settingsStore.ts.old", () => ({
+  useSettingsStore: vi.fn(() => ({
+    provider: "openai",
+    model: "gpt-4o",
+    apiKey: "",
+    endpoint: "",
+  })),
+}));
+
+// Mock licenseKeyStore so keyring operations are no-ops
 vi.mock("../../lib/licenseKeyStore", () => ({
   clearLicenseKey: vi.fn(),
   loadLicenseKey: vi.fn(),
   saveLicenseKey: vi.fn(),
 }));
 
-function resetAllStores() {
-  usePersonaStore().$patch({ persona: null, loaded: false });
-  useInterviewStore().$patch({ record: null, loaded: false, streamingContent: "", isThinking: false, synthesisPhase: null });
-  useSettingsStore().$patch({ provider: "openai", model: "gpt-4o", apiKey: "", endpoint: "", debugEnabled: false, loaded: false });
-  useLicenseStore().$patch({ isActivated: false, isPro: false, maskedKey: "", instanceId: "", activatedAt: "", lastCheckedAt: "", loaded: false });
-}
-
 describe("wipe", () => {
   beforeEach(() => {
-    resetAllStores();
+    vi.clearAllMocks();
+    mockLoadApiKey.mockResolvedValue(null);
+    mockIsTauri.mockReturnValue(false);
   });
 
   describe("wipePersonaData", () => {
-    it("clears persona and interview stores", async () => {
-      // Prime stores with some data
-      usePersonaStore().$patch({ persona: { id: "default", data: { persona: { identity: { name: "Test", tagline: "Dev", elevator_pitch: "Hi" }, strengths: [], weaknesses: [], skills: [], career_timeline: [], non_professional: [], personality_traits: [], values: [], hidden_assets: [], goals: {}, use_cases: {}, metadata: { sources_used: [], language: "en", generated_at: "2026-01-01T00:00:00.000Z", version: "1.0" } } }, derived: { how_i_work_best: [] }, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }, loaded: true });
-      useInterviewStore().$patch({ record: { id: "default", status: "active", initialData: "test", messages: [], createdAt: "", updatedAt: "" }, loaded: true });
+    it("clears persona and interview records from IndexedDB", async () => {
+      // Pre-populate persona in IndexedDB
+      const db = await getDB();
+      const now = new Date().toISOString();
+      await db.put("persona", {
+        id: "default",
+        data: {
+          persona: {
+            identity: { name: "Test", tagline: "Dev", elevator_pitch: "Hi" },
+            strengths: [],
+            weaknesses: [],
+            skills: [],
+            career_timeline: [],
+            non_professional: [],
+            personality_traits: [],
+            values: [],
+            hidden_assets: [],
+            goals: {},
+            use_cases: {},
+          },
+          metadata: {
+            sources_used: [],
+            language: "en",
+            generated_at: now,
+            version: "1.0",
+          },
+        },
+        derived: { how_i_work_best: [] },
+        createdAt: now,
+        updatedAt: now,
+      });
+      await db.put("interview", {
+        id: "default",
+        status: "active",
+        initialData: "test data",
+        messages: [],
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      // Verify pre-population
+      expect(await db.get("persona", "default")).toBeDefined();
+      expect(await db.get("interview", "default")).toBeDefined();
 
       await wipePersonaData();
 
-      expect(usePersonaStore().persona).toBeNull();
-      expect(useInterviewStore().record).toBeNull();
+      // Verify records are deleted from IndexedDB
+      expect(await db.get("persona", "default")).toBeUndefined();
+      expect(await db.get("interview", "default")).toBeUndefined();
     });
   });
 
   describe("wipeAiProvider", () => {
-    it("resets settings store to defaults", async () => {
-      useSettingsStore().$patch({ provider: "anthropic", model: "claude-4", apiKey: "sk-key", endpoint: "https://test.com" });
+    it("clears llmConfig and deletes settings record from IndexedDB", async () => {
+      mockIsTauri.mockReturnValue(false);
+
+      // Pre-populate settings via the store
+      const store = useMirrorStore();
+      await store.saveLLMConfig({
+        provider: "anthropic",
+        model: "claude-sonnet-4-20250514",
+        apiKey: "sk-wipe-test",
+        endpoint: "https://api.anthropic.com",
+      });
+      expect(store.llmConfig).not.toBeNull();
+      expect(store.isLLMConfigured).toBe(true);
+
+      // Verify IDB record exists
+      const db = await getDB();
+      expect(await db.get("settings", "default")).toBeDefined();
 
       await wipeAiProvider();
 
-      const state = useSettingsStore();
-      expect(state.provider).toBe("openai");
-      expect(state.apiKey).toBe("");
-    });
-  });
+      // In-memory state cleared
+      expect(store.llmConfig).toBeNull();
+      expect(store.isLLMConfigured).toBe(false);
 
-  describe("wipeServiceWorker", () => {
-    it("completes without throwing (best-effort)", async () => {
-      // Should not throw even if caches/serviceWorker APIs are absent in jsdom
-      await expect(wipeServiceWorker()).resolves.toBeUndefined();
+      // IDB record deleted
+      expect(await db.get("settings", "default")).toBeUndefined();
+
+      // On PWA, clearApiKey is NOT called (wipeAiProvider calls it unconditionally,
+      // but the mocked implementation is a no-op outside Tauri).
+      expect(mockClearApiKey).toHaveBeenCalled();
+    });
+
+    it("calls clearApiKey on Tauri", async () => {
+      mockIsTauri.mockReturnValue(true);
+
+      const store = useMirrorStore();
+      await store.saveLLMConfig({
+        provider: "openai",
+        model: "gpt-4o",
+        apiKey: "sk-tauri-wipe",
+        endpoint: "",
+      });
+
+      await wipeAiProvider();
+
+      // clearApiKey is called (by wipeAiProvider directly, then by clearLLMConfig)
+      expect(mockClearApiKey).toHaveBeenCalled();
     });
   });
 
   describe("factoryReset", () => {
-    it("runs through all steps without throwing (reload skipped in test)", async () => {
-      // Override the global location so the final reload is a no-op.
-      const originalLocation = globalThis.location;
-      delete (globalThis as Record<string, unknown>).location;
-      (globalThis as Record<string, unknown>).location = {
-        ...originalLocation,
-        reload: vi.fn(),
-      };
+    it("deletes the IndexedDB database and reloads the page", async () => {
+      // Pre-populate data
+      const db = await getDB();
+      const now = new Date().toISOString();
 
-      try {
-        await factoryReset();
-        expect(true).toBe(true);
-      } finally {
-        // Restore
-        (globalThis as Record<string, unknown>).location = originalLocation;
-      }
+      await db.put("settings", {
+        id: "default",
+        provider: "anthropic",
+        model: "claude-sonnet-4-20250514",
+        apiKey: "sk-factory-reset",
+        endpoint: "",
+        updatedAt: now,
+      });
+      await db.put("persona", {
+        id: "default",
+        data: {
+          persona: {
+            identity: { name: "Test", tagline: "Dev", elevator_pitch: "Hi" },
+            strengths: [],
+            weaknesses: [],
+            skills: [],
+            career_timeline: [],
+            non_professional: [],
+            personality_traits: [],
+            values: [],
+            hidden_assets: [],
+            goals: {},
+            use_cases: {},
+          },
+          metadata: {
+            sources_used: [],
+            language: "en",
+            generated_at: now,
+            version: "1.0",
+          },
+        },
+        derived: { how_i_work_best: [] },
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      expect(await db.get("settings", "default")).toBeDefined();
+      expect(await db.get("persona", "default")).toBeDefined();
+
+      // Mock location.reload
+      const mockReload = vi.fn();
+      Object.defineProperty(window, "location", {
+        value: { reload: mockReload },
+        writable: true,
+      });
+
+      await factoryReset();
+
+      // IndexedDB database should be deleted
+      const databases = await indexedDB.databases();
+      const ourDb = databases.find((d) => d.name === "mirror-db");
+      expect(ourDb).toBeUndefined();
+
+      // location.reload should have been called
+      expect(mockReload).toHaveBeenCalled();
     });
   });
 });

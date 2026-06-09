@@ -16,7 +16,7 @@ import { wipeIndexedDBDatabase } from "../db/schema";
 import { clearApiKey } from "./keyStore";
 import { usePersonaStore } from "../stores/personaStore";
 import { useInterviewStore } from "../stores/interviewStore";
-import { useSettingsStore } from "../stores/settingsStore.ts.old";
+import { useMirrorStore } from "../stores/mirror";
 import { useLicenseStore } from "../stores/licenseStore";
 import { logger } from "../logger";
 
@@ -35,7 +35,7 @@ export async function wipePersonaData(): Promise<void> {
  */
 export async function wipeAiProvider(): Promise<void> {
   await clearApiKey();
-  await useSettingsStore().clear();
+  await useMirrorStore().clearLLMConfig();
 }
 
 /**

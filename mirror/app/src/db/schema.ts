@@ -1,17 +1,17 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 import type { StoredPersona } from "../types/persona";
-import type { Provider } from "../llm/types";
+import type { ProviderKind } from "@nc-750/llm-ts";
 import type { LicenseRecord } from "../types/license";
 import type { CoverageMap, ProbeSignal, FacetKey } from "../types/interview";
 
-export type { Provider };
+export type { ProviderKind as Provider };
 export type { LicenseRecord };
 
 export interface SettingsRecord {
   id: "default";
-  provider: Provider;
+  provider: ProviderKind;
   model: string;
-  apiKey: string;
+  apiKey?: string;
   endpoint?: string;
   debugEnabled?: boolean;
   updatedAt: string;

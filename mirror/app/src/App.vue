@@ -1,46 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 
 import { ChassisHeader, ChassisFooter } from "@nc-750/lab-vue";
-// import AppShell from "./components/layout/AppShell.vue";
-// import InterviewInstrument from "./components/interview/InterviewInstrument.vue";
-// import InsightView from "./components/insight/InsightView.vue";
-// import ProfileView from "./components/profile/ProfileView.vue";
-// import PrivacyView from "./components/privacy/PrivacyView.vue";
-// import { useSettingsStore } from "./stores/settingsStore";
-// import { usePersonaStore } from "./stores/personaStore";
-// import { useInterviewStore } from "./stores/interviewStore";
-// import { useLicenseStore } from "./stores/licenseStore";
-// import { useLogStore } from "./stores/logStore";
-// import { setDebugEnabled } from "./logger";
+import { useMirrorStore } from "./stores/mirror";
 
-// type Section = "interview" | "insight" | "profile" | "privacy";
+const mirrorStore = useMirrorStore();
 
-// const section = ref<Section>("interview");
-
-// const settingsStore = useSettingsStore();
-// const personaStore = usePersonaStore();
-// const interviewStore = useInterviewStore();
-// const licenseStore = useLicenseStore();
-// const logStore = useLogStore();
-
-// // Load all persistent state on mount
-// onMounted(() => {
-//   Promise.all([settingsStore.load(), personaStore.load(), interviewStore.load(), licenseStore.load()]).then(() => {
-//     // Sync persisted debug toggle to the logger and log store
-//     const debugEnabled = settingsStore.debugEnabled;
-//     logStore.setDebugEnabled(debugEnabled);
-//     setDebugEnabled(debugEnabled);
-//   });
-// });
-
-// function handleInterviewComplete(target: "insight" | "profile") {
-//   section.value = target;
-// }
-
-// function openPrivacy() {
-//   section.value = "privacy";
-// }
+onMounted(() => {
+  mirrorStore.loadSettings();
+});
 </script>
 
 <template>
@@ -48,4 +16,3 @@ import { ChassisHeader, ChassisFooter } from "@nc-750/lab-vue";
       <RouterView /> 
     <ChassisFooter title="NC-750 // MIRROR // NODE-0M"/>
 </template>
-``
