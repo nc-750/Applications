@@ -12,6 +12,7 @@ import { useMirrorStore } from "../stores/mirror";
 import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
 import { factoryReset } from "../lib/wipe";
+import { downloadFile } from "../lib/utils";
 
 const mirrorStore = useMirrorStore();
 
@@ -100,20 +101,29 @@ function onAIProviderSelected() {
 // Import / Export persona
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
-function handleImportPersona(e: Event) {
+async function handleImportPersona(e: Event) {
     const target = e.target as HTMLInputElement;
     if (target.files?.length) {
-        // TODO Phase 2: personaStore.importFromJSON
+        try {
+            const text = await target.files[0].text();
+            await mirrorStore.importPersonaFromJSON(text);
+        } catch (err) {
+            testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
+        }
         target.value = "";
     }
 }
 
 function handleExportPersona() {
-    // TODO Phase 2
+    const p = mirrorStore.persona;
+    if (!p) return;
+    const json = JSON.stringify(p.data, null, 2);
+    const name = p.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() || "mirror";
+    downloadFile(json, `${name}-mirror.json`, "application/json");
 }
 
-function handleDeletePersona() {
-    // TODO Phase 2
+async function handleDeletePersona() {
+    await mirrorStore.clearPersona();
 }
 
 async function handleClearLLMConfig() {
@@ -150,7 +160,7 @@ async function handleClearLLMConfig() {
                     <Button variant="secondary" :disabled="testing" @click="testConnectionHandler">{{ testing ? 'Testing...' : 'Test Connection' }}</Button>
                     <Button variant="accent" submit :disabled="!localConfig.provider || !localConfig.model || !localConfig.apiKey">Save</Button>
                 </div>
-                <Button variant="ghost">Read the privacy details →</Button>
+                <router-link to="/privacy" class="nc-btn nc-btn--ghost">Read the privacy details →</router-link>
             </Form>
         </Cell>
         <Cell title="DATA" spec="CFG // 0x02">

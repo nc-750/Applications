@@ -7,6 +7,7 @@
 // (app.css media queries) only; the readout's `minimal` prop is the sole
 // form-factor branch.
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import { Loader2 } from "lucide-vue-next";
 import { Band, CellHead } from "lab-vue";
 import DataInputStep from "./DataInputStep.vue";
@@ -24,16 +25,17 @@ import { prepareInputBrief } from "../../skills/dataDigest";
 import { logger } from "../../logger";
 import type { PersonaJSON } from "../../types/persona";
 
-const emit = defineEmits<{ complete: [section: "insight" | "profile"]; openPrivacy: [] }>();
-
 const mirrorStore = useMirrorStore();
+const router = useRouter();
 const interviewApi = useInterview(mirrorStore);
 
 const showDataInput = ref(false);
 const isDigesting = ref(false);
+const digestError = ref("");
 // Set true when the user asks to keep going past conclusion (shows a probe
 // again instead of the conclude state, until the next answer).
 const keepGoing = ref(false);
+const showRestartConfirm = ref(false);
 let synthAbort: AbortController | null = null;
 
 const isMobile = ref(false);
@@ -85,7 +87,7 @@ async function handleDataContinue(rawData: string, inputText: string, fileNames:
     ({ brief, wasDigested } = await prepareInputBrief(rawData, llm));
   } catch (e) {
     isDigesting.value = false;
-    alert(`Could not analyze your input: ${e instanceof Error ? e.message : "Failed to analyze input data"}`);
+    digestError.value = `Could not analyze your input: ${e instanceof Error ? e.message : "Failed to analyze input data"}`;
     showDataInput.value = true;
     return;
   }
@@ -157,18 +159,29 @@ function handleAbort() {
   synthAbort?.abort();
 }
 
-async function handleRestart() {
-  if (confirm("Clear the interview and start over?")) {
-    keepGoing.value = false;
-    await mirrorStore.clearInterview();
-  }
+function handleRestart() {
+  showRestartConfirm.value = true;
+}
+
+async function confirmRestart() {
+  showRestartConfirm.value = false;
+  keepGoing.value = false;
+  await mirrorStore.clearInterview();
+}
+
+function cancelRestart() {
+  showRestartConfirm.value = false;
 }
 </script>
 
 <template>
   <Band>
     <!-- Pre-interview flows are full-width (no chassis) -->
-  <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
+    <div v-if="digestError" role="alert" class="mr-digest-error">
+      <p class="nc-text-sm">{{ digestError }}</p>
+      <button class="nc-btn nc-btn--ghost nc-btn--sm" @click="digestError = ''">Dismiss</button>
+    </div>
+    <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
 
   <div v-else-if="isDigesting" class="mr-digesting">
     <Loader2 :size="24" class="animate-spin mr-digesting__spinner" />
@@ -177,6 +190,15 @@ async function handleRestart() {
 
   <!-- The instrument (bands fill the shell's content area) -->
   <div v-else class="mr-interview">
+    <!-- Restart confirmation bar -->
+    <div v-if="showRestartConfirm" class="mr-restart-confirm">
+      <p class="nc-text-sm">Clear the interview and start over?</p>
+      <div class="mr-restart-confirm__actions">
+        <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
+        <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+      </div>
+    </div>
+
     <!-- Working band: readout + probe -->
     <div class="nc-band mr-band-work">
       <section class="nc-cell mr-cell-readout">
@@ -204,8 +226,8 @@ async function handleRestart() {
             :persona-name="mirrorStore.persona?.data.persona.identity.name"
             :error-message="interview?.synthesisError"
             :synthesis-phase="mirrorStore.synthesisPhase"
-            @go-insight="emit('complete', 'insight')"
-            @go-profile="emit('complete', 'profile')"
+            @go-insight="router.push('/insight')"
+            @go-profile="router.push('/profile')"
             @retry="runSynthesis"
             @restart="handleRestart"
           />
@@ -311,6 +333,38 @@ async function handleRestart() {
     color: var(--nc-accent);
 }
 
+/* Digest error alert */
+.mr-digest-error {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--nc-space-3);
+    padding: var(--nc-space-3) var(--nc-space-4);
+    margin: var(--nc-space-4) var(--nc-space-4) 0;
+    background: var(--nc-panel-1);
+    border: var(--nc-border-width) solid var(--nc-error);
+    border-radius: var(--nc-radius-md);
+    color: var(--nc-error);
+}
+
+/* Restart confirmation bar */
+.mr-restart-confirm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nc-space-4);
+    padding: var(--nc-space-3) var(--nc-space-4);
+    background: var(--nc-panel-1);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    border-radius: var(--nc-radius-md);
+    color: var(--nc-ink);
+}
+.mr-restart-confirm__actions {
+    display: flex;
+    gap: var(--nc-space-2);
+    flex-shrink: 0;
+}
+
 /* Mobile responsive rules */
 @media (max-width: 640px) {
     .mr-band-work > .mr-cell-readout {
@@ -321,6 +375,10 @@ async function handleRestart() {
     }
     .mr-band-log {
         max-height: 40%;
+    }
+    .mr-restart-confirm {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 </style>

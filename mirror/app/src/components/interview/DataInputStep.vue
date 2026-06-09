@@ -340,6 +340,11 @@ function fileIconColorClass(name: string): string {
   color: var(--nc-accent-ink);
 }
 
+.data-input__attach-btn:focus-visible {
+  outline: 2px solid var(--nc-accent);
+  outline-offset: 2px;
+}
+
 /* ── Extracting indicator ── */
 .data-input__extracting {
   gap: var(--nc-space-2);

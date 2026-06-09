@@ -1,4 +1,11 @@
 <script setup lang="ts">
+/**
+ * LOGVIEWER STYLE EXEMPTION (Phase 6 policy rule 3):
+ * This debug/developer component uses :style bindings for rapid prototyping.
+ * It is not user-facing and is exempt from the zero-inline-styles policy.
+ * If this component ever becomes user-facing, all :style bindings must be
+ * migrated to scoped CSS classes.
+ */
 import { ref, computed } from "vue";
 import { useMirrorStore } from "../stores/mirror";
 import type { LogLevel } from "./types";

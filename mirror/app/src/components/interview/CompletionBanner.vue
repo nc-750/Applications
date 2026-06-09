@@ -41,6 +41,7 @@ const phaseDetail = computed(
   <div
     v-if="status === 'error'"
     class="flex flex-col items-center justify-center text-center banner__error"
+    role="alert"
   >
     <AlertTriangle :size="32" class="banner__icon" aria-hidden="true" />
     <div>
@@ -67,7 +68,7 @@ const phaseDetail = computed(
     class="flex flex-col items-center justify-center text-center banner__synthesizing"
   >
     <Loader2 :size="32" class="animate-spin banner__icon" aria-hidden="true" />
-    <div>
+    <div aria-live="polite" aria-atomic="true">
       <p class="nc-text-md nc-font-semibold banner__title">{{ phaseLabel }}</p>
       <p class="nc-text-sm nc-text-secondary banner__detail">{{ phaseDetail }}</p>
     </div>
@@ -158,5 +159,10 @@ const phaseDetail = computed(
   background: none;
   border: none;
   cursor: pointer;
+}
+
+.banner__restart:focus-visible {
+  outline: 2px solid var(--nc-accent);
+  outline-offset: 2px;
 }
 </style>

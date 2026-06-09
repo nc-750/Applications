@@ -195,6 +195,7 @@ const hasUseCases = computed(() => {
             <span class="nc-text-xs nc-text-muted">{{ trait.position }} / 10</span>
           </div>
           <div class="personality-bar">
+            <!-- :style justified (Phase 6 policy rule 2): dynamic bar width from continuous 0-10 trait position -->
             <div
               class="personality-bar__fill"
               :style="{ width: `${trait.position * 10}%` }"

@@ -10,10 +10,15 @@
         />
         <!--
       CSP mirrors src-tauri/tauri.conf.json for the PWA build.
-      The trailing https: in connect-src exists because the openai-compatible
-      provider takes a user-supplied endpoint that isn't known at build time.
-      TODO (Phase 4B follow-up): generate this CSP at app launch from saved
-      settings so connect-src can be pinned to the active endpoint only.
+
+      The trailing https: in connect-src permits any user-configured endpoint
+      for the openai-compatible provider. This is an accepted limitation
+      (ETHOS C3.5): no build-time CSP can enumerate arbitrary user-supplied
+      endpoints. For a Tauri desktop build the three known provider domains
+      are listed explicitly, and the broad https: serves only the PWA case.
+
+      Long-term: generate this CSP meta tag at runtime after settings load,
+      pinning connect-src to the single configured endpoint + known providers.
     -->
         <meta
             http-equiv="Content-Security-Policy"

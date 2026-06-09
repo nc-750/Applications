@@ -39,49 +39,4 @@ body,
     background: var(--nc-ink-3);
 }
 
-/* ── AppShell: the chassis fills the field; content area holds the view ────── */
-.mr-shell {
-    height: 100vh;
-    overflow: hidden;
-}
-.mr-shell__chassis {
-    height: 100%;
-    min-height: 0;
-}
-.mr-shell__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--nc-space-3) var(--nc-space-4);
-}
-.mr-shell__brand {
-    display: flex;
-    align-items: center;
-    gap: var(--nc-space-3);
-}
-.mr-shell__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--nc-radius-md);
-    background: var(--nc-metal-key);
-    border: var(--nc-border-width) solid var(--nc-line-strong);
-    box-shadow: var(--nc-edge-raised);
-}
-.mr-shell__nav {
-    margin: 0 auto;
-}
-/* The content area sits between the header and status bands and grows to fill.
-   Interview bands (seam-fill bg) render directly inside; other views sit on the
-   panel surface. */
-.mr-shell__content {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: var(--nc-panel);
-}
 

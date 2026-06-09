@@ -53,9 +53,9 @@ const primaryButton = {
                 <p class="nc-text-xs nc-text-muted mb-2">
                     Your messages are sent to your AI provider.
                 </p>
-                <button class="nc-btn nc-btn--ghost w-fit">
+                <router-link to="/privacy" class="nc-btn nc-btn--ghost w-fit">
                     Read the privacy details →
-                </button>
+                </router-link>
             </div>
         </Cell>
     </Band>

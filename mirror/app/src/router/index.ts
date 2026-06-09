@@ -2,11 +2,15 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import InterviewPage from "@/pages/InterviewPage.vue";
 import InsightPage from "@/pages/InsightPage.vue";
+import PrivacyPage from "@/pages/PrivacyPage.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
 import SettingsPage from "@/pages/SettingsPage.vue";
 import WelcomePage from "@/pages/WelcomePage.vue";
 
 const Router = createRouter({
+  scrollBehavior() {
+    return { top: 0 };
+  },
   history: createWebHistory(),
   routes: [
     {
@@ -33,8 +37,21 @@ const Router = createRouter({
       path: "/settings",
       name: "settings",
       component: SettingsPage
+    },
+    {
+      path: "/privacy",
+      name: "privacy",
+      component: PrivacyPage
     }
   ]
 })
+
+Router.afterEach(() => {
+  // Focus the main content area after navigation for screen readers (WCAG 2.4.3)
+  const mainEl = document.getElementById("main-content");
+  if (mainEl) {
+    mainEl.focus({ preventScroll: true });
+  }
+});
 
 export default Router;
