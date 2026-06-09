@@ -36,3 +36,28 @@ const emit = defineEmits<{ generate: []; continue: [] }>();
     <p v-if="busy && phase" class="nc-label mr-conclude__phase">{{ phase }}…</p>
   </div>
 </template>
+
+<style scoped>
+.mr-conclude {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-3);
+}
+.mr-conclude__q {
+    margin: var(--nc-space-2) 0 0;
+}
+.mr-conclude__note {
+    color: var(--nc-ink-2);
+    max-width: 56ch;
+}
+.mr-conclude__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nc-space-3);
+    margin-top: var(--nc-space-3);
+}
+.mr-conclude__phase {
+    color: var(--nc-ink-3);
+    margin-top: var(--nc-space-2);
+}
+</style>

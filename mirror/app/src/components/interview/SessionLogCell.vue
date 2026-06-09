@@ -36,3 +36,9 @@ const entries = computed(() => {
   <SessionLog v-if="entries.length" :entries="entries" />
   <p v-else class="nc-label mr-log-empty">— NO ENTRIES —</p>
 </template>
+
+<style scoped>
+.mr-log-empty {
+    color: var(--nc-ink-faint);
+}
+</style>

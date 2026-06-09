@@ -145,10 +145,10 @@ export function buildProbePrompt(opts: ProbePromptOptions): string {
   const guide = FACET_PROBE_GUIDE[facet];
 
   const opening = isFirst
-    ? `This is the FIRST probe. Open with a brief warm summary of what you already understood from the data (1–2 sentences), then ask your single question.`
+    ? `This is the FIRST probe. Ask your single opening question directly — no preamble or summary needed.`
     : action === "follow_up"
-      ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. Acknowledge their answer in one short line, then ask one sharper follow-up.`
-      : `Move on to the "${facetMeta?.label}" facet. Acknowledge the last answer in one short line, then ask your single new question.`;
+      ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. If a bridge is helpful, use ≤10 words. Never repeat their answer back. The question is the primary output.`
+      : `Move on to the "${facetMeta?.label}" facet. If a bridge is helpful, use ≤10 words. Never repeat their answer back. The question is the primary output.`;
 
   return `${philosophyIntro()}
 

@@ -60,3 +60,40 @@ function submit() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.mr-probe {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+    height: 100%;
+    min-height: 0;
+}
+.mr-probe__q {
+    margin: 0;
+}
+.mr-probe__caret {
+    color: var(--nc-accent);
+    margin-left: 2px;
+}
+.mr-probe__input {
+    flex: 1 1 auto;
+    min-height: 120px;
+    resize: none;
+}
+.mr-probe__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nc-space-3);
+}
+.mr-probe__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--nc-panel) 92%, transparent);
+}
+</style>

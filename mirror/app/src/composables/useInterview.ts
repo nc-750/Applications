@@ -164,11 +164,28 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
       return;
     }
 
+    const STREAM_STALL_MS = 30_000;
     let acc = "";
+    let stallTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const clearStallTimer = () => {
+      if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
+    };
+
     try {
+      // Start the stall timer — if no chunk arrives within STREAM_STALL_MS,
+      // append an ellipsis to show the model is still thinking.
+      stallTimer = setTimeout(() => {
+        mirrorStore.setStreaming(acc + "\n\n…");
+      }, STREAM_STALL_MS);
+
       for await (const chunk of streamResult.value) {
+        clearStallTimer();
         acc += chunk;
         mirrorStore.setStreaming(acc);
+        stallTimer = setTimeout(() => {
+          mirrorStore.setStreaming(acc + "\n\n…");
+        }, STREAM_STALL_MS);
       }
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
@@ -182,6 +199,7 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
         return;
       }
     } finally {
+      clearStallTimer();
       abortRef = null;
       mirrorStore.setThinking(false);
     }

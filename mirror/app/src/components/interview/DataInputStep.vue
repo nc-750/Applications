@@ -92,67 +92,66 @@ function fileIconFor(name: string): { icon: Component; color: string } {
   if (lower.endsWith(".json")) return { icon: FileCode, color: "var(--nc-ink-2)" };
   return { icon: FileText, color: "var(--nc-ink-3)" };
 }
+
+/** Maps a file name to a scoped CSS class for its icon colour. */
+function fileIconColorClass(name: string): string {
+  const lower = name.toLowerCase();
+  if (lower.endsWith(".pdf")) return "data-input__file-icon--pdf";
+  if (lower.endsWith(".html") || lower.endsWith(".htm")) return "data-input__file-icon--html";
+  if (lower.endsWith(".md") || lower.endsWith(".markdown")) return "data-input__file-icon--md";
+  if (lower.endsWith(".json")) return "data-input__file-icon--json";
+  return "data-input__file-icon--default";
+}
 </script>
 
 <template>
   <div
-    class="relative flex flex-col h-full"
-    :style="{ padding: 'var(--nc-space-8) var(--nc-space-6)', maxWidth: '42rem', margin: '0 auto', width: '100%' }"
+    class="data-input__container relative flex flex-col h-full max-w-2xl mx-auto w-full"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
-    <h2 class="nc-heading-4" :style="{ marginBottom: 'var(--nc-space-2)' }">Share your background (optional)</h2>
-    <p
-      class="nc-text-sm nc-text-secondary"
-      :style="{ marginBottom: 'var(--nc-space-5)', lineHeight: 'var(--nc-leading-relaxed)' }"
-    >
+    <h2 class="data-input__title nc-heading-4">Share your background (optional)</h2>
+    <p class="data-input__description nc-text-sm nc-text-secondary">
       Paste text or upload files — CV, LinkedIn export, portfolio, anything that describes you. The more context you
       share, the more targeted the interview questions will be.
     </p>
 
     <!-- Drag-over overlay -->
-    <div v-if="dragging" class="absolute inset-0 z-10 flex items-center justify-center" style="background: rgba(0,0,0,0.05); border: 2px dashed var(--nc-accent); border-radius: var(--nc-radius-md);">
-      <p class="nc-text-md nc-font-medium" :style="{ color: 'var(--nc-accent)' }">Drop files here</p>
+    <div
+      v-if="dragging"
+      class="data-input__overlay absolute inset-0 z-10 flex items-center justify-center bg-black/5"
+    >
+      <p class="data-input__overlay-text nc-text-md font-medium">Drop files here</p>
     </div>
 
     <!-- Textarea -->
     <textarea
       v-model="text"
       placeholder="Paste your CV, LinkedIn About, or a short description here…"
-      class="nc-textarea"
-      :style="{ minHeight: '160px', resize: 'none' }"
+      class="data-input__textarea nc-textarea resize-none"
     />
 
     <!-- Attached files -->
-    <ul v-if="attached.length > 0" class="flex flex-col" :style="{ marginTop: 'var(--nc-space-3)', gap: 'var(--nc-space-2)' }">
+    <ul v-if="attached.length > 0" class="data-input__file-list flex flex-col">
       <li
         v-for="a in attached"
         :key="a.name"
-        class="flex items-center"
-        :style="{
-          gap: 'var(--nc-space-3)',
-          padding: 'var(--nc-space-2) var(--nc-space-3)',
-          backgroundColor: 'var(--nc-panel-2)',
-          border: 'var(--nc-border-width) solid var(--nc-line)',
-          borderRadius: 'var(--nc-radius-md)',
-          fontSize: 'var(--nc-text-sm)',
-        }"
+        class="data-input__file-item flex items-center"
       >
         <component
           :is="fileIconFor(a.name).icon"
           :size="14"
           class="shrink-0"
-          :style="{ color: fileIconFor(a.name).color }"
+          :class="fileIconColorClass(a.name)"
           aria-hidden="true"
         />
-        <span class="flex-1 truncate" :style="{ color: 'var(--nc-ink)' }">{{ a.name }}</span>
+        <span class="data-input__file-name flex-1 truncate">{{ a.name }}</span>
         <span class="nc-text-xs nc-text-muted shrink-0">{{ Math.round(a.text.length / 100) / 10 }} KB text</span>
         <button
-          title="Remove"
+          :title="`Remove ${a.name}`"
           :aria-label="`Remove ${a.name}`"
-          :style="{ color: 'var(--nc-ink-3)', marginLeft: 'var(--nc-space-1)' }"
-          class="nc-btn nc-btn--ghost nc-btn--icon nc-btn--sm"
+          class="data-input__file-remove nc-btn nc-btn--ghost nc-btn--icon nc-btn--sm"
           @click="removeAttachment(a.name)"
         >
           <X :size="14" aria-hidden="true" />
@@ -160,23 +159,20 @@ function fileIconFor(name: string): { icon: Component; color: string } {
       </li>
     </ul>
 
-    <p v-if="combined.length > 0" class="nc-text-xs nc-text-muted" :style="{ marginTop: 'var(--nc-space-2)' }">
+    <p v-if="combined.length > 0" class="data-input__token-info nc-text-xs nc-text-muted">
       ~{{ estimatedTokens.toLocaleString() }} estimated tokens
-      <span v-if="isOverBudget" :style="{ color: 'var(--nc-warning)', marginLeft: 'var(--nc-space-1)' }"
-        >(will be condensed)</span
-      >
+      <span v-if="isOverBudget" class="data-input__token-warning">(will be condensed)</span>
     </p>
 
     <!-- Error -->
-    <p v-if="extractError" class="nc-text-xs" :style="{ color: 'var(--nc-error)', marginTop: 'var(--nc-space-2)' }">
+    <p v-if="extractError" class="data-input__error nc-text-xs">
       {{ extractError }}
     </p>
 
     <!-- Attach link -->
     <button
       v-if="!attached.length && !extracting"
-      class="nc-text-sm"
-      style="display: flex; align-items: center; gap: var(--nc-space-2); margin-top: var(--nc-space-3); align-self: flex-start; color: var(--nc-accent-ink); background: none; border: none; cursor: pointer;"
+      class="data-input__attach-btn nc-text-sm flex items-center self-start cursor-pointer bg-transparent border-0"
       @click="fileInputRef?.click()"
     >
       <Paperclip :size="14" aria-hidden="true" />
@@ -186,8 +182,7 @@ function fileIconFor(name: string): { icon: Component; color: string } {
     <!-- Extracting -->
     <div
       v-if="extracting"
-      class="flex items-center"
-      :style="{ gap: 'var(--nc-space-2)', marginTop: 'var(--nc-space-3)', fontSize: 'var(--nc-text-sm)', color: 'var(--nc-ink-2)' }"
+      class="data-input__extracting flex items-center"
     >
       <Loader2 :size="14" class="animate-spin" aria-hidden="true" />
       Extracting text…
@@ -196,8 +191,7 @@ function fileIconFor(name: string): { icon: Component; color: string } {
     <!-- Add more -->
     <button
       v-if="attached.length > 0 && !extracting"
-      class="nc-text-sm"
-      style="display: flex; align-items: center; gap: var(--nc-space-2); margin-top: var(--nc-space-3); align-self: flex-start; color: var(--nc-accent-ink); background: none; border: none; cursor: pointer;"
+      class="data-input__attach-btn nc-text-sm flex items-center self-start cursor-pointer bg-transparent border-0"
       @click="fileInputRef?.click()"
     >
       <Paperclip :size="14" aria-hidden="true" />
@@ -209,37 +203,34 @@ function fileIconFor(name: string): { icon: Component; color: string } {
       type="file"
       :accept="ACCEPT_STRING"
       multiple
-      :style="{ display: 'none' }"
+      class="hidden"
       @change="handleFileInput"
     />
 
     <div
       v-if="isOverBudget"
-      class="nc-alert nc-alert--warning"
-      :style="{ marginTop: 'var(--nc-space-4)', fontSize: 'var(--nc-text-xs)' }"
+      class="data-input__alert nc-alert nc-alert--warning"
     >
-      <span :style="{ fontWeight: 'var(--nc-font-medium)', color: 'var(--nc-warning)' }">Large input detected.</span>
+      <span class="data-input__alert-title font-medium">Large input detected.</span>
       Your data ({{ Math.round(combined.length / 1024) }} KB) exceeds the direct-context budget. The app will run a
-      <span :style="{ fontWeight: 'var(--nc-font-medium)' }">{{ chunkCount }}-pass analysis</span> using your configured
+      <span class="font-medium">{{ chunkCount }}-pass analysis</span> using your configured
       model before the interview starts. This preserves full detail but makes {{ chunkCount }} extra API call{{
         chunkCount !== 1 ? "s" : ""
       }}. You can trim or remove files to skip this step.
     </div>
 
     <!-- Actions -->
-    <div class="flex" style="gap: var(--nc-space-3); margin-top: var(--nc-space-6);">
+    <div class="data-input__actions flex">
       <button
         :disabled="!hasContent || extracting"
-        class="nc-btn nc-btn--accent"
-        :style="{ gap: 'var(--nc-space-2)' }"
+        class="data-input__action-btn nc-btn nc-btn--accent"
         @click="handleContinue"
       >
         <ArrowRight :size="15" aria-hidden="true" />
         Start interview
       </button>
       <button
-        class="nc-btn nc-btn--secondary"
-        :style="{ gap: 'var(--nc-space-2)' }"
+        class="data-input__action-btn nc-btn nc-btn--secondary"
         @click="emit('continue', '', '', [])"
       >
         <SkipForward :size="15" aria-hidden="true" />
@@ -248,3 +239,132 @@ function fileIconFor(name: string): { icon: Component; color: string } {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* ── Container ── */
+.data-input__container {
+  padding: var(--nc-space-8) var(--nc-space-6);
+}
+
+/* ── Title ── */
+.data-input__title {
+  margin-bottom: var(--nc-space-2);
+}
+
+/* ── Description ── */
+.data-input__description {
+  margin-bottom: var(--nc-space-5);
+  line-height: var(--nc-leading-relaxed);
+}
+
+/* ── Drag overlay ── */
+.data-input__overlay {
+  border: 2px dashed var(--nc-accent);
+  border-radius: var(--nc-radius-md);
+}
+
+.data-input__overlay-text {
+  color: var(--nc-accent);
+}
+
+/* ── Textarea ── */
+.data-input__textarea {
+  min-height: 160px;
+}
+
+/* ── File list ── */
+.data-input__file-list {
+  margin-top: var(--nc-space-3);
+  gap: var(--nc-space-2);
+}
+
+.data-input__file-item {
+  gap: var(--nc-space-3);
+  padding: var(--nc-space-2) var(--nc-space-3);
+  background-color: var(--nc-panel-2);
+  border: var(--nc-border-width) solid var(--nc-line);
+  border-radius: var(--nc-radius-md);
+  font-size: var(--nc-text-sm);
+}
+
+/* Icon colours per file type */
+.data-input__file-icon--pdf {
+  color: var(--nc-error);
+}
+
+.data-input__file-icon--html {
+  color: var(--nc-accent);
+}
+
+.data-input__file-icon--md {
+  color: var(--nc-ink-2);
+}
+
+.data-input__file-icon--json {
+  color: var(--nc-ink-2);
+}
+
+.data-input__file-icon--default {
+  color: var(--nc-ink-3);
+}
+
+.data-input__file-name {
+  color: var(--nc-ink);
+}
+
+.data-input__file-remove {
+  color: var(--nc-ink-3);
+  margin-left: var(--nc-space-1);
+}
+
+/* ── Token info ── */
+.data-input__token-info {
+  margin-top: var(--nc-space-2);
+}
+
+.data-input__token-warning {
+  color: var(--nc-warning);
+  margin-left: var(--nc-space-1);
+}
+
+/* ── Error ── */
+.data-input__error {
+  color: var(--nc-error);
+  margin-top: var(--nc-space-2);
+}
+
+/* ── Attach / Add-more button ── */
+.data-input__attach-btn {
+  gap: var(--nc-space-2);
+  margin-top: var(--nc-space-3);
+  color: var(--nc-accent-ink);
+}
+
+/* ── Extracting indicator ── */
+.data-input__extracting {
+  gap: var(--nc-space-2);
+  margin-top: var(--nc-space-3);
+  font-size: var(--nc-text-sm);
+  color: var(--nc-ink-2);
+}
+
+/* ── Alert ── */
+.data-input__alert {
+  margin-top: var(--nc-space-4);
+  font-size: var(--nc-text-xs);
+}
+
+.data-input__alert-title {
+  color: var(--nc-warning);
+}
+
+/* ── Actions ── */
+.data-input__actions {
+  gap: var(--nc-space-3);
+  margin-top: var(--nc-space-6);
+}
+
+.data-input__action-btn {
+  gap: var(--nc-space-2);
+}
+</style>

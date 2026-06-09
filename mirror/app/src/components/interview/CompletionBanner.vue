@@ -40,26 +40,22 @@ const phaseDetail = computed(
   <!-- Error -->
   <div
     v-if="status === 'error'"
-    class="flex flex-col items-center justify-center"
-    :style="{ gap: 'var(--nc-space-5)', padding: 'var(--nc-space-12) 0', textAlign: 'center', paddingLeft: 'var(--nc-space-6)', paddingRight: 'var(--nc-space-6)' }"
+    class="flex flex-col items-center justify-center text-center banner__error"
   >
-    <AlertTriangle :size="32" :style="{ color: 'var(--nc-accent)' }" aria-hidden="true" />
+    <AlertTriangle :size="32" class="banner__icon" aria-hidden="true" />
     <div>
-      <p class="nc-text-md nc-font-semibold" :style="{ color: 'var(--nc-ink)' }">Couldn't build your profile</p>
-      <p
-        class="nc-text-sm nc-text-secondary"
-        :style="{ marginTop: 'var(--nc-space-2)', maxWidth: '24rem', lineHeight: 'var(--nc-leading-relaxed)' }"
-      >
+      <p class="nc-text-md nc-font-semibold banner__title">Couldn't build your profile</p>
+      <p class="nc-text-sm nc-text-secondary max-w-sm banner__subtitle">
         {{ errorMessage ? `Synthesis failed — ${errorMessage}` : "Something went wrong while building your profile." }}
         Your interview answers are saved, so you can try again.
       </p>
     </div>
-    <div class="flex flex-col" :style="{ gap: 'var(--nc-space-3)' }">
-      <button class="nc-btn nc-btn--accent" :style="{ justifyContent: 'center' }" @click="emit('retry')">
+    <div class="flex flex-col banner__actions">
+      <button class="nc-btn nc-btn--accent justify-center" @click="emit('retry')">
         <RotateCcw :size="15" aria-hidden="true" />
         Try again
       </button>
-      <button class="nc-btn nc-btn--secondary" :style="{ justifyContent: 'center' }" @click="emit('restart')">
+      <button class="nc-btn nc-btn--secondary justify-center" @click="emit('restart')">
         Start over
       </button>
     </div>
@@ -68,53 +64,99 @@ const phaseDetail = computed(
   <!-- Synthesizing -->
   <div
     v-else-if="status === 'synthesizing'"
-    class="flex flex-col items-center justify-center"
-    :style="{ gap: 'var(--nc-space-4)', padding: 'var(--nc-space-12) 0', textAlign: 'center' }"
+    class="flex flex-col items-center justify-center text-center banner__synthesizing"
   >
-    <Loader2 :size="32" class="animate-spin" :style="{ color: 'var(--nc-accent)' }" aria-hidden="true" />
+    <Loader2 :size="32" class="animate-spin banner__icon" aria-hidden="true" />
     <div>
-      <p class="nc-text-md nc-font-semibold" :style="{ color: 'var(--nc-ink)' }">{{ phaseLabel }}</p>
-      <p class="nc-text-sm nc-text-secondary" :style="{ marginTop: 'var(--nc-space-1)' }">{{ phaseDetail }}</p>
+      <p class="nc-text-md nc-font-semibold banner__title">{{ phaseLabel }}</p>
+      <p class="nc-text-sm nc-text-secondary banner__detail">{{ phaseDetail }}</p>
     </div>
   </div>
 
   <!-- Completed -->
   <div
     v-else
-    class="flex flex-col items-center justify-center"
-    :style="{ gap: 'var(--nc-space-6)', padding: 'var(--nc-space-12) 0', textAlign: 'center', paddingLeft: 'var(--nc-space-6)', paddingRight: 'var(--nc-space-6)' }"
+    class="flex flex-col items-center justify-center text-center banner__completed"
   >
-    <CheckCircle :size="36" :style="{ color: 'var(--nc-accent)' }" aria-hidden="true" />
+    <CheckCircle :size="36" class="banner__icon" aria-hidden="true" />
 
     <div>
-      <p class="nc-text-lg nc-font-semibold" :style="{ color: 'var(--nc-ink)' }">
+      <p class="nc-text-lg nc-font-semibold banner__title">
         {{ personaName ? `${personaName}'s mirror is ready` : "Mirror ready" }}
       </p>
-      <p
-        class="nc-text-sm nc-text-secondary"
-        :style="{ marginTop: 'var(--nc-space-2)', maxWidth: '24rem', lineHeight: 'var(--nc-leading-relaxed)' }"
-      >
+      <p class="nc-text-sm nc-text-secondary max-w-sm banner__subtitle">
         Your interview is complete. View your private insight document or your public profile.
       </p>
     </div>
 
-    <div class="flex flex-col" :style="{ gap: 'var(--nc-space-3)' }">
-      <button class="nc-btn nc-btn--accent" :style="{ justifyContent: 'center' }" @click="emit('goInsight')">
+    <div class="flex flex-col banner__actions">
+      <button class="nc-btn nc-btn--accent justify-center" @click="emit('goInsight')">
         <User :size="15" aria-hidden="true" />
         View Insight
       </button>
-      <button class="nc-btn nc-btn--secondary" :style="{ justifyContent: 'center' }" @click="emit('goProfile')">
+      <button class="nc-btn nc-btn--secondary justify-center" @click="emit('goProfile')">
         <Globe :size="15" aria-hidden="true" />
         View Profile
       </button>
     </div>
 
-    <button
-      style="display: flex; align-items: center; gap: var(--nc-space-1); font-size: var(--nc-text-xs); margin-top: var(--nc-space-1); color: var(--nc-accent-ink); background: none; border: none; cursor: pointer;"
-      @click="emit('restart')"
-    >
+    <button class="banner__restart" @click="emit('restart')">
       <RotateCcw :size="12" aria-hidden="true" />
       Start new interview
     </button>
   </div>
 </template>
+
+<style scoped>
+.banner__error {
+  gap: var(--nc-space-5);
+  padding: var(--nc-space-12) 0;
+  padding-left: var(--nc-space-6);
+  padding-right: var(--nc-space-6);
+}
+
+.banner__synthesizing {
+  gap: var(--nc-space-4);
+  padding: var(--nc-space-12) 0;
+}
+
+.banner__completed {
+  gap: var(--nc-space-6);
+  padding: var(--nc-space-12) 0;
+  padding-left: var(--nc-space-6);
+  padding-right: var(--nc-space-6);
+}
+
+.banner__icon {
+  color: var(--nc-accent);
+}
+
+.banner__title {
+  color: var(--nc-ink);
+}
+
+.banner__subtitle {
+  margin-top: var(--nc-space-2);
+  line-height: var(--nc-leading-relaxed);
+}
+
+.banner__detail {
+  margin-top: var(--nc-space-1);
+}
+
+.banner__actions {
+  gap: var(--nc-space-3);
+}
+
+.banner__restart {
+  display: flex;
+  align-items: center;
+  gap: var(--nc-space-1);
+  font-size: var(--nc-text-xs);
+  margin-top: var(--nc-space-1);
+  color: var(--nc-accent-ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+</style>

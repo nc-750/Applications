@@ -72,7 +72,7 @@ describe("interviewPrompt", () => {
       expect(prompt).toContain("strengths");
     });
 
-    it("includes a warm opening for the first probe", () => {
+    it("keeps the first probe direct with no preamble", () => {
       const prompt = buildProbePrompt({
         initialData: "Some data",
         facet: "story",
@@ -80,7 +80,7 @@ describe("interviewPrompt", () => {
         isFirst: true,
       });
       expect(prompt).toContain("FIRST probe");
-      expect(prompt).toContain("warm summary");
+      expect(prompt).toContain("no preamble or summary");
     });
 
     it("uses follow_up wording when action is follow_up", () => {

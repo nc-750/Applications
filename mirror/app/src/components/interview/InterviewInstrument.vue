@@ -170,12 +170,8 @@ async function handleRestart() {
     <!-- Pre-interview flows are full-width (no chassis) -->
   <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
 
-  <div
-    v-else-if="isDigesting"
-    class="flex flex-col items-center justify-center"
-    style="gap: var(--nc-space-3); color: var(--nc-ink-2); padding: var(--nc-space-12) var(--nc-space-6);"
-  >
-    <Loader2 :size="24" class="animate-spin" style="color: var(--nc-accent);" />
+  <div v-else-if="isDigesting" class="mr-digesting">
+    <Loader2 :size="24" class="animate-spin mr-digesting__spinner" />
     <p class="nc-text-sm">Analyzing your background…</p>
   </div>
 
@@ -261,3 +257,70 @@ async function handleRestart() {
   </div>
   </Band>
 </template>
+
+<style scoped>
+.mr-interview {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-seam-width);
+    background: var(--nc-seam-fill);
+}
+.mr-band-work {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.mr-band-log {
+    flex: 0 0 auto;
+    max-height: 32%;
+}
+.mr-band-log .nc-cell {
+    overflow-y: auto;
+}
+.mr-cell-readout,
+.mr-cell-probe {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+    min-height: 0;
+    overflow: hidden;
+}
+.mr-cell-probe > .mr-probe,
+.mr-cell-readout > .mr-readout {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.mr-interview__abort {
+    position: absolute;
+    right: var(--nc-space-4);
+    bottom: var(--nc-space-4);
+    z-index: 5;
+}
+.mr-digesting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nc-space-3);
+    color: var(--nc-ink-2);
+    padding: var(--nc-space-12) var(--nc-space-6);
+}
+.mr-digesting__spinner {
+    color: var(--nc-accent);
+}
+
+/* Mobile responsive rules */
+@media (max-width: 640px) {
+    .mr-band-work > .mr-cell-readout {
+        flex: 0 0 auto;
+    }
+    .mr-band-work > .mr-cell-probe {
+        flex: 1 1 auto;
+    }
+    .mr-band-log {
+        max-height: 40%;
+    }
+}
+</style>

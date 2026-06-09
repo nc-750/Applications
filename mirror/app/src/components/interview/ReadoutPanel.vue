@@ -53,3 +53,35 @@ const signal = computed(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.mr-readout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-4);
+}
+.mr-readout__heading {
+    margin-bottom: var(--nc-space-1);
+}
+.mr-readout__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-2);
+}
+.mr-cov-row {
+    display: grid;
+    grid-template-columns: 84px 1fr 40px;
+    align-items: center;
+    gap: var(--nc-space-3);
+}
+.mr-cov-row__meter {
+    min-width: 0;
+}
+.mr-cov-row__pct {
+    font-family: var(--nc-font-mono);
+    font-size: var(--nc-text-xs);
+    text-align: right;
+    color: var(--nc-ink-3);
+    font-variant-numeric: tabular-nums;
+}
+</style>
