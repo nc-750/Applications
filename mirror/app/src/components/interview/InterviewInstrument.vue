@@ -61,10 +61,12 @@ const showCompletion = computed(
   () => status.value === "synthesizing" || status.value === "completed" || status.value === "error",
 );
 
-// The active probe question: the last committed question (question text only).
-const activeQuestion = computed(
+// The active probe question: the live stream, or the last committed question.
+const lastAssistant = computed(
   () => [...(interview.value?.messages ?? [])].reverse().find((m) => m.role === "assistant" && !m.isError)?.content ?? "",
 );
+const activeQuestion = computed(() => mirrorStore.streamingContent || lastAssistant.value);
+const questionStreaming = computed(() => mirrorStore.isThinking || !!mirrorStore.streamingContent);
 const showConclude = computed(() => mirrorStore.concluded && !keepGoing.value);
 
 function makeLLM(): LLMClient {
@@ -184,12 +186,11 @@ function cancelRestart() {
       <ReadoutPanel
         :coverage="mirrorStore.coverage"
         :probe-signal="mirrorStore.probeSignal"
-        :acquiring="mirrorStore.working"
-        :context="mirrorStore.latestContext"
+        :acquiring="mirrorStore.acquiring"
         :minimal="isMobile"
       />
     </MonitorCell>
-    <Cell title="DATA INPUT" spec="IVW // 0x02">
+    <Cell title="DATA INPUT" spec="IVW // 0x02" :grow="3">
       <!-- Pre-interview flows are full-width (no chassis) -->
       <div v-if="digestError" role="alert" class="mr-digest-error">
         <p class="nc-text-sm">{{ digestError }}</p>
@@ -203,21 +204,18 @@ function cancelRestart() {
 
       <div v-else>
       <!-- Working band: readout + probe -->
-      
-
         <!-- Synthesis / completion -->
-        <div v-if="showCompletion">
-          <CompletionBanner
-            :status="(status as 'synthesizing' | 'completed' | 'error')"
-            :persona-name="mirrorStore.persona?.data.persona.identity.name"
-            :error-message="interview?.synthesisError"
-            :synthesis-phase="mirrorStore.synthesisPhase"
-            @go-insight="router.push('/insight')"
-            @go-profile="router.push('/profile')"
-            @retry="runSynthesis"
-            @restart="handleRestart"
-          />
-        </div>
+        <CompletionBanner
+          v-if="showCompletion"
+          :status="(status as 'synthesizing' | 'completed' | 'error')"
+          :persona-name="mirrorStore.persona?.data.persona.identity.name"
+          :error-message="interview?.synthesisError"
+          :synthesis-phase="mirrorStore.synthesisPhase"
+          @go-insight="router.push('/insight')"
+          @go-profile="router.push('/profile')"
+          @retry="runSynthesis"
+          @restart="handleRestart"
+        />
         <ConcludeCell
           v-if="showConclude"
           :busy="status === 'synthesizing'"
@@ -227,26 +225,17 @@ function cancelRestart() {
         />
         <ProbeCell
           v-else
+          class="mb-4"
           :facet="mirrorStore.currentFacet"
           :question="activeQuestion"
-          :working="mirrorStore.working"
+          :streaming="questionStreaming"
+          :acquiring="mirrorStore.acquiring"
           @submit="handleSubmit"
         />
-        <!-- Restart confirmation bar -->
-        <div v-if="showRestartConfirm" class="mr-restart-confirm">
-          <p class="nc-text-sm">Clear the interview and start over?</p>
-          <div class="mr-restart-confirm__actions">
-            <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
-            <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
-          </div>
-        </div>
-        <div v-if="mirrorStore.working" class="mr-interview__abort">
-          <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
-        </div>
       </div>
     </Cell>
   </Band>
-  <Band class="mr-band-log">
+  <Band>
     <Cell title="SESSION LOG" spec="IVW // 0x03">
       <SessionLogCell :messages="interview?.messages ?? []" />
     </Cell>
@@ -269,19 +258,10 @@ function cancelRestart() {
 }
 .mr-band-log {
     flex: 0 0 auto;
-    max-height: 32vh;
-    min-height: 0;
+    max-height: 32%;
 }
-.mr-band-log :deep(.nc-cell) {
-    max-height: 32vh;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-/* Scroll the entries, keep the cell header pinned. */
-.mr-band-log :deep(.nc-cell-content) {
+.mr-band-log .nc-cell {
     overflow-y: auto;
-    min-height: 0;
 }
 .mr-cell-readout,
 .mr-cell-probe {
@@ -355,13 +335,11 @@ function cancelRestart() {
     .mr-band-work > .mr-cell-probe {
         flex: 1 1 auto;
     }
-    .mr-band-log,
+    .mr-band-log {
+        max-height: 40%;
     .mr-band-log :deep(.nc-cell) {
         max-height: 40vh;
     }
-    .mr-restart-confirm {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  }
 }
 </style>

@@ -29,7 +29,7 @@
      plain gray. Saturation stays low (8–14%) so it never tints.
      ---------------------------------------------------------- */
 
-    /* Surface ramp */
+    /* Surface ramp; Background for nc-lab */
     --nc-bg: hsl(
         var(--nc-seed-h) calc(var(--nc-seed-s) * 1%) calc(var(--nc-seed-l) * 1%)
     );
@@ -37,6 +37,8 @@
         var(--nc-seed-h) calc(var(--nc-seed-s) * 1%)
             calc((var(--nc-seed-l) - 5) * 1%)
     );
+
+    /* Primarily for the Cells */
     --nc-panel: hsl(
         calc(var(--nc-seed-h) - 4) calc((var(--nc-seed-s) + 8) * 1%)
             clamp(0%, calc((var(--nc-seed-l) + 13) * 1%), 98%)
@@ -49,14 +51,17 @@
         var(--nc-seed-h) calc(var(--nc-seed-s) * 1%)
             clamp(0%, calc((var(--nc-seed-l) + 3) * 1%), 98%)
     );
+    
     --nc-inset: hsl(
         var(--nc-seed-h) calc((var(--nc-seed-s) - 1) * 1%)
             clamp(0%, calc((var(--nc-seed-l) + 5) * 1%), 98%)
     );
+    
     --nc-hover: hsl(
         calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) + 2) * 1%)
             clamp(0%, calc((var(--nc-seed-l) + 5) * 1%), 98%)
     );
+    
     --nc-active: hsl(
         calc(var(--nc-seed-h) - 2) calc((var(--nc-seed-s) + 2) * 1%)
             clamp(0%, calc((var(--nc-seed-l) + 1) * 1%), 98%)
@@ -356,6 +361,7 @@
      ---------------------------------------------------------- */
     --nc-cell-bg: var(--nc-panel);
     --nc-ctl-text: var(--nc-ink);
+    --nc-btn-label: var(--nc-ink);
     --nc-ctl-text-secondary: var(--nc-ink-2);
     --nc-ctl-bg: var(--nc-panel);
     --nc-ctl-bg-hover: var(--nc-hover);
@@ -992,16 +998,19 @@ fieldset {
    7 · MONITOR / LCD — the black "display" surface
    ============================================================ */
 .nc-monitor {
-    --nc-cell-bg: var(--nc-console);
     color: var(--nc-ink-invert);
-    /* Dark surface only. Compose onto a cell or bar; box chrome (border,
+    background-color: var(--nc-console);
+    /* Dark surface only. Compose onto a cell or band; box chrome (border,
        radius, padding) comes from the cell/plate, so .nc-monitor layers
        cleanly. The dark on-surface contract vars are set here. */
+
+    --nc-cell-bg: var(--nc-console);
 
     /* On-surface contract — controls placed inside .nc-monitor
        auto-adapt to the dark cavity without --variant modifiers. */
     --nc-ctl-text: var(--nc-ink-invert);
     --nc-ctl-text-secondary: var(--nc-ink-invert-2);
+    --nc-ctl-heading-text: var(--nc-ink-invert);
     --nc-ctl-bg: var(--nc-console-2);
     --nc-ctl-bg-hover: var(--nc-console-line);
     --nc-ctl-bg-active: var(--nc-console);
@@ -2468,7 +2477,7 @@ fieldset {
     font-family: var(--nc-font-display);
     line-height: var(--nc-leading-tight);
     letter-spacing: var(--nc-track-display);
-    color: var(--nc-ink);
+    color: var(--nc-ctrl-text);
 }
 .nc-heading-1 {
     font-size: var(--nc-text-4xl);
