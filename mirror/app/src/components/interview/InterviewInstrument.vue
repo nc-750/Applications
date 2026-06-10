@@ -9,7 +9,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Loader2 } from "lucide-vue-next";
-import { Band, Cell, Monitor } from "@nc-750/lab-vue";
+import { Band, Cell, MonitorCell } from "@nc-750/lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";
@@ -96,6 +96,7 @@ async function handleDataContinue(rawData: string, inputText: string, fileNames:
 }
 
 async function handleSubmit(answer: string) {
+  logger.debug("app", "Handle Submit");
   keepGoing.value = false;
   await interviewApi.submitAnswer(answer);
 }
@@ -189,24 +190,13 @@ function cancelRestart() {
       </div>
 
       <div v-else>
-        <!-- Restart confirmation bar -->
-        <div v-if="showRestartConfirm" class="mr-restart-confirm">
-          <p class="nc-text-sm">Clear the interview and start over?</p>
-          <div class="mr-restart-confirm__actions">
-            <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
-            <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
-          </div>
-        </div>
-
         <!-- Working band: readout + probe -->
-        <section class="nc-cell mr-cell-readout">
-          <ReadoutPanel
-            :coverage="mirrorStore.coverage"
-            :probe-signal="mirrorStore.probeSignal"
-            :acquiring="mirrorStore.acquiring"
-            :minimal="isMobile"
-          />
-        </section>
+        <ReadoutPanel
+          :coverage="mirrorStore.coverage"
+          :probe-signal="mirrorStore.probeSignal"
+          :acquiring="mirrorStore.acquiring"
+          :minimal="isMobile"
+        />
 
         <!-- Synthesis / completion -->
         <div v-if="showCompletion">
@@ -242,6 +232,14 @@ function cancelRestart() {
         :acquiring="mirrorStore.acquiring"
         @submit="handleSubmit"
       />
+      <!-- Restart confirmation bar -->
+      <div v-if="showRestartConfirm" class="mr-restart-confirm">
+        <p class="nc-text-sm">Clear the interview and start over?</p>
+        <div class="mr-restart-confirm__actions">
+          <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
+          <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+        </div>
+      </div>
       <div v-if="questionStreaming" class="mr-interview__abort">
         <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
       </div>

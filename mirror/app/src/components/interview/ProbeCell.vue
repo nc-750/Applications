@@ -6,6 +6,7 @@
 import { ref, computed } from "vue";
 import { Facet, Acquire } from "@nc-750/lab-vue";
 import { FACETS, type FacetKey } from "../../types/interview";
+import { logger } from "../../logger";
 
 const props = withDefaults(
   defineProps<{
@@ -28,6 +29,7 @@ const facetLabel = computed(() => FACETS.find((f) => f.key === props.facet)?.lab
 const canSubmit = computed(() => !props.disabled && !props.streaming && !props.acquiring && answer.value.trim().length > 0);
 
 function submit() {
+  logger.debug("app", "ProbeCell submit");
   if (!canSubmit.value) return;
   emit("submit", answer.value.trim());
   answer.value = "";
@@ -36,7 +38,7 @@ function submit() {
 
 <template>
   <div class="mr-probe">
-    <Facet>OBSERVATION · {{ facetLabel }}</Facet>
+    <Facet>PROBING · {{ facetLabel }}</Facet>
 
     <h2 class="nc-heading-3 mr-probe__q">
       {{ question || "…" }}<span v-if="streaming" class="mr-probe__caret">▋</span>

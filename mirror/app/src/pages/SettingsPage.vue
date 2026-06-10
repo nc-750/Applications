@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import {
     Band,
     Button,
@@ -13,6 +13,7 @@ import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
 import { factoryReset } from "../lib/wipe";
 import { downloadFile } from "../lib/utils";
+import { logger } from "../logger";
 
 const mirrorStore = useMirrorStore();
 
@@ -40,6 +41,7 @@ watch(() => mirrorStore.llmConfig, (config) => {
 
 const testMessage = ref("");
 const testing = ref(false);
+const isDebugOn = ref(false);
 
 async function saveLLMConfig() {
     if (!localConfig.provider || !localConfig.model || !localConfig.apiKey) return;
@@ -133,6 +135,18 @@ async function handleClearLLMConfig() {
     localConfig.apiKey = "";
     localConfig.endpoint = "";
 }
+
+function toggleDebug() {
+    isDebugOn.value = mirrorStore.debugEnabled;
+
+    if (isDebugOn.value) {
+        mirrorStore.setDebugEnabled(false);
+    } else {
+        mirrorStore.setDebugEnabled(true);
+    }
+
+    isDebugOn.value = mirrorStore.debugEnabled;
+}
 </script>
 
 <template>
@@ -176,10 +190,14 @@ async function handleClearLLMConfig() {
                 @change="handleImportPersona"
             />
             <h3 class="nc-label nc-label--danger">Danger Zone</h3>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 mb-4">
                 <Button variant="danger" class="flex-1" @click="handleDeletePersona">Delete persona</Button>
                 <Button variant="danger" class="flex-1" @click="handleClearLLMConfig">Clear LLM Config</Button>
                 <Button variant="danger" class="flex-2" @click="factoryReset">Factory reset</Button>
+            </div>
+            <h3 class="nc-label">Debug</h3>
+            <div class="flex">
+                <Button variant="secondary" @click="toggleDebug">Debug {{ isDebugOn ? "On" : "Off" }}</Button>
             </div>
         </Cell>
     </Band>

@@ -3,7 +3,9 @@ import type { LogEntry } from "../../logger/types";
 
 export function useLogModule() {
   const logEntries = ref<LogEntry[]>([]);
-  const debugEnabled = ref(false);
+  
+  // TODO: Switch to false in production
+  const debugEnabled = ref(true);
   const logMaxEntries = ref(500);
 
   function appendLog(entry: LogEntry) {

@@ -58,9 +58,12 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
   }
 
   /** Commit the user's answer, run the analysis (Call B), then the next probe (Call A). */
-  async function submitAnswer(text: string) {
+  async function submitAnswer(text: string) {    
     const rec = mirrorStore.record;
-    if (!rec || rec.status !== "active") return;
+    if (!rec || rec.status !== "active") {
+      logger.debug("app", "No interview record or no active record");
+      return;
+    }
 
     await mirrorStore.addMessage({ role: "user", content: text, timestamp: new Date().toISOString() });
 
