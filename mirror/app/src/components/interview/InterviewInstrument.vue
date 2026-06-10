@@ -9,7 +9,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Loader2 } from "lucide-vue-next";
-import { Band, Cell, CellHead } from "@nc-750/lab-vue";
+import { Band, Cell, Monitor } from "@nc-750/lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";
@@ -24,7 +24,6 @@ import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
 import { prepareInputBrief } from "../../skills/dataDigest";
 import { logger } from "../../logger";
 import type { PersonaJSON } from "../../types/persona";
-import NavigationBand from "../NavigationBand.vue";
 
 const mirrorStore = useMirrorStore();
 const router = useRouter();
@@ -177,7 +176,7 @@ function cancelRestart() {
 
 <template>
   <Band :grow="1">
-    <Cell title="DATA ANALYSIS" spec="IVW // 0x01">
+    <MonitorCell title="DATA ANALYSIS" spec="IVW // 0x01">
       <!-- Pre-interview flows are full-width (no chassis) -->
       <div v-if="digestError" role="alert" class="mr-digest-error">
         <p class="nc-text-sm">{{ digestError }}</p>
@@ -189,8 +188,7 @@ function cancelRestart() {
         <p class="nc-text-sm">Analyzing your background…</p>
       </div>
 
-      <div v-else class="mr-interview">
-        
+      <div v-else>
         <!-- Restart confirmation bar -->
         <div v-if="showRestartConfirm" class="mr-restart-confirm">
           <p class="nc-text-sm">Clear the interview and start over?</p>
@@ -227,7 +225,7 @@ function cancelRestart() {
         </div>
 
       </div>
-    </Cell>
+    </MonitorCell>
     <Cell title="DATA INPUT" spec="IVW // 0x02">
       <ConcludeCell
         v-if="showConclude"

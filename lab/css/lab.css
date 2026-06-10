@@ -354,6 +354,7 @@
      these to dark-surface values; components reference ONLY these
      vars, never the raw surface/ink tokens directly.
      ---------------------------------------------------------- */
+    --nc-cell-bg: var(--nc-panel);
     --nc-ctl-text: var(--nc-ink);
     --nc-ctl-text-secondary: var(--nc-ink-2);
     --nc-ctl-bg: var(--nc-panel);
@@ -991,8 +992,7 @@ fieldset {
    7 · MONITOR / LCD — the black "display" surface
    ============================================================ */
 .nc-monitor {
-    position: relative;
-    background: var(--nc-console);
+    --nc-cell-bg: var(--nc-console);
     color: var(--nc-ink-invert);
     /* Dark surface only. Compose onto a cell or bar; box chrome (border,
        radius, padding) comes from the cell/plate, so .nc-monitor layers
@@ -2161,7 +2161,7 @@ fieldset {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    background: var(--nc-panel);
+    background: var(--nc-cell-bg);
     padding: var(--nc-space-5);
 }
 
