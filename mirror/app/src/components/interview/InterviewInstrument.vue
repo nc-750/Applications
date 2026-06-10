@@ -44,9 +44,14 @@ function onResize() {
   // exactly when the bands stack.
   isMobile.value = window.innerWidth <= 640;
 }
-onMounted(() => {
+onMounted(async () => {
   onResize();
   window.addEventListener("resize", onResize);
+  // Load any existing interview from IndexedDB and decide what to show.
+  await mirrorStore.loadInterview();
+  if (!mirrorStore.record) {
+    showDataInput.value = true;
+  }
 });
 onUnmounted(() => window.removeEventListener("resize", onResize));
 
@@ -178,6 +183,14 @@ function cancelRestart() {
 <template>
   <Band :grow="1">
     <MonitorCell title="DATA ANALYSIS" spec="IVW // 0x01">
+      <ReadoutPanel
+        :coverage="mirrorStore.coverage"
+        :probe-signal="mirrorStore.probeSignal"
+        :acquiring="mirrorStore.acquiring"
+        :minimal="isMobile"
+      />
+    </MonitorCell>
+    <Cell title="DATA INPUT" spec="IVW // 0x02">
       <!-- Pre-interview flows are full-width (no chassis) -->
       <div v-if="digestError" role="alert" class="mr-digest-error">
         <p class="nc-text-sm">{{ digestError }}</p>
@@ -190,13 +203,8 @@ function cancelRestart() {
       </div>
 
       <div v-else>
-        <!-- Working band: readout + probe -->
-        <ReadoutPanel
-          :coverage="mirrorStore.coverage"
-          :probe-signal="mirrorStore.probeSignal"
-          :acquiring="mirrorStore.acquiring"
-          :minimal="isMobile"
-        />
+      <!-- Working band: readout + probe -->
+      
 
         <!-- Synthesis / completion -->
         <div v-if="showCompletion">
@@ -211,37 +219,32 @@ function cancelRestart() {
             @restart="handleRestart"
           />
         </div>
-        <div v-else>
+        <ConcludeCell
+          v-if="showConclude"
+          :busy="status === 'synthesizing'"
+          :phase="mirrorStore.synthesisPhase"
+          @generate="runSynthesis"
+          @continue="handleContinue"
+        />
+        <ProbeCell
+          v-else
+          :facet="mirrorStore.currentFacet"
+          :question="activeQuestion"
+          :streaming="questionStreaming"
+          :acquiring="mirrorStore.acquiring"
+          @submit="handleSubmit"
+        />
+        <!-- Restart confirmation bar -->
+        <div v-if="showRestartConfirm" class="mr-restart-confirm">
+          <p class="nc-text-sm">Clear the interview and start over?</p>
+          <div class="mr-restart-confirm__actions">
+            <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
+            <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+          </div>
         </div>
-
-      </div>
-    </MonitorCell>
-    <Cell title="DATA INPUT" spec="IVW // 0x02">
-      <ConcludeCell
-        v-if="showConclude"
-        :busy="status === 'synthesizing'"
-        :phase="mirrorStore.synthesisPhase"
-        @generate="runSynthesis"
-        @continue="handleContinue"
-      />
-      <ProbeCell
-        v-else
-        :facet="mirrorStore.currentFacet"
-        :question="activeQuestion"
-        :streaming="questionStreaming"
-        :acquiring="mirrorStore.acquiring"
-        @submit="handleSubmit"
-      />
-      <!-- Restart confirmation bar -->
-      <div v-if="showRestartConfirm" class="mr-restart-confirm">
-        <p class="nc-text-sm">Clear the interview and start over?</p>
-        <div class="mr-restart-confirm__actions">
-          <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
-          <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+        <div v-if="questionStreaming" class="mr-interview__abort">
+          <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
         </div>
-      </div>
-      <div v-if="questionStreaming" class="mr-interview__abort">
-        <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
       </div>
     </Cell>
   </Band>
