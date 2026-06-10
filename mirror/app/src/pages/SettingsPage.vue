@@ -13,6 +13,7 @@ import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
 import { factoryReset } from "../lib/wipe";
 import { downloadFile } from "../lib/utils";
+import NavigationBand from "../components/NavigationBand.vue";
 
 const mirrorStore = useMirrorStore();
 

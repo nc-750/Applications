@@ -9,7 +9,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Loader2 } from "lucide-vue-next";
-import { Band, CellHead } from "@nc-750/lab-vue";
+import { Band, Cell, CellHead } from "@nc-750/lab-vue";
 import DataInputStep from "./DataInputStep.vue";
 import CompletionBanner from "./CompletionBanner.vue";
 import ReadoutPanel from "./ReadoutPanel.vue";
@@ -24,6 +24,7 @@ import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
 import { prepareInputBrief } from "../../skills/dataDigest";
 import { logger } from "../../logger";
 import type { PersonaJSON } from "../../types/persona";
+import NavigationBand from "../NavigationBand.vue";
 
 const mirrorStore = useMirrorStore();
 const router = useRouter();
@@ -175,52 +176,42 @@ function cancelRestart() {
 </script>
 
 <template>
-  <Band>
-    <!-- Pre-interview flows are full-width (no chassis) -->
-    <div v-if="digestError" role="alert" class="mr-digest-error">
-      <p class="nc-text-sm">{{ digestError }}</p>
-      <button class="nc-btn nc-btn--ghost nc-btn--sm" @click="digestError = ''">Dismiss</button>
-    </div>
-    <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
-
-  <div v-else-if="isDigesting" class="mr-digesting">
-    <Loader2 :size="24" class="animate-spin mr-digesting__spinner" />
-    <p class="nc-text-sm">Analyzing your background…</p>
-  </div>
-
-  <!-- The instrument (bands fill the shell's content area) -->
-  <div v-else class="mr-interview">
-    <!-- Restart confirmation bar -->
-    <div v-if="showRestartConfirm" class="mr-restart-confirm">
-      <p class="nc-text-sm">Clear the interview and start over?</p>
-      <div class="mr-restart-confirm__actions">
-        <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
-        <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+  <Band :grow="1">
+    <Cell title="DATA ANALYSIS" spec="IVW // 0x01">
+      <!-- Pre-interview flows are full-width (no chassis) -->
+      <div v-if="digestError" role="alert" class="mr-digest-error">
+        <p class="nc-text-sm">{{ digestError }}</p>
+        <button class="nc-btn nc-btn--ghost nc-btn--sm" @click="digestError = ''">Dismiss</button>
       </div>
-    </div>
+      <DataInputStep v-if="showDataInput" @continue="handleDataContinue" />
+      <div v-else-if="isDigesting" class="mr-digesting">
+        <Loader2 :size="24" class="animate-spin mr-digesting__spinner" />
+        <p class="nc-text-sm">Analyzing your background…</p>
+      </div>
 
-    <!-- Working band: readout + probe -->
-    <div class="nc-band mr-band-work">
-      <section class="nc-cell mr-cell-readout">
-        <CellHead>
-          <template #title><span class="nc-label">Subject reading</span></template>
-          <template #spec>// 0x00 · LIVE</template>
-        </CellHead>
-        <ReadoutPanel
-          :coverage="mirrorStore.coverage"
-          :probe-signal="mirrorStore.probeSignal"
-          :acquiring="mirrorStore.acquiring"
-          :minimal="isMobile"
-        />
-      </section>
+      <div v-else class="mr-interview">
+        
+        <!-- Restart confirmation bar -->
+        <div v-if="showRestartConfirm" class="mr-restart-confirm">
+          <p class="nc-text-sm">Clear the interview and start over?</p>
+          <div class="mr-restart-confirm__actions">
+            <button class="nc-btn nc-btn--danger nc-btn--sm" @click="confirmRestart">Clear interview</button>
+            <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
+          </div>
+        </div>
 
-      <section class="nc-cell nc-cell--grow-2 mr-cell-probe">
+        <!-- Working band: readout + probe -->
+        <section class="nc-cell mr-cell-readout">
+          <ReadoutPanel
+            :coverage="mirrorStore.coverage"
+            :probe-signal="mirrorStore.probeSignal"
+            :acquiring="mirrorStore.acquiring"
+            :minimal="isMobile"
+          />
+        </section>
+
         <!-- Synthesis / completion -->
-        <template v-if="showCompletion">
-          <CellHead>
-            <template #title><span class="nc-label">Profile</span></template>
-            <template #spec>// SYNTHESIS</template>
-          </CellHead>
+        <div v-if="showCompletion">
           <CompletionBanner
             :status="(status as 'synthesizing' | 'completed' | 'error')"
             :persona-name="mirrorStore.persona?.data.persona.identity.name"
@@ -231,52 +222,37 @@ function cancelRestart() {
             @retry="runSynthesis"
             @restart="handleRestart"
           />
-        </template>
+        </div>
+        <div v-else>
+        </div>
 
-        <!-- Active probe or conclude -->
-        <template v-else>
-          <CellHead>
-            <template #title>
-              <span class="nc-label">{{ showConclude ? "Converged" : "Active probe" }}</span>
-            </template>
-            <template #spec>// {{ mirrorStore.currentFacet.toUpperCase() }}</template>
-          </CellHead>
-
-          <ConcludeCell
-            v-if="showConclude"
-            :busy="status === 'synthesizing'"
-            :phase="mirrorStore.synthesisPhase"
-            @generate="runSynthesis"
-            @continue="handleContinue"
-          />
-          <ProbeCell
-            v-else
-            :facet="mirrorStore.currentFacet"
-            :question="activeQuestion"
-            :streaming="questionStreaming"
-            :acquiring="mirrorStore.acquiring"
-            @submit="handleSubmit"
-          />
-        </template>
-      </section>
-    </div>
-
-    <!-- Log band -->
-    <div class="nc-band mr-band-log">
-      <section class="nc-cell">
-        <CellHead>
-          <template #title><span class="nc-label">Session log</span></template>
-          <template #spec>APPEND-ONLY · 0x00</template>
-        </CellHead>
-        <SessionLogCell :messages="interview?.messages ?? []" />
-      </section>
-    </div>
-
-    <!-- Stop control while a probe streams -->
-    <div v-if="questionStreaming" class="mr-interview__abort">
-      <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
-    </div>
-  </div>
+      </div>
+    </Cell>
+    <Cell title="DATA INPUT" spec="IVW // 0x02">
+      <ConcludeCell
+        v-if="showConclude"
+        :busy="status === 'synthesizing'"
+        :phase="mirrorStore.synthesisPhase"
+        @generate="runSynthesis"
+        @continue="handleContinue"
+      />
+      <ProbeCell
+        v-else
+        :facet="mirrorStore.currentFacet"
+        :question="activeQuestion"
+        :streaming="questionStreaming"
+        :acquiring="mirrorStore.acquiring"
+        @submit="handleSubmit"
+      />
+      <div v-if="questionStreaming" class="mr-interview__abort">
+        <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
+      </div>
+    </Cell>
+  </Band>
+  <Band>
+    <Cell title="SESSION LOG" spec="IVW // 0x03">
+      <SessionLogCell :messages="interview?.messages ?? []" />
+    </Cell>
   </Band>
 </template>
 

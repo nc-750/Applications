@@ -4,6 +4,7 @@ import { Band, Cell } from "@nc-750/lab-vue";
 
 import { useMirrorStore } from "../stores/mirror";
 import { computed } from "vue";
+import NavigationBand from "../components/NavigationBand.vue";
 
 let mirrorStore = useMirrorStore();
 

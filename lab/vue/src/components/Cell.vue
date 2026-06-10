@@ -1,6 +1,6 @@
 <script setup lang="ts">
     defineProps<{
-        surface?: string,
+        surface?: "2" | "accent" | "brushed",
         grow?: 0 | 1 | 2 | 3,
         title: string,
         spec: string
@@ -13,7 +13,7 @@
         grow && `nc-cell--grow-${grow}`,
         surface && `nc-cell--${surface}`
     ]">
-        <header class="nc-cell-head">
+        <header v-if="title != '' && spec != ''" class="nc-cell-head">
             <span class="nc-label">{{ title }}</span>
             <span class="nc-label">{{ spec }}</span>
         </header>
