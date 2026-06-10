@@ -11,22 +11,20 @@ import { logger } from "../../logger";
 const props = withDefaults(
   defineProps<{
     facet: FacetKey;
-    /** The active question (streamed live, or the committed last probe). */
+    /** The active question — the committed last probe (question text only). */
     question: string;
-    /** Question still streaming in (Call A). */
-    streaming?: boolean;
-    /** Analysis (Call B) in flight — show the acquisition overlay. */
-    acquiring?: boolean;
+    /** A turn (analysis + probe) is in flight — show the overlay and lock input. */
+    working?: boolean;
     disabled?: boolean;
   }>(),
-  { streaming: false, acquiring: false, disabled: false },
+  { working: false, disabled: false },
 );
 
 const emit = defineEmits<{ submit: [answer: string] }>();
 
 const answer = ref("");
 const facetLabel = computed(() => FACETS.find((f) => f.key === props.facet)?.label ?? props.facet);
-const canSubmit = computed(() => !props.disabled && !props.streaming && !props.acquiring && answer.value.trim().length > 0);
+const canSubmit = computed(() => !props.disabled && !props.working && answer.value.trim().length > 0);
 
 function submit() {
   logger.debug("app", "ProbeCell submit");
@@ -40,14 +38,16 @@ function submit() {
   <div class="mr-probe">
     <Facet>PROBING · {{ facetLabel }}</Facet>
 
-    <h2 class="nc-heading-3 mr-probe__q">
-      {{ question || "…" }}<span v-if="streaming" class="mr-probe__caret">▋</span>
-    </h2>
+    <!-- Fixed-height question box: long questions scroll inside it so the
+         textarea + footer below never shift as the question changes. -->
+    <div class="mr-probe__qbox">
+      <h2 class="nc-heading-3 mr-probe__q">{{ question || "…" }}</h2>
+    </div>
 
     <textarea
       v-model="answer"
       class="nc-textarea mr-probe__input"
-      :disabled="disabled || acquiring"
+      :disabled="disabled || working"
       placeholder="Enter evidence — a paragraph is welcome. The instrument is not in a hurry."
       @keydown.enter.exact.prevent="submit"
     />
@@ -57,7 +57,7 @@ function submit() {
       <button class="nc-btn nc-btn--accent" :disabled="!canSubmit" @click="submit">Submit ▸</button>
     </div>
 
-    <div v-if="acquiring" class="mr-probe__overlay">
+    <div v-if="working" class="mr-probe__overlay">
       <Acquire label="ANALYZING RESPONSE · READING SIGNAL" />
     </div>
   </div>
@@ -72,12 +72,15 @@ function submit() {
     height: 100%;
     min-height: 0;
 }
+.mr-probe__qbox {
+    /* Fixed height (~5 lines of nc-heading-3) so the question never reflows the
+       controls below it. Longer questions scroll within this box. */
+    flex: 0 0 auto;
+    height: 7.5rem;
+    overflow-y: auto;
+}
 .mr-probe__q {
     margin: 0;
-}
-.mr-probe__caret {
-    color: var(--nc-accent);
-    margin-left: 2px;
 }
 .mr-probe__input {
     flex: 1 1 auto;

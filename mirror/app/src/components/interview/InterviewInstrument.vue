@@ -61,12 +61,10 @@ const showCompletion = computed(
   () => status.value === "synthesizing" || status.value === "completed" || status.value === "error",
 );
 
-// The active probe question: the live stream, or the last committed question.
-const lastAssistant = computed(
+// The active probe question: the last committed question (question text only).
+const activeQuestion = computed(
   () => [...(interview.value?.messages ?? [])].reverse().find((m) => m.role === "assistant" && !m.isError)?.content ?? "",
 );
-const activeQuestion = computed(() => mirrorStore.streamingContent || lastAssistant.value);
-const questionStreaming = computed(() => mirrorStore.isThinking || !!mirrorStore.streamingContent);
 const showConclude = computed(() => mirrorStore.concluded && !keepGoing.value);
 
 function makeLLM(): LLMClient {
@@ -186,7 +184,8 @@ function cancelRestart() {
       <ReadoutPanel
         :coverage="mirrorStore.coverage"
         :probe-signal="mirrorStore.probeSignal"
-        :acquiring="mirrorStore.acquiring"
+        :acquiring="mirrorStore.working"
+        :context="mirrorStore.latestContext"
         :minimal="isMobile"
       />
     </MonitorCell>
@@ -230,8 +229,7 @@ function cancelRestart() {
           v-else
           :facet="mirrorStore.currentFacet"
           :question="activeQuestion"
-          :streaming="questionStreaming"
-          :acquiring="mirrorStore.acquiring"
+          :working="mirrorStore.working"
           @submit="handleSubmit"
         />
         <!-- Restart confirmation bar -->
@@ -242,13 +240,13 @@ function cancelRestart() {
             <button class="nc-btn nc-btn--secondary nc-btn--sm" @click="cancelRestart">Cancel</button>
           </div>
         </div>
-        <div v-if="questionStreaming" class="mr-interview__abort">
+        <div v-if="mirrorStore.working" class="mr-interview__abort">
           <button class="nc-btn nc-btn--danger nc-btn--sm" @click="handleAbort">Stop</button>
         </div>
       </div>
     </Cell>
   </Band>
-  <Band>
+  <Band class="mr-band-log">
     <Cell title="SESSION LOG" spec="IVW // 0x03">
       <SessionLogCell :messages="interview?.messages ?? []" />
     </Cell>
@@ -271,10 +269,19 @@ function cancelRestart() {
 }
 .mr-band-log {
     flex: 0 0 auto;
-    max-height: 32%;
+    max-height: 32vh;
+    min-height: 0;
 }
-.mr-band-log .nc-cell {
+.mr-band-log :deep(.nc-cell) {
+    max-height: 32vh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+/* Scroll the entries, keep the cell header pinned. */
+.mr-band-log :deep(.nc-cell-content) {
     overflow-y: auto;
+    min-height: 0;
 }
 .mr-cell-readout,
 .mr-cell-probe {
@@ -348,8 +355,9 @@ function cancelRestart() {
     .mr-band-work > .mr-cell-probe {
         flex: 1 1 auto;
     }
-    .mr-band-log {
-        max-height: 40%;
+    .mr-band-log,
+    .mr-band-log :deep(.nc-cell) {
+        max-height: 40vh;
     }
     .mr-restart-confirm {
         flex-direction: column;

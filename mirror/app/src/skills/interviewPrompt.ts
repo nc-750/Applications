@@ -114,6 +114,34 @@ ${toneSection()}`;
 // to follow-up vs advance are decided by the analysis call (Call B); this prompt
 // just renders the next question in probe voice. It does NOT plan ahead, list
 // questions, or decide completion — the store concludes from coverage.
+//
+// The probe returns STRUCTURED JSON { context, question } so the UI can place the
+// two cleanly: `question` is the only thing shown in the probe heading; `context`
+// is a brief reaction to the previous answer, surfaced read-only in the Monitor.
+// Keeping them separate is what stops the heading from ballooning with the whole
+// chat reply.
+
+/** Schema name for the structured probe call (Call A). */
+export const PROBE_SCHEMA_NAME = "probe";
+
+/** JSON Schema for the structured probe result — a reaction + a single question. */
+export const PROBE_JSON_SCHEMA: Record<string, unknown> = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    context: {
+      type: "string",
+      description:
+        "A brief, warm acknowledgement of the user's PREVIOUS answer — at most ~12 words, one clause, no question. Empty string on the first probe (there is no prior answer yet).",
+    },
+    question: {
+      type: "string",
+      description:
+        "The single question to ask this turn — one clear interrogative sentence. No preamble, no acknowledgement, no compound questions, no list.",
+    },
+  },
+  required: ["context", "question"],
+};
 
 /** Per-facet guidance for what a probe on that facet should dig into. */
 const FACET_PROBE_GUIDE: Record<FacetKey, string> = {
@@ -145,10 +173,10 @@ export function buildProbePrompt(opts: ProbePromptOptions): string {
   const guide = FACET_PROBE_GUIDE[facet];
 
   const opening = isFirst
-    ? `This is the FIRST probe. Ask your single opening question directly — no preamble or summary needed.`
+    ? `This is the FIRST probe. There is no prior answer, so "context" MUST be an empty string. Put your single opening question in "question".`
     : action === "follow_up"
-      ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. If a bridge is helpful, use ≤10 words. Never repeat their answer back. The question is the primary output.`
-      : `Move on to the "${facetMeta?.label}" facet. If a bridge is helpful, use ≤10 words. Never repeat their answer back. The question is the primary output.`;
+      ? `Dig DEEPER on the thread from the user's last answer, staying within the "${facetMeta?.label}" facet. "context" is a brief acknowledgement of that answer; "question" digs further.`
+      : `Move on to the "${facetMeta?.label}" facet. "context" briefly acknowledges the user's last answer; "question" opens the new facet.`;
 
   return `${philosophyIntro()}
 
@@ -160,9 +188,12 @@ What to dig into: ${guide}
 
 ${opening}
 
-You may probe with depth, but still only ONE question this turn.
+## Output
+Return a JSON object with exactly two string fields:
+- "context": a brief, warm acknowledgement of the user's PREVIOUS answer — at most ~12 words, one clause, NOT a question. Use an empty string on the first probe. Never repeat the answer back verbatim.
+- "question": the single question to ask this turn — one clear interrogative sentence, no preamble, no acknowledgement folded in, no compound questions.
 
-Output only the message to the user (acknowledgement + the single question). Do not output JSON, labels, or any control token.
+Keep the acknowledgement and the question strictly separate: nothing question-like in "context", nothing acknowledgement-like in "question".
 
 ${languageRule()}
 

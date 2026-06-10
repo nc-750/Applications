@@ -6,13 +6,18 @@
  * `{ beginInterview, submitAnswer, probeMore, abort, finishEarly }`.
  */
 import { createLLMClient, type LLMClient, type Message } from "@nc-750/llm-ts";
-import { buildProbePrompt } from "../skills/interviewPrompt";
+import {
+  buildProbePrompt,
+  PROBE_SCHEMA_NAME,
+  PROBE_JSON_SCHEMA,
+} from "../skills/interviewPrompt";
 import {
   buildAnalysisSystemPrompt,
   buildAnalysisUserPrompt,
   ANALYSIS_JSON_SCHEMA,
   ANALYSIS_SCHEMA_NAME,
   TurnAnalysisSchema,
+  CONCLUDE_THRESHOLD,
 } from "../skills/analysisPrompt";
 import { extractFencedJSON } from "../skills/interviewExtractor";
 import { logger } from "../logger";
@@ -23,6 +28,7 @@ import {
   type TurnAnalysis,
   FACETS,
   emptyCoverage,
+  mergeCoverage,
 } from "../types/interview";
 import type { useMirrorStore } from "../stores/mirror";
 
@@ -51,14 +57,34 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
       .join("\n\n");
   }
 
-  /** Begin a fresh interview: start the record, then stream the first probe. */
-  async function beginInterview(brief: string, inputText?: string, fileNames?: string[], wasDigested?: boolean) {
-    await mirrorStore.startInterview(brief, inputText, fileNames, wasDigested);
-    await streamProbe({ facet: "story", action: "advance", isFirst: true });
+  /** Run a single probe under the working overlay (entry points that have no
+   *  analysis step: the first probe and "continue past conclusion"). */
+  async function probeWithWorking(args: ProbeArgs) {
+    const controller = new AbortController();
+    abortRef = controller;
+    mirrorStore.setWorking(true);
+    try {
+      await generateProbe(args, controller.signal);
+    } finally {
+      abortRef = null;
+      mirrorStore.setWorking(false);
+    }
   }
 
-  /** Commit the user's answer, run the analysis (Call B), then the next probe (Call A). */
-  async function submitAnswer(text: string) {    
+  /** Begin a fresh interview: start the record, then generate the first probe. */
+  async function beginInterview(brief: string, inputText?: string, fileNames?: string[], wasDigested?: boolean) {
+    await mirrorStore.startInterview(brief, inputText, fileNames, wasDigested);
+    await probeWithWorking({ facet: "story", action: "advance", isFirst: true });
+  }
+
+  /**
+   * One turn: commit the answer, run the analysis (Call B), then — unless coverage
+   * has converged — the next probe (Call A). A single `working` flag covers the
+   * whole turn so the Monitor and the ProbeCell reveal together at the end (no
+   * staggered Monitor-then-overlay change). When the reading converges we show the
+   * conclude state and skip generating a question entirely.
+   */
+  async function submitAnswer(text: string) {
     const rec = mirrorStore.record;
     if (!rec || rec.status !== "active") {
       logger.debug("app", "No interview record or no active record");
@@ -67,30 +93,54 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
 
     await mirrorStore.addMessage({ role: "user", content: text, timestamp: new Date().toISOString() });
 
-    // Call B — analysis. Failure is non-fatal: the loop continues without a
-    // readout update rather than blocking the user.
-    mirrorStore.setAcquiring(true);
+    const controller = new AbortController();
+    abortRef = controller;
+    mirrorStore.setWorking(true);
     try {
-      const analysis = await runAnalysis(mirrorStore.record!, text);
-      lastAction = analysis.next_action;
-      await mirrorStore.patchRecord({
-        coverage: analysis.coverage,
-        probeSignal: analysis.probe_signal,
-        currentFacet: analysis.next_facet,
-      });
-    } catch (e) {
-      logger.warn("app", "Turn analysis failed; continuing without readout update", {
-        error: e instanceof Error ? e : undefined,
-      });
-    } finally {
-      mirrorStore.setAcquiring(false);
-    }
+      const prior = mirrorStore.record!.coverage ?? emptyCoverage();
 
-    if (mirrorStore.concluded) return; // the view shows the conclude state / offers synthesis
-    await streamProbe({ facet: mirrorStore.currentFacet, action: lastAction, isFirst: false });
+      // Call B — analysis. Failure is non-fatal; we proceed without a fresh read.
+      // Do NOT patch the store yet — coverage is revealed at the end of the turn.
+      let analysis: TurnAnalysis | null = null;
+      try {
+        analysis = await runAnalysis(mirrorStore.record!, text, controller.signal);
+        lastAction = analysis.next_action;
+      } catch (e) {
+        if (controller.signal.aborted) return;
+        logger.warn("app", "Turn analysis failed; continuing without readout update", {
+          error: e instanceof Error ? e : undefined,
+        });
+      }
+
+      const patch = analysis
+        ? { coverage: analysis.coverage, probeSignal: analysis.probe_signal, currentFacet: analysis.next_facet }
+        : null;
+
+      // Conclusion is coverage-derived — compute it from the merged read locally,
+      // before touching the store, so we can skip Call A when converged.
+      const merged = analysis ? mergeCoverage(prior, analysis.coverage) : prior;
+      const willConclude = FACETS.every((f) => merged[f.key] >= CONCLUDE_THRESHOLD);
+
+      if (willConclude) {
+        if (patch) await mirrorStore.patchRecord(patch); // reveal Monitor + ConcludeCell together
+        return;
+      }
+
+      // Call A — the next probe, steered by this turn's fresh analysis.
+      const facet = analysis?.next_facet ?? mirrorStore.currentFacet;
+      const action = analysis?.next_action ?? lastAction;
+      await generateProbe({ facet, action, isFirst: false }, controller.signal);
+      if (controller.signal.aborted) return;
+
+      // Reveal the new coverage together with the new question (overlay still up).
+      if (patch) await mirrorStore.patchRecord(patch);
+    } finally {
+      abortRef = null;
+      mirrorStore.setWorking(false);
+    }
   }
 
-  async function runAnalysis(rec: InterviewRecord, answer: string): Promise<TurnAnalysis> {
+  async function runAnalysis(rec: InterviewRecord, answer: string, signal: AbortSignal): Promise<TurnAnalysis> {
     const llm = makeLLM();
     const lastQuestion =
       [...rec.messages].reverse().find((m) => m.role === "assistant" && !m.isError)?.content ?? "";
@@ -108,21 +158,28 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
       { role: "user", content: user },
     ];
 
-    let raw: unknown;
+    // strict:false → json_object (openai-compatible) or forced tool use (anthropic).
+    // strict json_schema returns null on some reasoning models (e.g. DeepSeek).
     const structuredResult = await llm.message(messages, {
-      structured: { name: ANALYSIS_SCHEMA_NAME, schema: ANALYSIS_JSON_SCHEMA, strict: true },
+      structured: { name: ANALYSIS_SCHEMA_NAME, schema: ANALYSIS_JSON_SCHEMA, strict: false },
+      signal,
     });
-    if (structuredResult.ok) {
-      raw = structuredResult.value;
-    } else {
-      // Fall back to plain completion + lenient JSON extraction
-      const plainResult = await llm.message(messages);
+
+    let parsed = structuredResult.ok ? TurnAnalysisSchema.safeParse(structuredResult.value) : null;
+    if (!structuredResult.ok && structuredResult.error.isAborted) {
+      throw new Error("Analysis aborted");
+    }
+
+    // Fall back to plain completion + lenient JSON extraction if the structured
+    // value is missing or doesn't match the schema.
+    if (!parsed || !parsed.success) {
+      const plainResult = await llm.message(messages, { signal });
       if (!plainResult.ok) {
         throw new Error(`Analysis failed: ${plainResult.error.message}`);
       }
-      raw = extractFencedJSON(plainResult.value as string);
+      parsed = TurnAnalysisSchema.safeParse(extractFencedJSON(plainResult.value as string));
     }
-    const parsed = TurnAnalysisSchema.safeParse(raw);
+
     if (!parsed.success) {
       throw new Error(`analysis parse failed: ${parsed.error.issues[0]?.message ?? "invalid shape"}`);
     }
@@ -135,80 +192,79 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
     isFirst: boolean;
   }
 
-  async function streamProbe({ facet, action, isFirst }: ProbeArgs) {
+  interface ProbeResult {
+    context: string;
+    question: string;
+  }
+
+  /** Coerce a raw structured/extracted value into a probe, or null if unusable.
+   *  Accepts a parsed object OR a JSON string (some providers return the JSON as
+   *  text rather than a parsed object). */
+  function coerceProbe(raw: unknown): ProbeResult | null {
+    let obj: unknown = raw;
+    if (typeof obj === "string") obj = extractFencedJSON(obj);
+    if (!obj || typeof obj !== "object") return null;
+    const o = obj as Record<string, unknown>;
+    const question = typeof o.question === "string" ? o.question.trim() : "";
+    if (!question) return null;
+    const context = typeof o.context === "string" ? o.context.trim() : "";
+    return { context, question };
+  }
+
+  /**
+   * Call A — the probe. A single structured `message` call returns the
+   * acknowledgement and the question SEPARATELY: the question alone goes in the
+   * heading, the acknowledgement is surfaced read-only in the Monitor. Atomic
+   * (not streamed) so the working overlay reveals the finished question with no
+   * stale-question flicker. Degrades gracefully if the provider returns no
+   * structured value (the same null case seen in Call B).
+   */
+  async function generateProbe({ facet, action, isFirst }: ProbeArgs, signal: AbortSignal) {
     const rec = mirrorStore.record;
     if (!rec) return;
     const llm = makeLLM();
     const sys = buildProbePrompt({ initialData: rec.initialData, facet, action, isFirst });
     const history: Message[] = rec.messages.map((m) => ({ role: m.role, content: m.content }));
+    const messages: Message[] = [{ role: "system", content: sys }, ...history];
 
-    const controller = new AbortController();
-    abortRef = controller;
-    mirrorStore.setThinking(true);
+    let probe: ProbeResult | null = null;
 
-    const streamResult = await llm.stream(
-      [{ role: "system", content: sys }, ...history],
-      { signal: controller.signal },
-    );
+    // Structured: json_object (openai-compatible) or forced tool use (anthropic).
+    // strict:false avoids the json_schema path that returns null on reasoning
+    // models like DeepSeek — one call on every provider.
+    const structured = await llm.message(messages, {
+      structured: { name: PROBE_SCHEMA_NAME, schema: PROBE_JSON_SCHEMA, strict: false },
+      signal,
+    });
+    if (structured.ok) probe = coerceProbe(structured.value);
+    else if (structured.error.isAborted) return; // user cancelled
 
-    if (!streamResult.ok) {
-      abortRef = null;
-      mirrorStore.setThinking(false);
-      // Don't add an error message for aborted requests
-      if (!streamResult.error.isAborted) {
-        mirrorStore.setStreaming("");
-        await mirrorStore.addMessage({
-          role: "assistant",
-          content: streamResult.error.message,
-          timestamp: new Date().toISOString(),
-          isError: true,
-        });
-      }
-      return;
-    }
-
-    const STREAM_STALL_MS = 30_000;
-    let acc = "";
-    let stallTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const clearStallTimer = () => {
-      if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
-    };
-
-    try {
-      // Start the stall timer — if no chunk arrives within STREAM_STALL_MS,
-      // append an ellipsis to show the model is still thinking.
-      stallTimer = setTimeout(() => {
-        mirrorStore.setStreaming(acc + "\n\n…");
-      }, STREAM_STALL_MS);
-
-      for await (const chunk of streamResult.value) {
-        clearStallTimer();
-        acc += chunk;
-        mirrorStore.setStreaming(acc);
-        stallTimer = setTimeout(() => {
-          mirrorStore.setStreaming(acc + "\n\n…");
-        }, STREAM_STALL_MS);
-      }
-    } catch (e) {
-      if ((e as Error).name !== "AbortError") {
-        mirrorStore.setStreaming("");
-        await mirrorStore.addMessage({
-          role: "assistant",
-          content: e instanceof Error ? e.message : "LLM error",
-          timestamp: new Date().toISOString(),
-          isError: true,
-        });
+    // Last resort: plain completion; recover JSON or fall back to raw text as the
+    // question (context empty).
+    if (!probe) {
+      const plain = await llm.message(messages, { signal });
+      if (!plain.ok) {
+        if (!plain.error.isAborted) {
+          await mirrorStore.addMessage({
+            role: "assistant",
+            content: plain.error.message,
+            timestamp: new Date().toISOString(),
+            isError: true,
+          });
+        }
         return;
       }
-    } finally {
-      clearStallTimer();
-      abortRef = null;
-      mirrorStore.setThinking(false);
+      const text = typeof plain.value === "string" ? plain.value : "";
+      probe = coerceProbe(text) ?? { context: "", question: text.trim() };
     }
-    if (acc) {
-      await mirrorStore.addMessage({ role: "assistant", content: acc, timestamp: new Date().toISOString() });
-    }
+
+    if (!probe.question) return;
+    await mirrorStore.addMessage({
+      role: "assistant",
+      content: probe.question,
+      context: probe.context || undefined,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   /** Ask one more probe past conclusion (the "continue — add more evidence" path). */
@@ -225,7 +281,7 @@ export function useInterview(mirrorStore: ReturnType<typeof useMirrorStore>) {
       }
     }
     await mirrorStore.patchRecord({ currentFacet: facet });
-    await streamProbe({ facet, action: "advance", isFirst: false });
+    await probeWithWorking({ facet, action: "advance", isFirst: false });
   }
 
   /** Triggers synthesis directly, bypassing coverage check. Escape route for the user. */

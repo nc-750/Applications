@@ -18,6 +18,7 @@ const entries = computed(() => {
   for (let i = 0; i < msgs.length; i++) {
     if (msgs[i].role !== "assistant" || msgs[i].isError) continue;
     const question = msgs[i].content;
+    const context = msgs[i].context?.trim();
     const answer = msgs[i + 1]?.role === "user" ? msgs[i + 1].content : "";
     if (!answer) continue; // only log answered probes
     n += 1;
@@ -25,7 +26,7 @@ const entries = computed(() => {
       id: `obs-${i}`,
       marker: "▸",
       summary: `OBS ${String(n).padStart(2, "0")} · ANSWERED`,
-      body: `Q: ${question}\n\nA: ${answer}`,
+      body: `${context ? `“${context}”\n\n` : ""}Q: ${question}\n\nA: ${answer}`,
     });
   }
   return out;

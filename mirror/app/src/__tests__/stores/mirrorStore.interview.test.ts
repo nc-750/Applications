@@ -18,7 +18,6 @@ describe("mirrorStore interview", () => {
     // Clean up any existing interview record
     const db = await getDB();
     try { await db.delete("interview", "default"); } catch { /* ok */ }
-    useMirrorStore().streamingContent = "";
   });
 
   describe("startInterview", () => {
@@ -76,18 +75,22 @@ describe("mirrorStore interview", () => {
       expect(rec!.messages.length).toBe(1);
     });
 
-    it("resets streamingContent after commit", async () => {
+    it("persists an assistant probe's context and exposes it as latestContext", async () => {
       const store = useMirrorStore();
       await store.startInterview("Brief");
-      store.setStreaming("partial streaming text...");
 
       await store.addMessage({
         role: "assistant",
-        content: "Full committed message",
+        content: "What went wrong?",
+        context: "That's a gutsy call.",
         timestamp: new Date().toISOString(),
       });
 
-      expect(store.streamingContent).toBe("");
+      expect(store.latestContext).toBe("That's a gutsy call.");
+
+      const db = await getDB();
+      const rec = await db.get("interview", "default");
+      expect(rec!.messages[0].context).toBe("That's a gutsy call.");
     });
   });
 
@@ -134,7 +137,6 @@ describe("mirrorStore interview", () => {
       await store.clearInterview();
 
       expect(store.record).toBeNull();
-      expect(store.streamingContent).toBe("");
 
       const db = await getDB();
       const rec = await db.get("interview", "default");

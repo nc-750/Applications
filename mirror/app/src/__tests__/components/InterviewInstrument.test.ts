@@ -32,6 +32,19 @@ describe("ReadoutPanel", () => {
     expect(w.find(".nc-led--rec").exists()).toBe(true);
     expect(w.text()).not.toContain("%");
   });
+
+  it("renders the instrument note when a context acknowledgement is provided", () => {
+    const w = mount(ReadoutPanel, {
+      props: { coverage: emptyCoverage(), context: "That's a gutsy call." },
+    });
+    expect(w.find(".mr-readout__note").exists()).toBe(true);
+    expect(w.text()).toContain("That's a gutsy call.");
+  });
+
+  it("hides the instrument note when there is no context", () => {
+    const w = mount(ReadoutPanel, { props: { coverage: emptyCoverage() } });
+    expect(w.find(".mr-readout__note").exists()).toBe(false);
+  });
 });
 
 describe("ProbeCell", () => {
@@ -48,8 +61,8 @@ describe("ProbeCell", () => {
     expect(w.emitted("submit")?.[0]).toEqual(["They rely on me to de-risk launches."]);
   });
 
-  it("shows the acquisition overlay while analysing", () => {
-    const w = mount(ProbeCell, { props: { facet: "story", question: "Q", acquiring: true } });
+  it("shows the acquisition overlay while a turn is in flight", () => {
+    const w = mount(ProbeCell, { props: { facet: "story", question: "Q", working: true } });
     expect(w.find(".nc-acquire").exists()).toBe(true);
   });
 });
@@ -68,5 +81,21 @@ describe("SessionLogCell", () => {
     });
     expect(w.findAll(".nc-log__entry")).toHaveLength(1);
     expect(w.text()).toContain("OBS 01");
+  });
+
+  it("includes the probe's context acknowledgement in the entry body", () => {
+    const now = new Date().toISOString();
+    const w = mount(SessionLogCell, {
+      props: {
+        messages: [
+          { role: "assistant", content: "What went wrong?", context: "Gutsy call.", timestamp: now },
+          { role: "user", content: "We pivoted.", timestamp: now },
+        ],
+      },
+    });
+    const text = w.text();
+    expect(text).toContain("Gutsy call.");
+    expect(text).toContain("What went wrong?");
+    expect(text).toContain("We pivoted.");
   });
 });

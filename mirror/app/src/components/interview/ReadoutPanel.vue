@@ -19,10 +19,12 @@ const props = withDefaults(
     probeSignal?: ProbeSignal | null;
     /** Analysis (Call B) in flight — drives the acquisition status LED. */
     acquiring?: boolean;
+    /** The instrument's read-only acknowledgement of the user's last answer. */
+    context?: string;
     /** Condensed layout for mobile. */
     minimal?: boolean;
   }>(),
-  { probeSignal: null, acquiring: false, minimal: false },
+  { probeSignal: null, acquiring: false, context: "", minimal: false },
 );
 
 const pct = (k: keyof CoverageMap) => Math.round((props.coverage[k] ?? 0) * 100);
@@ -38,6 +40,11 @@ const signal = computed(() => {
 
 <template>
   <div class="nc-monitor mr-readout">
+    <div v-if="context" class="mr-readout__note">
+      <span class="nc-label mr-readout__note-key">▸ INSTRUMENT NOTE</span>
+      <p class="mr-readout__note-text">{{ context }}</p>
+    </div>
+
     <div class="mr-readout__signal">
       <span class="nc-led" :class="signal.cls">{{ signal.text }}</span>
     </div>
@@ -59,6 +66,22 @@ const signal = computed(() => {
     display: flex;
     flex-direction: column;
     gap: var(--nc-space-4);
+}
+.mr-readout__note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nc-space-1);
+    padding-bottom: var(--nc-space-3);
+    border-bottom: var(--nc-border-width) solid var(--nc-line);
+}
+.mr-readout__note-key {
+    color: var(--nc-ink-3);
+}
+.mr-readout__note-text {
+    margin: 0;
+    color: var(--nc-ink-2);
+    font-size: var(--nc-text-sm);
+    line-height: 1.4;
 }
 .mr-readout__heading {
     margin-bottom: var(--nc-space-1);

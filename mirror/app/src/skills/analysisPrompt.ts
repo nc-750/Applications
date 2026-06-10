@@ -106,7 +106,7 @@ For every turn, return:
 
 Aim to reach roughly ${target}% saturation across all facets before the reading is considered sufficient. Do not inflate numbers to finish early, and do not stall a facet that is genuinely covered.
 
-Output ONLY the structured result. No prose.`;
+Output ONLY the structured JSON result (a single JSON object with the fields above). No prose.`;
 }
 
 export function buildAnalysisUserPrompt(

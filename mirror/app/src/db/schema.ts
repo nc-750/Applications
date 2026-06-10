@@ -17,7 +17,10 @@ export interface SettingsRecord {
 
 export interface InterviewMessage {
   role: "user" | "assistant";
+  /** For an assistant probe this is the QUESTION only; the acknowledgement lives in `context`. */
   content: string;
+  /** Assistant probes only: a brief reaction to the user's previous answer, shown read-only in the Monitor and the Session Log. */
+  context?: string;
   timestamp: string;
   isError?: boolean;
 }

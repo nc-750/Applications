@@ -16,15 +16,17 @@ export function useInterviewModule() {
   // we avoid deep reactive proxies that IndexedDB's structured clone can't handle.
   const record = shallowRef<InterviewRecord | null>(null);
   const interviewLoaded = ref(false);
-  const streamingContent = ref(""); // live streamed text not yet committed
-  const isThinking = ref(false); // waiting for first chunk of the probe (Call A)
-  const acquiring = ref(false); // analysis call (Call B) in flight — drives acquisition
+  const working = ref(false); // a turn is in flight (analysis + probe) — drives the Monitor LED AND the ProbeCell overlay together
   const synthesisPhase = ref<string | null>(null); // transient UI: "extracting" | "analyzing" | "polishing" | "finalizing"
 
   // ── Readout getters ─────────────────────────────────────────────────────
   const coverage = computed<CoverageMap>(() => record.value?.coverage ?? emptyCoverage());
   const probeSignal = computed(() => record.value?.probeSignal ?? null);
   const currentFacet = computed<FacetKey>(() => record.value?.currentFacet ?? "story");
+  /** The acknowledgement from the most recent probe — shown read-only in the Monitor. */
+  const latestContext = computed(
+    () => [...(record.value?.messages ?? [])].reverse().find((m) => m.role === "assistant" && !m.isError)?.context ?? "",
+  );
   /** Probes asked so far (non-error assistant turns). */
   const probeCount = computed(
     () => record.value?.messages.filter((m) => m.role === "assistant" && !m.isError).length ?? 0,
@@ -76,7 +78,6 @@ export function useInterviewModule() {
       updatedAt: now,
     };
     await persist(rec);
-    streamingContent.value = "";
     logger.info("app", "Interview started", {
       data: {
         briefLength: brief.length,
@@ -90,7 +91,6 @@ export function useInterviewModule() {
     const cur = record.value;
     if (!cur) return;
     await persist({ ...cur, messages: [...cur.messages, msg], updatedAt: new Date().toISOString() });
-    streamingContent.value = "";
   }
 
   async function setStatus(status: InterviewStatus) {
@@ -107,17 +107,8 @@ export function useInterviewModule() {
     logger.error("app", "Synthesis failed", { data: { message } });
   }
 
-  function setStreaming(content: string) {
-    streamingContent.value = content;
-    isThinking.value = false;
-  }
-
-  function setThinking(thinking: boolean) {
-    isThinking.value = thinking;
-  }
-
-  function setAcquiring(val: boolean) {
-    acquiring.value = val;
+  function setWorking(val: boolean) {
+    working.value = val;
   }
 
   function setSynthesisPhase(phase: string | null) {
@@ -128,19 +119,17 @@ export function useInterviewModule() {
     const db = await getDB();
     await db.delete("interview", "default");
     record.value = null;
-    streamingContent.value = "";
   }
 
   return {
     record,
     interviewLoaded,
-    streamingContent,
-    isThinking,
-    acquiring,
+    working,
     synthesisPhase,
     coverage,
     probeSignal,
     currentFacet,
+    latestContext,
     probeCount,
     concluded,
     loadInterview,
@@ -149,9 +138,7 @@ export function useInterviewModule() {
     patchRecord,
     setStatus,
     failSynthesis,
-    setStreaming,
-    setThinking,
-    setAcquiring,
+    setWorking,
     setSynthesisPhase,
     clearInterview,
   };
