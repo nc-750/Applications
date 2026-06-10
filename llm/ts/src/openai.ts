@@ -109,6 +109,7 @@ export function createOpenAIClient(
   const client = new OpenAI({
     apiKey: keyProvider,
     baseURL: baseUrl ?? DEFAULT_BASE_URL,
+    dangerouslyAllowBrowser: true
   });
 
   // Cast to LLMClient — the implementation satisfies the overloaded interface

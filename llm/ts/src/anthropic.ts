@@ -201,7 +201,7 @@ export function createAnthropicClient(
 
       try {
         const apiKey = await keyProvider();
-        const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl });
+        const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl, dangerouslyAllowBrowser: true });
 
         const response = await client.messages.create(
           {
