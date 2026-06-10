@@ -2175,6 +2175,9 @@ fieldset {
 .nc-cell--fixed {
     flex: 0 0 auto;
 }
+.nc-cell--thin {
+    padding: var(--nc-space-2) var(--nc-space-4);
+}
 
 /* ── Cell surface variants ───────────────────────────────── */
 .nc-cell--2 {

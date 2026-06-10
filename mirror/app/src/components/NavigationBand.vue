@@ -26,7 +26,7 @@ const cellLayout = computed(() => {
 
 <template>
     <Band>
-        <Cell title="" spec="" surface="2">
+        <Cell title="" spec="" surface="brushed" variant="thin">
         <div :class="cellLayout">
             <router-link v-if="!isWelcomePage" to="/">Home</router-link>
             <router-link v-if="!isSettingsPage" to="/settings">Settings</router-link>
