@@ -3,13 +3,16 @@ import { MessageSquare, Import, BrainCircuit } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
 import { useMirrorStore } from "../stores/mirror";
+import { computed } from "vue";
 
-const mirrorStore = useMirrorStore();
+let mirrorStore = useMirrorStore();
 
-const primaryButton = {
-    target: mirrorStore.isLLMConfigured ? "/interview" : "/settings",
-    label: mirrorStore.isLLMConfigured ? "Probe" : "Configure AI",
-}
+const primaryButton = computed(() => { 
+    return {
+        target: mirrorStore.isLLMConfigured ? "/interview" : "/settings",
+        label: mirrorStore.isLLMConfigured ? "Probe" : "Configure AI",
+    }
+});
 
 </script>
 
@@ -28,11 +31,11 @@ const primaryButton = {
 
                 <!-- Actions -->
                 <div class="flex flex-col">
-                    <a :href="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                    <router-link :to="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
                         <MessageSquare :size="15" aria-hidden="true" v-if="mirrorStore.isLLMConfigured"/>
                         <BrainCircuit :size="15" aria-hidden="true" v-else />
                         {{ primaryButton.label }} 
-                    </a>
+                    </router-link>
                     <button class="nc-btn nc-btn--secondary nc-btn--lg">
                         <Import :size="15" aria-hidden="true" />
                         Import your persona
