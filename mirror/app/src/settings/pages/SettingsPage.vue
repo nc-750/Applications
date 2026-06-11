@@ -10,10 +10,10 @@ import {
 } from "@nc-750/lab-vue";
 import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
-import { factoryReset } from "../lib/wipe";
-import { downloadFile } from "../lib/utils";
-import { useAppStore } from "../AppStore";
-import { LLMProvider } from "./models";
+import { factoryReset } from "../../lib/wipe";
+import { downloadFile } from "../../lib/utils";
+import { useAppStore } from "../../AppStore";
+import { LLMProvider } from "../models";
 
 const appStore = useAppStore();
 const settingsStore = appStore.settings;
