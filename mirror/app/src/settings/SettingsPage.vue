@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch } from "vue";
 import {
     Band,
     Button,
@@ -8,29 +8,32 @@ import {
     FormField,
     TextField,
 } from "@nc-750/lab-vue";
-import { useMirrorStore } from "../stores/mirror";
 import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
 import { factoryReset } from "../lib/wipe";
 import { downloadFile } from "../lib/utils";
-import { logger } from "../logger";
+import { useAppStore } from "../AppStore";
+import { LLMProvider } from "./models";
 
-const mirrorStore = useMirrorStore();
+const appStore = useAppStore();
+const settingsStore = appStore.settings;
+const personaStore = appStore.persona;
+const logStore = appStore.log;
 
 const localConfig = reactive({
-    provider: "" as ProviderKind | "",
+    provider: "" as LLMProvider | "",
     model: "",
     apiKey: "",
     endpoint: "",
 });
 
 // Sync store -> local when store loads or config changes
-watch(() => mirrorStore.llmConfig, (config) => {
+watch(() => settingsStore.llmConfig, (config) => {
     if (config) {
         localConfig.provider = config.provider;
         localConfig.model = config.model;
         localConfig.apiKey = config.apiKey;
-        localConfig.endpoint = config.endpoint ?? "";
+        localConfig.endpoint = config.endpoint;
     } else {
         localConfig.provider = "";
         localConfig.model = "";
@@ -43,13 +46,14 @@ const testMessage = ref("");
 const testing = ref(false);
 const isDebugOn = ref(false);
 
-async function saveLLMConfig() {
-    if (!localConfig.provider || !localConfig.model || !localConfig.apiKey) return;
-    await mirrorStore.saveLLMConfig({
-        provider: localConfig.provider as ProviderKind,
+async function save() {
+    if (!localConfig.provider || !localConfig.model || !localConfig.apiKey || !localConfig.endpoint) return;
+    
+    await settingsStore.saveSettings({
+        provider: localConfig.provider,
         model: localConfig.model,
         apiKey: localConfig.apiKey,
-        endpoint: localConfig.endpoint || undefined,
+        endpoint: localConfig.endpoint,
     });
 }
 
@@ -64,8 +68,24 @@ async function testConnectionHandler() {
 
     try {
         const keyProvider = async () => localConfig.apiKey;
+        
+
+        let provider: ProviderKind = "openai-compatible";
+         
+        switch (Number(localConfig.provider)) {
+            case LLMProvider.OpenAI: 
+                provider = "openai";
+                break;
+            case LLMProvider.Anthropic: 
+                provider = "anthropic";
+                break;
+            case LLMProvider.CompatibleOpenAI: 
+                provider = "openai-compatible";
+                break;
+        }
+        
         const clientResult = createLLMClient({
-            provider: localConfig.provider as ProviderKind,
+            provider: provider,
             model: localConfig.model,
             keyProvider,
             baseUrl: localConfig.endpoint || undefined,
@@ -108,7 +128,7 @@ async function handleImportPersona(e: Event) {
     if (target.files?.length) {
         try {
             const text = await target.files[0].text();
-            await mirrorStore.importPersonaFromJSON(text);
+            await personaStore.importPersonaFromJSON(text);
         } catch (err) {
             testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
         }
@@ -117,7 +137,7 @@ async function handleImportPersona(e: Event) {
 }
 
 function handleExportPersona() {
-    const p = mirrorStore.persona;
+    const p = personaStore.persona;
     if (!p) return;
     const json = JSON.stringify(p.data, null, 2);
     const name = p.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() || "mirror";
@@ -125,11 +145,11 @@ function handleExportPersona() {
 }
 
 async function handleDeletePersona() {
-    await mirrorStore.clearPersona();
+    // await mirrorStore.clearPersona();
 }
 
 async function handleClearLLMConfig() {
-    await mirrorStore.clearLLMConfig();
+    await settingsStore.clearSettings();
     localConfig.provider = "";
     localConfig.model = "";
     localConfig.apiKey = "";
@@ -137,22 +157,22 @@ async function handleClearLLMConfig() {
 }
 
 function toggleDebug() {
-    isDebugOn.value = mirrorStore.debugEnabled;
+    isDebugOn.value = logStore.debugEnabled;
 
     if (isDebugOn.value) {
-        mirrorStore.setDebugEnabled(false);
+        logStore.setDebugEnabled(false);
     } else {
-        mirrorStore.setDebugEnabled(true);
+        logStore.setDebugEnabled(true);
     }
 
-    isDebugOn.value = mirrorStore.debugEnabled;
+    isDebugOn.value = logStore.debugEnabled;
 }
 </script>
 
 <template>
     <Band :grow="1">
         <Cell title="LLM CONFIG" spec="CFG // 0x01">
-            <Form class="flex flex-col gap-4" @submit.prevent="saveLLMConfig">
+            <Form class="flex flex-col gap-4" @submit.prevent="save">
                 <FormField label="AI Provider">
                     <select class="nc-select" v-model="localConfig.provider" @change="onAIProviderSelected">
                         <option value="openai">OpenAI</option>
