@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import InterviewPage from "@/pages/InterviewPage.vue";
-import InsightPage from "@/pages/InsightPage.vue";
-import PrivacyPage from "@/pages/PrivacyPage.vue";
-import ProfilePage from "@/pages/ProfilePage.vue";
+import InterviewPage from "@/interview/pages/InterviewPage.vue";
+import InsightPage from "@/insight/pages/InsightPage.vue";
+import PrivacyPage from "@/privacy/pages/PrivacyPage.vue";
+import ProfilePage from "@/profile/pages/ProfilePage.vue";
 import SettingsPage from "@/settings/pages/SettingsPage.vue";
 import WelcomePage from "@/welcome/WelcomePage.vue";
 
