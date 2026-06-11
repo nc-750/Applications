@@ -1,8 +1,8 @@
 import { ref } from "vue";
-import type { LogEntry } from "../../logger/models/types";
+import { LogEntry } from "../models/types";
 
-export function useLogModule() {
-  const logEntries = ref<LogEntry[]>([]);
+export function useLoggerStore() {
+    const logEntries = ref<LogEntry[]>([]);
   
   // TODO: Switch to false in production
   const debugEnabled = ref(true);

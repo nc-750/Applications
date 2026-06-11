@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { useSettingsStore } from "./settings/stores";
-import { useLogModule } from "./stores/mirror/log";
 import { usePersonaStore } from "./persona/stores";
+import { useLoggerStore } from "./logger/stores";
 
 export const useAppStore = defineStore("app", () => {
   const settingsStore = useSettingsStore();
   const personaStore = usePersonaStore();
-  const logStore = useLogModule();
+  const logStore = useLoggerStore();
 
   return {
     settings: {
@@ -15,7 +15,7 @@ export const useAppStore = defineStore("app", () => {
     persona: {
         ...personaStore
     },
-    log: {
+    logger: {
         ...logStore
     }
   };

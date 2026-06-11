@@ -3,19 +3,17 @@ import { logger } from "../../logger";
 
 export async function wipePersona() {
     const personaStore = useAppStore().persona;
-    // await personaStore.clearPersona();
+    await personaStore.clearPersona();
 }
 
 export async function wipeSettings() {
     const settingsStore = useAppStore().settings;
-
     await settingsStore.clearSettings();
 }
 
 export async function wipeLogs() {
-    const logStore = useAppStore().log;
-
-    // await logStore.clearLogs();
+    const logStore = useAppStore().logger;
+    await logStore.clearLogs();
 }
 
 export async function wipeDatabase() {
