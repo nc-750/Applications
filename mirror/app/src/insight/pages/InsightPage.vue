@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { BookOpen, ChevronDown, ChevronRight } from "lucide-vue-next";
+import { computed } from "vue";
+import { BookOpen } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
+import { useAppStore } from "../../AppStore";
+import { SKILL_CATEGORIES } from "../../types/persona";
 
-import { useMirrorStore } from "../stores/mirror";
-import { SKILL_CATEGORIES } from "../types/persona";
+const personaStore = useAppStore().persona;
 
-const mirrorStore = useMirrorStore();
-
-const persona = computed(() => mirrorStore.persona?.data?.persona ?? null);
+const persona = computed(() => personaStore.persona);
 
 const skillsByCategory = computed(() => {
   const skills = persona.value?.skills ?? [];
@@ -17,7 +16,7 @@ const skillsByCategory = computed(() => {
     map.set(cat, []);
   }
   for (const s of skills) {
-    const bucket = map.get(s.category);
+    const bucket = map.get(String(s.category));
     if (bucket) bucket.push(s);
   }
   // Return only categories that have skills
@@ -26,13 +25,13 @@ const skillsByCategory = computed(() => {
 
 const timelineSorted = computed(() => {
   if (!persona.value) return [];
-  return [...persona.value.career_timeline].sort(
-    (a, b) => b.year_start - a.year_start,
+  return [...persona.value.carreer].sort(
+    (a, b) => b.dateStart - a.dateStart,
   );
 });
 
 const formattedDate = computed(() => {
-  const raw = persona.value?.metadata?.generated_at;
+  const raw = persona.value.metadata.createdAt;
   if (!raw) return "";
   try {
     return new Date(raw).toLocaleDateString(undefined, {
@@ -43,14 +42,6 @@ const formattedDate = computed(() => {
   } catch {
     return raw;
   }
-});
-
-const useCasesExpanded = ref(false);
-
-const hasUseCases = computed(() => {
-  const uc = persona.value?.use_cases;
-  if (!uc) return false;
-  return !!(uc.cv_summary || uc.interview_pitch || uc.linkedin_about);
 });
 </script>
 
@@ -74,19 +65,19 @@ const hasUseCases = computed(() => {
   <Band v-else :grow="1" class="overflow-y-auto">
     <!-- 0x01 Identity -->
     <Cell title="IDENTITY" spec="// 0x01">
-      <div class="flex flex-col gap-3">
+      <!-- <div class="flex flex-col gap-3">
         <h2 class="nc-heading-3">{{ persona.identity.name }}</h2>
         <p class="nc-text-md nc-text-secondary">{{ persona.identity.tagline }}</p>
         <p class="nc-text-sm">{{ persona.identity.elevator_pitch }}</p>
         <p class="nc-text-xs nc-text-muted">
           {{ persona.metadata.language }} &middot; {{ formattedDate }}
         </p>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x02 Strengths -->
     <Cell title="STRENGTHS" spec="// 0x02">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4">
         <div
           v-for="(s, i) in persona.strengths"
           :key="i"
@@ -98,12 +89,12 @@ const hasUseCases = computed(() => {
             {{ s.evidence }}
           </p>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x03 Growth Areas -->
     <Cell title="GROWTH AREAS" spec="// 0x03">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4">
         <div
           v-for="(w, i) in persona.weaknesses"
           :key="i"
@@ -115,12 +106,12 @@ const hasUseCases = computed(() => {
             {{ w.growth_note }}
           </p>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x04 Skills Map -->
     <Cell title="SKILLS MAP" spec="// 0x04">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4">
         <div
           v-for="[category, skills] in skillsByCategory"
           :key="category"
@@ -138,12 +129,12 @@ const hasUseCases = computed(() => {
             </span>
           </div>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x05 Career Timeline -->
     <Cell title="CAREER TIMELINE" spec="// 0x05">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4">
         <div
           v-for="(entry, i) in timelineSorted"
           :key="i"
@@ -166,12 +157,12 @@ const hasUseCases = computed(() => {
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x06 Hidden Assets -->
     <Cell title="HIDDEN ASSETS" spec="// 0x06">
-      <ul class="flex flex-col gap-2">
+      <!-- <ul class="flex flex-col gap-2">
         <li
           v-for="(asset, i) in persona.hidden_assets"
           :key="i"
@@ -179,12 +170,12 @@ const hasUseCases = computed(() => {
         >
           {{ asset }}
         </li>
-      </ul>
+      </ul> -->
     </Cell>
 
     <!-- 0x07 Personality Dimensions -->
     <Cell title="PERSONALITY DIMENSIONS" spec="// 0x07">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4">
         <div
           v-for="(trait, i) in persona.personality_traits"
           :key="i"
@@ -195,7 +186,6 @@ const hasUseCases = computed(() => {
             <span class="nc-text-xs nc-text-muted">{{ trait.position }} / 10</span>
           </div>
           <div class="personality-bar">
-            <!-- :style justified (Phase 6 policy rule 2): dynamic bar width from continuous 0-10 trait position -->
             <div
               class="personality-bar__fill"
               :style="{ width: `${trait.position * 10}%` }"
@@ -205,14 +195,14 @@ const hasUseCases = computed(() => {
             {{ trait.note }}
           </p>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x08 Values & Goals -->
     <Cell title="VALUES &amp; GOALS" spec="// 0x08">
-      <div class="flex flex-col gap-4">
+      <!-- <div class="flex flex-col gap-4"> -->
         <!-- Values -->
-        <div class="flex flex-col gap-2">
+        <!-- <div class="flex flex-col gap-2">
           <span class="nc-label">Values</span>
           <div class="flex flex-wrap gap-2">
             <span
@@ -223,9 +213,9 @@ const hasUseCases = computed(() => {
               {{ v }}
             </span>
           </div>
-        </div>
+        </div> -->
         <!-- Goals -->
-        <div class="flex flex-col gap-3">
+        <!-- <div class="flex flex-col gap-3">
           <div v-if="persona.goals.short_term" class="flex flex-col gap-1">
             <span class="nc-label">Short-term</span>
             <p class="nc-text-sm">{{ persona.goals.short_term }}</p>
@@ -235,11 +225,11 @@ const hasUseCases = computed(() => {
             <p class="nc-text-sm">{{ persona.goals.long_term }}</p>
           </div>
         </div>
-      </div>
+      </div> -->
     </Cell>
 
     <!-- 0x09 Ready-to-use Text -->
-    <Cell v-if="hasUseCases" title="READY-TO-USE TEXT" spec="// 0x09">
+    <!-- <Cell v-if="hasUseCases" title="READY-TO-USE TEXT" spec="// 0x09">
       <button
         class="flex items-center gap-2 w-full text-left nc-text-sm nc-label py-1"
         @click="useCasesExpanded = !useCasesExpanded"
@@ -262,7 +252,7 @@ const hasUseCases = computed(() => {
           <p class="nc-text-sm">{{ persona.use_cases.linkedin_about }}</p>
         </div>
       </div>
-    </Cell>
+    </Cell> -->
   </Band>
 </template>
 

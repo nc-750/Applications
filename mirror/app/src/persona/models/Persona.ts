@@ -34,8 +34,8 @@ export interface PersonaSkill {
 }
 
 export interface PersonaCareer {
-    dateState: Date,
-    dateEnd: Date,
+    dateStart: number,
+    dateEnd: number,
     role: string,
     highlights: string[],
     organization?: string,
