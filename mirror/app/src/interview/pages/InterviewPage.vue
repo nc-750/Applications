@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import InterviewPreparation from '../interview/components/InterviewPreparation.vue';
+import InterviewPreparation from '../components/InterviewPreparation.vue';
 import { useAppStore } from '../../AppStore.ts';
 import { logger } from '../../logger/index.ts';
 import { AttachedFile } from '../../lib/fileExtractor.ts';
 import { ContentPart, createLLMClient, LLMClient, Message, ProviderKind } from '@nc-750/llm-ts';
 import { Persona, PersonaMetrics } from '../../persona/models/Persona.ts';
 import { buildInterviewSystemPrompt, buildNextQuestionSystemPrompt, buildPersonaMetricsSystemPrompt, buildPersonaMetricsUserPrompt } from '../prompts/index.ts';
-import { ANALYZE_SCHEMA_NAME } from '../../skills/personaSchemas.ts';
-import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../../skills/analysisPrompt.ts';
-import { extractFencedJSON } from '../../skills/interviewExtractor.ts';
+import { ANALYZE_SCHEMA_NAME } from '../../persona/personaSchemas.ts';
+import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../prompts/analysisPrompt.ts';
+import { extractFencedJSON } from '../prompts/interviewExtractor.ts';
 import { TurnAnalysis } from '../../types/interview.ts';
-import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../../skills/interviewPrompt.ts';
+import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../prompts/interviewPrompt.ts';
 import { LLMProvider } from '../../settings/models/index.ts';
 
 interface ProbeResult {

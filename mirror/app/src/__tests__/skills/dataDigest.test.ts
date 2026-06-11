@@ -4,7 +4,7 @@ import {
   estimateTokens,
   DIGEST_THRESHOLD_CHARS,
   DIGEST_CHUNK_CHARS,
-} from "../../skills/dataDigest";
+} from "../../interview/prompts/dataDigest";
 import type { LLMClient } from "@nc-750/llm-ts";
 
 function createMockLLM(messageResponse: string): LLMClient {

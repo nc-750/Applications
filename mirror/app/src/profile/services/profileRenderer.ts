@@ -1,4 +1,4 @@
-import type { PersonaJSON, Skill, Strength, CareerEntry, NonProfessionalEntry } from "../types/persona";
+import type { PersonaJSON, Skill, Strength, CareerEntry, NonProfessionalEntry } from "../../types/persona";
 import { esc, groupSkills } from "./html";
 
 /**

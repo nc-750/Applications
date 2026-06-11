@@ -19,9 +19,9 @@ import ConcludeCell from "./ConcludeCell.vue";
 import { createLLMClient, type LLMClient } from "@nc-750/llm-ts";
 import { useMirrorStore } from "../../stores/mirror";
 import { useInterview } from "../../composables/useInterview";
-import { synthesizePersona } from "../../skills/synthesize";
-import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
-import { prepareInputBrief } from "../../skills/dataDigest";
+import { synthesizePersona } from "../prompts/synthesize.ts";
+import { synthesizeHowIWorkBest } from "../prompts/profileSynthesizer.ts";
+import { prepareInputBrief } from "../prompts/dataDigest.ts";
 import { logger } from "../../logger";
 import type { PersonaJSON } from "../../types/persona";
 

@@ -3,7 +3,7 @@ import {
   buildSystemPrompt,
   buildProbePrompt,
   INTERVIEW_COMPLETE_SENTINEL,
-} from "../../skills/interviewPrompt";
+} from "../../interview/prompts/interviewPrompt";
 
 describe("interviewPrompt", () => {
   describe("INTERVIEW_COMPLETE_SENTINEL", () => {

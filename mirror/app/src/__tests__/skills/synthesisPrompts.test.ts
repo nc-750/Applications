@@ -7,7 +7,7 @@ import {
   buildPolishSystemPrompt,
   buildPolishUserPrompt,
   FALLBACK_FORMAT_SUFFIX,
-} from "../../skills/synthesisPrompts";
+} from "../../interview/prompts/synthesisPrompts";
 
 describe("synthesisPrompts", () => {
   describe("FALLBACK_FORMAT_SUFFIX", () => {

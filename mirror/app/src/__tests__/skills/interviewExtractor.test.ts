@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { extractPersonaJSON, extractFencedJSON } from "../../skills/interviewExtractor";
+import { extractPersonaJSON, extractFencedJSON } from "../../interview/prompts/interviewExtractor";
 import { minimalPersona } from "../factories/persona";
 
 // ── extractPersonaJSON ──────────────────────────────────────────────────────

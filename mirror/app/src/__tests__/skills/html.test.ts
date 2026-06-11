@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { esc, groupSkills } from "../../skills/html";
+import { esc, groupSkills } from "../../profile/services/html";
 
 // ── esc ─────────────────────────────────────────────────────────────────────
 

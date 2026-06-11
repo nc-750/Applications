@@ -7,7 +7,7 @@ import {
   EXTRACT_JSON_SCHEMA,
   ANALYZE_JSON_SCHEMA,
   POLISH_JSON_SCHEMA,
-} from "../../skills/personaSchemas";
+} from "../../persona/personaSchemas";
 
 // ── JSON Schema structure ──────────────────────────────────────────────────
 

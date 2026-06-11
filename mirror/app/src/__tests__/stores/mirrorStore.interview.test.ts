@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useMirrorStore } from "../../stores/mirror";
 import { getDB } from "../../db/schema";
-import { CONCLUDE_THRESHOLD } from "../../skills/analysisPrompt";
+import { CONCLUDE_THRESHOLD } from "../../interview/prompts/analysisPrompt";
 
 // Mock keyStore
 vi.mock("../../lib/keyStore", () => ({

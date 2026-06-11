@@ -2,7 +2,7 @@
 import { ref, computed, type Component } from "vue";
 import { ArrowRight, SkipForward, Paperclip, X, Loader2, FileText, FileCode, File } from "lucide-vue-next";
 import { extractText, isSupportedFile, ACCEPT_STRING } from "../../lib/fileExtractor";
-import { estimateTokens, DIGEST_THRESHOLD_CHARS, DIGEST_CHUNK_CHARS } from "../../skills/dataDigest";
+import { estimateTokens, DIGEST_THRESHOLD_CHARS, DIGEST_CHUNK_CHARS } from "../prompts/dataDigest";
 
 interface AttachedFile {
   name: string;

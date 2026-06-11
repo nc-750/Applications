@@ -11,7 +11,7 @@
 import { computed } from "vue";
 import { Coverage } from "@nc-750/lab-vue";
 import { FACETS, type CoverageMap, type ProbeSignal } from "../../types/interview";
-import { SATURATION_LOCKED } from "../../skills/analysisPrompt";
+import { SATURATION_LOCKED } from "../prompts/analysisPrompt";
 
 const props = withDefaults(
   defineProps<{

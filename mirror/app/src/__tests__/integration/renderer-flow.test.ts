@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { renderInsight } from "../../skills/insightRenderer";
-import { renderProfile } from "../../skills/profileRenderer";
+import { renderProfile } from "../../profile/services/profileRenderer";
 import {
   minimalPersona,
   richPersona,

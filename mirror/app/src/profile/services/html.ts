@@ -1,4 +1,4 @@
-import type { Skill } from "../types/persona";
+import type { Skill } from "../../types/persona";
 
 /** HTML-escape a value for safe interpolation into rendered documents. */
 export function esc(s: string | number | undefined | null): string {

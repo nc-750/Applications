@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { synthesizeHowIWorkBest } from "../../skills/profileSynthesizer";
+import { synthesizeHowIWorkBest } from "../../interview/prompts/profileSynthesizer";
 import { richPersona, minimalPersona } from "../factories/persona";
 import type { LLMClient } from "@nc-750/llm-ts";
 

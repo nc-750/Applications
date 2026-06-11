@@ -3,7 +3,7 @@ import {
   TurnAnalysisSchema,
   CONCLUDE_THRESHOLD,
   SATURATION_LOCKED,
-} from "../../skills/analysisPrompt";
+} from "../../interview/prompts/analysisPrompt";
 import { mergeCoverage, emptyCoverage, FACETS } from "../../types/interview";
 
 describe("TurnAnalysisSchema", () => {

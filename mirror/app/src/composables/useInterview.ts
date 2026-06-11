@@ -10,7 +10,7 @@ import {
   buildProbePrompt,
   PROBE_SCHEMA_NAME,
   PROBE_JSON_SCHEMA,
-} from "../skills/interviewPrompt";
+} from "../interview/prompts/interviewPrompt";
 import {
   buildAnalysisSystemPrompt,
   buildAnalysisUserPrompt,
@@ -18,8 +18,8 @@ import {
   ANALYSIS_SCHEMA_NAME,
   TurnAnalysisSchema,
   CONCLUDE_THRESHOLD,
-} from "../skills/analysisPrompt";
-import { extractFencedJSON } from "../skills/interviewExtractor";
+} from "../interview/prompts/analysisPrompt";
+import { extractFencedJSON } from "../interview/prompts/interviewExtractor";
 import { logger } from "../logger";
 import type { InterviewRecord } from "../db/schema";
 import {
