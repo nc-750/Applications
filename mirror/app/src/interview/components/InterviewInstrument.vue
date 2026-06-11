@@ -18,7 +18,7 @@ import SessionLogCell from "./SessionLogCell.vue";
 import ConcludeCell from "./ConcludeCell.vue";
 import { createLLMClient, type LLMClient } from "@nc-750/llm-ts";
 import { useMirrorStore } from "../../stores/mirror";
-import { useInterview } from "../../composables/useInterview";
+import { useInterview } from "../services/useInterview.ts";
 import { synthesizePersona } from "../prompts/synthesize.ts";
 import { synthesizeHowIWorkBest } from "../prompts/profileSynthesizer.ts";
 import { prepareInputBrief } from "../prompts/dataDigest.ts";

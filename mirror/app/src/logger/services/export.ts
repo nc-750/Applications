@@ -1,4 +1,4 @@
-import { downloadFile } from "../../lib/utils";
+import { downloadFile } from "../../fileManager/services/utils";
 import { useAppStore } from "../../AppStore";
 
 export function exportDebugLog(): void {

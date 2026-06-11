@@ -1,5 +1,5 @@
 import { isWithinTokenLimit } from "tokenx";
-import { AttachedFile } from "../../lib/fileExtractor";
+import { AttachedFile } from "../../fileManager/services/fileExtractor";
 import { getContextWindowLimit } from "../models";
 import { Message } from "@nc-750/llm-ts";
 

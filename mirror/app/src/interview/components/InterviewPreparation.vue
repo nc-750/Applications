@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Band, Cell } from '@nc-750/lab-vue';
-import { AttachedFile, ACCEPT_STRING, extractText, isSupportedFile } from '../../lib/fileExtractor';
+import { AttachedFile, ACCEPT_STRING, extractText, isSupportedFile } from '../../fileManager/services/fileExtractor';
 
 const emit = defineEmits<{
     startInterview: [userInput: string, attachedFiles: AttachedFile[]];

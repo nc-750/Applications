@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { downloadFile, readFileAsText, openExternal } from "../../lib/utils";
+import { downloadFile, readFileAsText, openExternal } from "../../fileManager/services/utils";
 
 describe("downloadFile", () => {
   // downloadFile creates a Blob + anchor.click() — not fully testable in jsdom.

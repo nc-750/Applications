@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import InterviewPreparation from '../components/InterviewPreparation.vue';
 import { useAppStore } from '../../AppStore.ts';
 import { logger } from '../../logger/index.ts';
-import { AttachedFile } from '../../lib/fileExtractor.ts';
+import { AttachedFile } from '../../fileManager/services/fileExtractor.ts';
 import { ContentPart, createLLMClient, LLMClient, Message, ProviderKind } from '@nc-750/llm-ts';
 import { Persona, PersonaMetrics } from '../../persona/models/Persona.ts';
 import { buildInterviewSystemPrompt, buildNextQuestionSystemPrompt, buildPersonaMetricsSystemPrompt, buildPersonaMetricsUserPrompt } from '../prompts/index.ts';

@@ -1,4 +1,4 @@
-import { logger } from "../logger";
+import { logger } from "../../logger";
 
 /** Join class names, filtering out falsy values */
 export function cn(...classes: (string | false | null | undefined)[]): string {

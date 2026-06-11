@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useMirrorStore } from "../../stores/mirror";
-import { useInterview } from "../../composables/useInterview";
+import { useInterview } from "../../interview/services/useInterview";
 import type { LLMClient } from "@nc-750/llm-ts";
 
 // ── Fake LLM helpers ───────────────────────────────────────────────────────

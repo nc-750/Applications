@@ -12,7 +12,7 @@
  * boot or block saveSettings.
  */
 
-import { logger } from "../logger";
+import { logger } from "../../logger";
 
 export const isTauri = (): boolean =>
   typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
