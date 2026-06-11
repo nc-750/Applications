@@ -49,14 +49,6 @@ export function usePersonaModule() {
     logger.info("wipe", "Mirror cleared");
   }
 
-  async function importPersonaFromJSON(json: string) {
-    // parsePersonaJSON validates every field against the Zod schema and throws
-    // a single-line, field-pointing error on the first issue.
-    const parsed = parsePersonaJSON(JSON.parse(json));
-    persona.value = await writePersona(parsed, []);
-    logger.info("import", "Mirror imported successfully");
-  }
-
   return {
     persona,
     personaLoaded,

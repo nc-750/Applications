@@ -10,10 +10,11 @@ import {
 } from "@nc-750/lab-vue";
 import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
-import { factoryReset } from "../../lib/wipe";
 import { downloadFile } from "../../lib/utils";
 import { useAppStore } from "../../AppStore";
 import { LLMProvider } from "../models";
+import { logger } from "../../logger";
+import { factoryReset } from "../services/wipe";
 
 const appStore = useAppStore();
 const settingsStore = appStore.settings;
@@ -123,12 +124,23 @@ function onAIProviderSelected() {
 // Import / Export persona
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
+// async function importPersonaFromJSON(json: string) {
+//     // parsePersonaJSON validates every field against the Zod schema and throws
+//     // a single-line, field-pointing error on the first issue.
+//     const parsed = parsePersonaJSON(JSON.parse(json));
+//     persona.value = await writePersona(parsed, []);
+//     logger.info("import", "Mirror imported successfully");
+// }
+
 async function handleImportPersona(e: Event) {
     const target = e.target as HTMLInputElement;
     if (target.files?.length) {
         try {
             const text = await target.files[0].text();
-            await personaStore.importPersonaFromJSON(text);
+            logger.debug("app", "Need to implement parse from JSON");
+            // let newPersona = await importPersonaFromJSON(text);
+
+            // personaStore.savePersona(newPersona);
         } catch (err) {
             testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
         }
