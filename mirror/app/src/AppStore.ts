@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
 import { useSettingsStore } from "./settings/stores";
 import { useLogModule } from "./stores/mirror/log";
+import { usePersonaStore } from "./persona/stores";
 
 export const useAppStore = defineStore("app", () => {
   const settingsStore = useSettingsStore();
@@ -20,13 +20,3 @@ export const useAppStore = defineStore("app", () => {
     }
   };
 });
-
-function usePersonaStore() {
-  const persona = ref<Persona | null>(null);
-  const isPersonaValid = computed(() => persona !== null);
-
-  return {
-    persona,
-    isPersonaValid
-  };
-}

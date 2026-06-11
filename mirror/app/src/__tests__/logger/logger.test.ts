@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { logger, setDebugEnabled } from "../../logger/logger";
+import { logger, setDebugEnabled } from "../../logger/services/logger";
 import { useMirrorStore } from "../../stores/mirror";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────

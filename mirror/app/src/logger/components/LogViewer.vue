@@ -8,7 +8,7 @@
  */
 import { ref, computed } from "vue";
 import { useMirrorStore } from "../stores/mirror";
-import type { LogLevel } from "./types";
+import type { LogLevel } from "./models/types";
 
 const LEVEL_COLORS: Record<LogLevel, { bg: string; text: string }> = {
   debug: { bg: "var(--nc-line)", text: "var(--nc-ink-3)" },

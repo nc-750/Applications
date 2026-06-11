@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useMirrorStore } from "../../stores/mirror";
-import type { LogEntry } from "../../logger/types";
+import type { LogEntry } from "../../logger/models/types";
 
 // Mock keyStore
 vi.mock("../../lib/keyStore", () => ({

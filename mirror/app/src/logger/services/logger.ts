@@ -1,5 +1,5 @@
-import { useMirrorStore } from "../stores/mirror";
-import type { LogLevel, LogCategory, LogEntry } from "./types";
+import { useMirrorStore } from "../../stores/mirror";
+import type { LogLevel, LogCategory, LogEntry } from "../models/types";
 
 // ── API key sanitization ──────────────────────────────────────────────
 

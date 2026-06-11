@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import type { LogEntry } from "../../logger/types";
+import type { LogEntry } from "../../logger/models/types";
 
 export function useLogModule() {
   const logEntries = ref<LogEntry[]>([]);

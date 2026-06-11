@@ -1,5 +1,5 @@
-import { useMirrorStore } from "../stores/mirror";
-import { downloadFile } from "../lib/utils";
+import { useMirrorStore } from "../../stores/mirror";
+import { downloadFile } from "../../lib/utils";
 
 export function exportDebugLog(): void {
   const { logEntries: entries } = useMirrorStore();
