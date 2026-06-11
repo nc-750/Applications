@@ -6,6 +6,11 @@
  * so it doesn't bloat the initial bundle.
  */
 
+export interface AttachedFile {
+  name: string;
+  text: string;
+}
+
 export const ACCEPTED_EXTENSIONS = [".txt", ".md", ".markdown", ".html", ".htm", ".pdf", ".json"];
 
 export const ACCEPT_STRING = ACCEPTED_EXTENSIONS.join(",");
