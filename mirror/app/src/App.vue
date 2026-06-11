@@ -3,12 +3,12 @@ import { onMounted } from "vue";
 
 import { ChassisHeader, ChassisFooter } from "@nc-750/lab-vue";
 import NavigationBand from "./components/NavigationBand.vue";
-import { useMirrorStore } from "./stores/mirror";
+import { useAppStore } from "./AppStore.ts";
 
-const mirrorStore = useMirrorStore();
+const appStore = useAppStore();
 
 onMounted(() => {
-  mirrorStore.loadSettings();
+  appStore.settings.loadSettings();
 });
 </script>
 

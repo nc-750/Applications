@@ -1,8 +1,8 @@
-import { useMirrorStore } from "../../stores/mirror";
 import { downloadFile } from "../../lib/utils";
+import { useAppStore } from "../../AppStore";
 
 export function exportDebugLog(): void {
-  const { logEntries: entries } = useMirrorStore();
+  const { logEntries: entries } = useAppStore().logger;
 
   const envelope = {
     exportedAt: new Date().toISOString(),
