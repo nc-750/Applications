@@ -1,117 +1,119 @@
-import { ref, computed } from "vue";
-import { createLLMClient, LLMClient, type ProviderKind } from "@nc-750/llm-ts";
-import { getDB } from "../../db/schema";
-import { isTauri, saveApiKey, loadApiKey, clearApiKey } from "../../lib/keyStore";
-import { logger } from "../../logger";
+// File deprecated and commented before removal. Still need to port some of its code before deletion.
 
-export interface LLMConfig {
-  provider: ProviderKind;
-  model: string;
-  apiKey: string;
-  endpoint?: string;
-}
+// import { ref, computed } from "vue";
+// import { createLLMClient, LLMClient, type ProviderKind } from "@nc-750/llm-ts";
+// import { getDB } from "../../db/schema";
+// import { isTauri, saveApiKey, loadApiKey, clearApiKey } from "../../lib/keyStore";
+// import { logger } from "../../logger";
 
-export function useSettingsModule() {
-  const llmConfig = ref<LLMConfig | null>(null);
-  const loaded = ref(false);
+// export interface LLMConfig {
+//   provider: ProviderKind;
+//   model: string;
+//   apiKey: string;
+//   endpoint?: string;
+// }
 
-  const isLLMConfigured = computed(() => llmConfig.value !== null);
-  const isLLMReady = computed(() => llmConfig.value !== null && llm !== null);
-  const llm = computed(() => {
-    const llmCreationResult = createLLMClient({
-      provider: llmConfig.value?.provider || "openai",
-      model: llmConfig.value?.model || "",
-      keyProvider: async () => llmConfig.value?.apiKey || "",
-      baseUrl: llmConfig.value?.endpoint || ""
-    });
+// export function useSettingsModule() {
+//   const llmConfig = ref<LLMConfig | null>(null);
+//   const loaded = ref(false);
 
-    if (!llmCreationResult.ok) {
-      return null; 
-    }
+//   const isLLMConfigured = computed(() => llmConfig.value !== null);
+//   const isLLMReady = computed(() => llmConfig.value !== null && llm !== null);
+//   const llm = computed(() => {
+//     const llmCreationResult = createLLMClient({
+//       provider: llmConfig.value?.provider || "openai",
+//       model: llmConfig.value?.model || "",
+//       keyProvider: async () => llmConfig.value?.apiKey || "",
+//       baseUrl: llmConfig.value?.endpoint || ""
+//     });
 
-    return llmCreationResult.value;
-  });
+//     if (!llmCreationResult.ok) {
+//       return null; 
+//     }
 
-  const interview: Interview = {
-    messages: [],
-    coverage: TurnAnalysis = {},
-  }
+//     return llmCreationResult.value;
+//   });
 
-  async function loadSettings(): Promise<void> {
-    try {
-      const db = await getDB();
-      const record = await db.get("settings", "default");
+//   const interview: Interview = {
+//     messages: [],
+//     coverage: TurnAnalysis = {},
+//   }
 
-      if (!record) {
-        loaded.value = true;
-        return;
-      }
+//   async function loadSettings(): Promise<void> {
+//     try {
+//       const db = await getDB();
+//       const record = await db.get("settings", "default");
 
-      const apiKey = isTauri() ? (await loadApiKey()) ?? "" : (record.apiKey ?? "");
+//       if (!record) {
+//         loaded.value = true;
+//         return;
+//       }
 
-      if (record.provider && record.model && apiKey) {
-        llmConfig.value = {
-          provider: record.provider as ProviderKind,
-          model: record.model,
-          apiKey,
-          endpoint: record.endpoint,
-        };
-      }
-    } catch (e) {
-      logger.warn("store", "Failed to load settings", { error: e instanceof Error ? e : undefined });
-    } finally {
-      loaded.value = true;
-    }
-  }
+//       const apiKey = isTauri() ? (await loadApiKey()) ?? "" : (record.apiKey ?? "");
 
-  async function saveLLMConfig(config: LLMConfig): Promise<void> {
-    try {
-      const db = await getDB();
-      const now = new Date().toISOString();
+//       if (record.provider && record.model && apiKey) {
+//         llmConfig.value = {
+//           provider: record.provider as ProviderKind,
+//           model: record.model,
+//           apiKey,
+//           endpoint: record.endpoint,
+//         };
+//       }
+//     } catch (e) {
+//       logger.warn("store", "Failed to load settings", { error: e instanceof Error ? e : undefined });
+//     } finally {
+//       loaded.value = true;
+//     }
+//   }
 
-      await db.put("settings", {
-        id: "default",
-        provider: config.provider,
-        model: config.model,
-        apiKey: isTauri() ? undefined : config.apiKey,
-        endpoint: config.endpoint,
-        updatedAt: now,
-      });
+//   async function saveLLMConfig(config: LLMConfig): Promise<void> {
+//     try {
+//       const db = await getDB();
+//       const now = new Date().toISOString();
 
-      if (isTauri()) {
-        await saveApiKey(config.apiKey);
-      }
+//       await db.put("settings", {
+//         id: "default",
+//         provider: config.provider,
+//         model: config.model,
+//         apiKey: isTauri() ? undefined : config.apiKey,
+//         endpoint: config.endpoint,
+//         updatedAt: now,
+//       });
 
-      llmConfig.value = { ...config };
-      logger.info("store", "LLM config saved");
-    } catch (e) {
-      logger.error("store", "Failed to save LLM config", { error: e instanceof Error ? e : undefined });
-      throw e;
-    }
-  }
+//       if (isTauri()) {
+//         await saveApiKey(config.apiKey);
+//       }
 
-  async function clearLLMConfig(): Promise<void> {
-    try {
-      const db = await getDB();
-      await db.delete("settings", "default");
-      if (isTauri()) {
-        await clearApiKey();
-      }
-      llmConfig.value = null;
-      logger.info("store", "LLM config cleared");
-    } catch (e) {
-      logger.warn("store", "Failed to clear LLM config", { error: e instanceof Error ? e : undefined });
-    }
-  }
+//       llmConfig.value = { ...config };
+//       logger.info("store", "LLM config saved");
+//     } catch (e) {
+//       logger.error("store", "Failed to save LLM config", { error: e instanceof Error ? e : undefined });
+//       throw e;
+//     }
+//   }
 
-  return {
-    loaded,
-    isLLMReady,
-    isLLMConfigured,
-    llmConfig,
-    llm,
-    loadSettings,
-    saveLLMConfig,
-    clearLLMConfig,
-  };
-}
+//   async function clearLLMConfig(): Promise<void> {
+//     try {
+//       const db = await getDB();
+//       await db.delete("settings", "default");
+//       if (isTauri()) {
+//         await clearApiKey();
+//       }
+//       llmConfig.value = null;
+//       logger.info("store", "LLM config cleared");
+//     } catch (e) {
+//       logger.warn("store", "Failed to clear LLM config", { error: e instanceof Error ? e : undefined });
+//     }
+//   }
+
+//   return {
+//     loaded,
+//     isLLMReady,
+//     isLLMConfigured,
+//     llmConfig,
+//     llm,
+//     loadSettings,
+//     saveLLMConfig,
+//     clearLLMConfig,
+//   };
+// }

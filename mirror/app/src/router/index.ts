@@ -4,8 +4,8 @@ import InterviewPage from "@/pages/InterviewPage.vue";
 import InsightPage from "@/pages/InsightPage.vue";
 import PrivacyPage from "@/pages/PrivacyPage.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
-import SettingsPage from "@/pages/SettingsPage.vue";
-import WelcomePage from "@/pages/WelcomePage.vue";
+import SettingsPage from "@/settings/pages/SettingsPage.vue";
+import WelcomePage from "@/welcome/WelcomePage.vue";
 
 const Router = createRouter({
   scrollBehavior() {
