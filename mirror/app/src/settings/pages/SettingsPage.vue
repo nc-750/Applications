@@ -10,7 +10,6 @@ import {
 } from "@nc-750/lab-vue";
 import { createLLMClient } from "@nc-750/llm-ts";
 import type { ProviderKind } from "@nc-750/llm-ts";
-import { downloadFile } from "../../lib/utils";
 import { useAppStore } from "../../AppStore";
 import { LLMProvider } from "../models";
 import { logger } from "../../logger";
@@ -18,8 +17,7 @@ import { factoryReset } from "../services/wipe";
 
 const appStore = useAppStore();
 const settingsStore = appStore.settings;
-const personaStore = appStore.persona;
-const logStore = appStore.log;
+const logStore = appStore.logger;
 
 const localConfig = reactive({
     provider: "" as LLMProvider | "",
@@ -133,30 +131,33 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 // }
 
 async function handleImportPersona(e: Event) {
-    const target = e.target as HTMLInputElement;
-    if (target.files?.length) {
-        try {
-            const text = await target.files[0].text();
-            logger.debug("app", "Need to implement parse from JSON");
-            // let newPersona = await importPersonaFromJSON(text);
+    logger.debug("app", "TODO: Implement import Persona from JSON");
+    // const target = e.target as HTMLInputElement;
+    // if (target.files?.length) {
+    //     try {
+    //         const text = await target.files[0].text();
+            
+    //         // let newPersona = await importPersonaFromJSON(text);
 
-            // personaStore.savePersona(newPersona);
-        } catch (err) {
-            testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
-        }
-        target.value = "";
-    }
+    //         // personaStore.savePersona(newPersona);
+    //     } catch (err) {
+    //         testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
+    //     }
+    //     target.value = "";
+    // }
 }
 
 function handleExportPersona() {
-    const p = personaStore.persona;
-    if (!p) return;
-    const json = JSON.stringify(p.data, null, 2);
-    const name = p.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() || "mirror";
-    downloadFile(json, `${name}-mirror.json`, "application/json");
+    logger.debug("app", "TODO: Implement exporting Persona data");
+    // const p = personaStore.persona;
+    // if (!p) return;
+    // const json = JSON.stringify(p.data, null, 2);
+    // const name = p.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() || "mirror";
+    // downloadFile(json, `${name}-mirror.json`, "application/json");
 }
 
 async function handleDeletePersona() {
+    logger.debug("app", "Implement deleting Persona data");
     // await mirrorStore.clearPersona();
 }
 

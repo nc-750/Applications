@@ -2,15 +2,15 @@
 import { MessageSquare, Import, BrainCircuit } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
-import { useMirrorStore } from "../stores/mirror";
 import { computed } from "vue";
+import { useAppStore } from "../AppStore";
 
-let mirrorStore = useMirrorStore();
-
-const primaryButton = computed(() => { 
+const isLLMConfigured = useAppStore().settings.isLLMConfigured;
+const primaryButton = computed(() => {
+    
     return {
-        target: mirrorStore.isLLMConfigured ? "/interview" : "/settings",
-        label: mirrorStore.isLLMConfigured ? "Probe" : "Configure AI",
+        target: isLLMConfigured ? "/interview" : "/settings",
+        label: isLLMConfigured ? "Probe" : "Configure AI",
     }
 });
 
@@ -32,7 +32,7 @@ const primaryButton = computed(() => {
                 <!-- Actions -->
                 <div class="flex flex-col">
                     <router-link :to="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
-                        <MessageSquare :size="15" aria-hidden="true" v-if="mirrorStore.isLLMConfigured"/>
+                        <MessageSquare :size="15" aria-hidden="true" v-if="isLLMConfigured"/>
                         <BrainCircuit :size="15" aria-hidden="true" v-else />
                         {{ primaryButton.label }} 
                     </router-link>
