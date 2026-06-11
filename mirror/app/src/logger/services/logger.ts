@@ -1,4 +1,4 @@
-import { useMirrorStore } from "../../stores/mirror";
+import { useAppStore } from "../../AppStore";
 import type { LogLevel, LogCategory, LogEntry } from "../models/types";
 
 // ── API key sanitization ──────────────────────────────────────────────
@@ -31,7 +31,7 @@ function redactKeys(value: unknown): unknown {
 // ── Core log function ─────────────────────────────────────────────────
 
 export function setDebugEnabled(enabled: boolean): void {
-  useMirrorStore().setDebugEnabled(enabled);
+  useAppStore().logger.setDebugEnabled(enabled);
 }
 
 function log(
@@ -40,7 +40,7 @@ function log(
   message: string,
   opts?: { data?: unknown; error?: Error },
 ): void {
-  const store = useMirrorStore();
+  const store = useAppStore().logger;
 
   // Debug-level entries are skipped entirely when the toggle is off
   if (level === "debug" && !store.debugEnabled) return;
