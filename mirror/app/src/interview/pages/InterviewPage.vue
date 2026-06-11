@@ -1,24 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import InterviewPreparation from '../interview/components/InterviewPreparation.vue';
-import { AttachedFile } from '../lib/fileExtractor.ts';
-import { useMirrorStore } from '../stores/mirror/index.ts';
-import { logger } from '../logger/index.ts';
-import { createEmptyPersona, Persona, PersonaMetrics } from '../persona/models/Persona.ts';
-import { ContentPart, LLMClient, Message } from '@nc-750/llm-ts';
-import { buildInterviewSystemPrompt, buildNextQuestionSystemPrompt, buildPersonaMetricsSystemPrompt, buildPersonaMetricsUserPrompt } from '../interview/prompts/index.ts';
-import { ANALYZE_SCHEMA_NAME } from '../skills/personaSchemas.ts';
-import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../skills/analysisPrompt.ts';
-import { extractFencedJSON } from '../skills/interviewExtractor.ts';
-import { TurnAnalysis } from '../types/interview.ts';
-import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../skills/interviewPrompt.ts';
+import { useAppStore } from '../../AppStore.ts';
+import { logger } from '../../logger/index.ts';
+import { AttachedFile } from '../../lib/fileExtractor.ts';
+import { ContentPart, createLLMClient, LLMClient, Message, ProviderKind } from '@nc-750/llm-ts';
+import { Persona, PersonaMetrics } from '../../persona/models/Persona.ts';
+import { buildInterviewSystemPrompt, buildNextQuestionSystemPrompt, buildPersonaMetricsSystemPrompt, buildPersonaMetricsUserPrompt } from '../prompts/index.ts';
+import { ANALYZE_SCHEMA_NAME } from '../../skills/personaSchemas.ts';
+import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../../skills/analysisPrompt.ts';
+import { extractFencedJSON } from '../../skills/interviewExtractor.ts';
+import { TurnAnalysis } from '../../types/interview.ts';
+import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../../skills/interviewPrompt.ts';
+import { LLMProvider } from '../../settings/models/index.ts';
 
 interface ProbeResult {
     context: string;
     question: string;
 }
 
-const mirrorStore = useMirrorStore();
+const personaStore = useAppStore().persona;
 const isInterviewStarted = ref(false);
 const isAnalyzing = ref(false);
 
@@ -35,7 +36,7 @@ async function startInterview(userInput: string, files?: AttachedFile[]) {
 
     isAnalyzing.value = true;
 
-    const persona = getPersonaForInterview();
+    const persona = personaStore.persona;
     const userMessage = transformInputDataForLLMInput(userInput, files);
 
     try {
@@ -61,19 +62,43 @@ async function startInterview(userInput: string, files?: AttachedFile[]) {
 } 
 
 function getLLMForInterview(): LLMClient | undefined {
-    if (!isLLMReady()) {
-        alertError(`AI is not available. Please verify it is correctly configured in the settings.`);
+    const settingsStore = useAppStore().settings;
+    const llmConfig = settingsStore.llmConfig;
+
+    if (!settingsStore.isLLMConfigured) {
+        alertError("LLM not configured.");
         return undefined;
     }
-}
 
-function getPersonaForInterview(): Persona {
-    if (!mirrorStore.persona) {
-        logger.debug("app", "Starting an interview with no existing Persona");
-        return createEmptyPersona();
+    let provider: ProviderKind = "openai-compatible";
+         
+    switch (Number(llmConfig!.provider)) {
+        case LLMProvider.OpenAI: 
+            provider = "openai";
+            break;
+        case LLMProvider.Anthropic: 
+            provider = "anthropic";
+            break;
+        case LLMProvider.CompatibleOpenAI: 
+            provider = "openai-compatible";
+            break;
     }
     
-    return mirrorStore.persona;
+    const keyProvider = async () => llmConfig!.apiKey;
+
+    const clientResult = createLLMClient({
+        provider: provider,
+        model: llmConfig!.model,
+        keyProvider,
+        baseUrl: llmConfig!.endpoint,
+    });
+
+    if (clientResult.ok) {
+        return clientResult.value;
+    }
+
+    alertError(`Unable to create LLM Client: ${clientResult.error.message}`);
+    return undefined;
 }
 
 function transformInputDataForLLMInput(userInput: string, files?: AttachedFile[]): Message {
@@ -235,10 +260,6 @@ function finishInterview() {
 
 function restartInterview() {
 
-}
-
-function isLLMReady(): boolean {
-    return mirrorStore.isLLMReady;
 }
 </script>
 
