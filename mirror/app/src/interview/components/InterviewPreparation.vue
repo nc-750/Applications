@@ -4,7 +4,7 @@ import { Band, Cell } from '@nc-750/lab-vue';
 import { AttachedFile, ACCEPT_STRING, extractText, isSupportedFile } from '../../lib/fileExtractor';
 
 const emit = defineEmits<{
-    startInterview: [attachedFiles: AttachedFile[], userInput: string];
+    startInterview: [userInput: string, attachedFiles: AttachedFile[]];
 }>();
 
 const attachedFiles = ref<AttachedFile[]>([]);
@@ -60,8 +60,8 @@ async function processFiles(files: FileList | File[]) {
 function startInterview() {
     emit(
         "startInterview",
-        attachedFiles.value,
-        userTextInput.value
+        userTextInput.value,
+        attachedFiles.value
     );
 }
 

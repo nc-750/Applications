@@ -62,13 +62,21 @@ Extracts to merge:
 ${combinedExtracts}`;
 }
 
+export async function prepareLLMInput(
+  rawData: string,
+  llm: LLMClient,
+  signal?: AbortSignal
+): Promise<{ llmInput: string; wasDigested: boolean }> {
+  return prepareInputBrief(rawData, llm, signal);
+}
+
 export async function prepareInputBrief(
   rawData: string,
   llm: LLMClient,
   signal?: AbortSignal
-): Promise<{ brief: string; wasDigested: boolean }> {
+): Promise<{ llmInput: string; wasDigested: boolean }> {
   if (rawData.length <= DIGEST_THRESHOLD_CHARS) {
-    return { brief: rawData, wasDigested: false };
+    return { llmInput: rawData, wasDigested: false };
   }
 
   const chunks: string[] = [];
@@ -88,7 +96,7 @@ export async function prepareInputBrief(
   );
 
   if (chunkResults.length === 1) {
-    return { brief: chunkResults[0], wasDigested: true };
+    return { llmInput: chunkResults[0], wasDigested: true };
   }
 
   const combinedExtracts = chunkResults.join("\n\n---\n\n");
@@ -99,5 +107,5 @@ export async function prepareInputBrief(
 
   if (!briefResult.ok) throw briefResult.error;
 
-  return { brief: briefResult.value as string, wasDigested: true };
+  return { llmInput: briefResult.value as string, wasDigested: true };
 }

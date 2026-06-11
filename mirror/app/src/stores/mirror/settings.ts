@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import type { ProviderKind } from "@nc-750/llm-ts";
+import { createLLMClient, LLMClient, type ProviderKind } from "@nc-750/llm-ts";
 import { getDB } from "../../db/schema";
 import { isTauri, saveApiKey, loadApiKey, clearApiKey } from "../../lib/keyStore";
 import { logger } from "../../logger";
@@ -16,6 +16,26 @@ export function useSettingsModule() {
   const loaded = ref(false);
 
   const isLLMConfigured = computed(() => llmConfig.value !== null);
+  const isLLMReady = computed(() => llmConfig.value !== null && llm !== null);
+  const llm = computed(() => {
+    const llmCreationResult = createLLMClient({
+      provider: llmConfig.value?.provider || "openai",
+      model: llmConfig.value?.model || "",
+      keyProvider: async () => llmConfig.value?.apiKey || "",
+      baseUrl: llmConfig.value?.endpoint || ""
+    });
+
+    if (!llmCreationResult.ok) {
+      return null; 
+    }
+
+    return llmCreationResult.value;
+  });
+
+  const interview: Interview = {
+    messages: [],
+    coverage: TurnAnalysis = {},
+  }
 
   async function loadSettings(): Promise<void> {
     try {
@@ -85,9 +105,11 @@ export function useSettingsModule() {
   }
 
   return {
-    llmConfig,
     loaded,
+    isLLMReady,
     isLLMConfigured,
+    llmConfig,
+    llm,
     loadSettings,
     saveLLMConfig,
     clearLLMConfig,

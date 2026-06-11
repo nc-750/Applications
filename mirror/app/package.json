@@ -13,9 +13,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@nc-750/lab-css": "file:../../lab/css",
-    "@nc-750/lab-vue": "file:../../lab/vue",
-    "@nc-750/llm-ts": "file:../../llm/ts",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-store": "^2.4.3",

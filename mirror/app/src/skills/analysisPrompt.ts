@@ -16,6 +16,7 @@
 
 import { z } from "zod";
 import { FACETS, type FacetKey, type CoverageMap } from "../types/interview";
+import { Message } from "@nc-750/llm-ts";
 
 /** A facet meter reads "locked" (green) at or above this saturation. */
 export const SATURATION_LOCKED = 0.8;
@@ -112,7 +113,7 @@ Output ONLY the structured JSON result (a single JSON object with the fields abo
 export function buildAnalysisUserPrompt(
   currentFacet: FacetKey,
   question: string,
-  answer: string,
+  answer: Message,
   priorCoverage: CoverageMap,
   transcript: string,
 ): string {

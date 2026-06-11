@@ -1,25 +1,27 @@
 import { defineStore } from "pinia";
 import { useSettingsModule } from "./settings";
-import { usePersonaModule } from "./persona";
-import { useInterviewModule } from "./interview";
+import { ref, computed } from "vue";
+import { Persona } from "../../persona/models/Persona";
 import { useLogModule } from "./log";
 
 export const useMirrorStore = defineStore("mirror", () => {
   const settings = useSettingsModule();
-  const persona = usePersonaModule();
-  const interview = useInterviewModule();
+  const persona = usePersonaStore();
   const log = useLogModule();
 
   return {
-    // Settings — LLM config
     ...settings,
-    // Persona
     ...persona,
-    // Interview
-    ...interview,
-    // Log
-    ...log,
+    ...log
   };
 });
 
-export type { LLMConfig } from "./settings";
+function usePersonaStore() {
+  const persona = ref<Persona | null>(null);
+  const isPersonaValid = computed(() => persona !== null);
+
+  return {
+    persona,
+    isPersonaValid
+  };
+}
