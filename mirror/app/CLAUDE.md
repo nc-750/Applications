@@ -2,6 +2,8 @@
 
 Cross-platform desktop + PWA that wraps the mirror-interview, mirror-insight, and mirror-profile skills with a bring-your-own-AI model.
 
+**Coding conventions:** see `CONVENTIONS.md` — binding rules for data modeling, layering, stores, services, utilities, naming, components, and error handling. Read it before writing, refactoring, or reviewing code.
+
 ## Stack
 
 - **Vue 3 + TypeScript** — frontend framework (`<script setup>` SFCs)
