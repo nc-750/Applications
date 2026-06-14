@@ -1,6 +1,6 @@
 import { isWithinTokenLimit } from "tokenx";
 import { AttachedFile } from "../../fileManager/services/fileExtractor";
-import { getContextWindowLimit } from "../models";
+import { getContextWindowLimit } from "../reference";
 import { Message } from "@nc-750/llm-ts";
 
 export function isDigestionNeeded(attachedFiles: AttachedFile[], userInput: string, model: string) {
