@@ -36,7 +36,7 @@ vi.mock("@tauri-apps/plugin-opener", () => ({ openUrl: vi.fn() }));
 // between tests so each test gets a fresh in-memory database.
 afterEach(async () => {
   // Close any open IndexedDB connection so deleteDatabase won't be blocked.
-  const { closeDB, DB_NAME } = await import("../db/schema");
+  const { closeDB, DB_NAME } = await import("../db");
   closeDB();
   await new Promise<void>((resolve, reject) => {
     const req = indexedDB.deleteDatabase(DB_NAME);
