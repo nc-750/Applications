@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { LLMConfig } from "../models";
+import { LLMConfig } from "../../llm";
 
 export function useSettingsStore() {
     const llmConfig = ref<LLMConfig | null>(null);

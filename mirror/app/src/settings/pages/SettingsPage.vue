@@ -8,10 +8,8 @@ import {
     FormField,
     TextField,
 } from "@nc-750/lab-vue";
-import { createLLMClient } from "@nc-750/llm-ts";
-import type { ProviderKind } from "@nc-750/llm-ts";
 import { useAppStore } from "../../AppStore";
-import { LLMProvider } from "../models";
+import { LLMProvider, testConnection } from "../../llm";
 import { logger } from "../../logger";
 import { factoryReset } from "../services/wipe";
 
@@ -66,46 +64,13 @@ async function testConnectionHandler() {
     testMessage.value = "";
 
     try {
-        const keyProvider = async () => localConfig.apiKey;
-        
-
-        let provider: ProviderKind = "openai-compatible";
-         
-        switch (Number(localConfig.provider)) {
-            case LLMProvider.OpenAI: 
-                provider = "openai";
-                break;
-            case LLMProvider.Anthropic: 
-                provider = "anthropic";
-                break;
-            case LLMProvider.CompatibleOpenAI: 
-                provider = "openai-compatible";
-                break;
-        }
-        
-        const clientResult = createLLMClient({
-            provider: provider,
+        const latencyMs = await testConnection({
+            provider: localConfig.provider as LLMProvider,
             model: localConfig.model,
-            keyProvider,
-            baseUrl: localConfig.endpoint || undefined,
+            apiKey: localConfig.apiKey,
+            endpoint: localConfig.endpoint,
         });
-
-        if (!clientResult.ok) {
-            testMessage.value = `Error: ${clientResult.error.message}`;
-            testing.value = false;
-            return;
-        }
-
-        const llm = clientResult.value;
-        const start = Date.now();
-        const msgResult = await llm.message("Reply with the single word: ok");
-        const latency = Date.now() - start;
-
-        if (msgResult.ok) {
-            testMessage.value = `Connected! Latency: ${latency}ms`;
-        } else {
-            testMessage.value = `Error: ${msgResult.error.message}`;
-        }
+        testMessage.value = `Connected! Latency: ${latencyMs}ms`;
     } catch (e) {
         testMessage.value = `Error: ${e instanceof Error ? e.message : String(e)}`;
     } finally {

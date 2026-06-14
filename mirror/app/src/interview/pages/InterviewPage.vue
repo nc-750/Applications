@@ -12,7 +12,7 @@ import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../prompts/analysisPro
 import { extractFencedJSON } from '../prompts/interviewExtractor.ts';
 import { TurnAnalysis } from '../../types/interview.ts';
 import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../prompts/interviewPrompt.ts';
-import { LLMProvider } from '../../settings/models/index.ts';
+import { LLMProvider } from '../../llm';
 
 interface ProbeResult {
     context: string;
