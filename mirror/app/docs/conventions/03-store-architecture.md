@@ -52,7 +52,16 @@ another.
    `usePersonaStore()` / `useLoggerStore()` directly. There is no aggregator to reach state through.
 4. **A store returns a flat surface.** Return `ref`s, `computed`s, and actions at the top level of the
    setup return object. No nesting, no grouping objects, no spreads. Name `ref`s for the state they
-   hold and `computed`s for the derived value (`isLLMConfigured`, not `llmConfigComputed`).
+   hold and `computed`s for the derived value (`isLLMConfigured`, not `llmConfigComputed`). "No
+   grouping objects" forbids ad-hoc return groupings (`{ foo: { … } }`), **not** a single domain
+   aggregate held in one `ref`/`reactive`. When a store's source of truth is one domain object, hold it
+   as `reactive<Feature>(createEmpty…())` and expose the flat surface via `toRefs(state)` — the `toRefs`
+   refs are live writable views onto the object's properties. **Never rebind the reactive target**
+   (`state = next` orphans every `toRefs` ref); a whole-record swap (load-from-db, reset,
+   commit-a-complete-object) mutates in place with `Object.assign(state, next)`, the single replacement
+   helper. A model used this way must be **total** (every key present; optionals typed `T | undefined`,
+   not `T?`; `createEmpty…()` sets them all) — `06-naming`/`01-data-models` rule 3 — or `toRefs` mints
+   no ref for an absent key and `Object.assign` leaves a stale value through a reset.
 5. **A store holds state only — no app logic** (re-states `02` rule 3). Actions are thin commits:
    assign the reactive state and persist via the db module. Decisions and orchestration live in
    services.
@@ -152,7 +161,16 @@ This file only removes the *facade* coupling.)
 - **Chosen:** delete the `AppStore` spread-facade; convert each feature store to a real `defineStore`
   singleton; consumers import the specific store; flat store return surface; stores stay leaf;
   cross-store work via an injected service; a **minimal app-level store is allowed** for genuinely
-  global state only (state-only, never re-exposing a feature store).
+  global state only (state-only, never re-exposing a feature store). For a single-aggregate store,
+  `reactive` + `toRefs` over one total domain object, replaced via `Object.assign` (never by rebinding
+  the reactive target).
+- **Rejected — a god-`record` the UI couples through (`store.record.x`) OR N hand-synced refs with
+  `snapshot()/hydrate()` field-listing:** the first hides the flat surface behind indirection, the
+  second lists every field three times; `reactive` + `toRefs` gives the flat surface and one object to
+  persist without either cost.
+- **Rejected — rebinding the reactive target (`state = next`) or `structuredClone(toRaw(state))` at the
+  persist boundary:** the first orphans the `toRefs` refs; the second is a shallow clone that still
+  throws `DataCloneError` on nested Vue proxies (deep-plain copy required — see `02` rule 3).
 - **Rejected — keeping the spread-facade / any store that aggregates other stores:** the god-store
   being removed; couples every consumer to the whole store graph and hides the real stores.
 - **Rejected — plain factory functions as "stores":** no singleton guarantee; once the cached facade

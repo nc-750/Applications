@@ -46,7 +46,13 @@ when building a new feature, refactoring, or extending an existing one.
    domain type — lookup/reference tables, pricing data, prompt text, configuration — lives in a
    service or reference module, never in `models/`, even though it is "data".
 3. A domain model may export factory helpers that construct it (e.g. `createEmpty<X>()`), co-located
-   in the model file.
+   in the model file. When the model **backs a reactive store** (held as `reactive` + `toRefs`,
+   replaced via `Object.assign` — `03` rule 4) it must be **total**: `createEmpty<X>()` sets every
+   field including optionals (`field: undefined`), optionals are typed `field: T | undefined` (not
+   `field?: T`), and a required-but-defaulted field is filled by a factory (e.g. a transcript-message
+   factory defaulting `isError: boolean` to `false`) rather than by each call site. A partial model
+   silently breaks `toRefs` (no ref minted for an absent key at seed time) and `Object.assign` resets
+   (a stale value survives a "clear").
 4. Every persisted entity has a **DTO** owned by the DB layer. The DTO is the only shape the database
    reads or writes; persistence keys/ids live on the DTO, never on the domain model.
 5. Data crosses a layer boundary only through a **transform function** — never by passing one layer's
@@ -142,6 +148,10 @@ After: `src/persona/mappers.ts` exports `toPersonaDTO(persona): PersonaDTO` /
 - Chosen: Domain + DTO default; view model only when a view reshapes.
 - Chosen: per-feature `mappers.ts` with `to<Target>`/`from<Source>` naming.
 - Chosen: factory helpers co-located in the model file.
+- Chosen: a model backing a reactive store is **total** — `createEmpty<X>()` sets every field;
+  optionals typed `T | undefined`, not `T?`; required-but-defaulted fields filled by a factory.
+- Rejected: absent-key optionals (`field?: T`) on a reactive-store model — `toRefs` mints no ref and a
+  reset leaves a stale value; the totality is load-bearing, not stylistic.
 - Chosen: Zod scoped to untrusted boundaries (LLM extraction + JSON import) only.
 - Chosen: delete `PersonaJSON`; renderers consume the domain model via a view-model transform.
 - Rejected: a single shared model with no DTO — lets persistence id/shape leak into views.

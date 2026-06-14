@@ -79,7 +79,9 @@ local ref) for display. The `Result` shape is confined to external boundaries th
     `{ question: "N/A" }`) or silently swallow failures.
 11. A view catches errors at the call site and surfaces them through reactive state (a store error
     field or a local ref) for display. Surfacing an error and presenting it is the view's job, not the
-    service's.
+    service's. A **leaf store** may itself catch a failure from its own db calls into its error field
+    (e.g. a load/save/clear); when it does, it surfaces-not-logs, does not rethrow, and clears the
+    error only on an explicit lifecycle success — see `07-components-and-style` rule 17.
 12. A function named `get*`/`is*`/`build*` performs no UI side effects. `getLLMForInterview` calling
     `alertError` is the anti-pattern: construction reports failure by throwing or returning, and the
     caller decides how to present it. (Cross-references [06-naming].)

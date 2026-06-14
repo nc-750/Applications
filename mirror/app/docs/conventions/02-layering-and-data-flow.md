@@ -48,7 +48,11 @@ schema module** while each feature owns its own record type and read/write funct
    view issues a query or constructs/handles a DTO.
 3. **A store holds reactive in-memory state and thin commit actions only.** A store action does at most
    two things: assign the reactive state, and persist via the db module. It contains no business
-   logic, no orchestration, and no inline queries.
+   logic, no orchestration, and no inline queries. **Reactive state is not structured-clone-safe** — a
+   deep `reactive` object (and any value spread out of one) carries Vue proxies that IndexedDB's
+   structured clone rejects (`DataCloneError`), and `toRaw()` only un-proxies the top level. So the
+   commit hands the db module a **deep-plain copy** of the state, not the reactive object itself; for a
+   JSON-safe record `JSON.parse(JSON.stringify(state))` is the reliable one-line conversion.
 4. **Stores are leaf.** A store imports only its own models and its db module — never a service, never
    another store. Anything spanning two stores is done in a service that receives both.
 5. **Services own app logic and orchestration** (decisions, multi-step flows, external calls such as
@@ -158,6 +162,9 @@ export async function wipePersona(personaStore: PersonaStore) {
   store actions; views hold no logic and never mutate a model.
 - **Rejected — persistence inline in stores:** the regression being removed; it puts query + transform
   into the in-memory layer and makes it untestable without IndexedDB.
+- **Rejected — handing the db the reactive object directly, or `structuredClone(toRaw(state))`:** Vue
+  proxies break IndexedDB's structured clone and `toRaw` is shallow; the commit passes a deep-plain
+  copy across the persistence boundary.
 - **Rejected — a separate persistence service layer:** needless indirection at this size (the db module
   already is the repository).
 - **Rejected — services calling `useAppStore()` internally:** hidden dependencies, couples every

@@ -49,8 +49,13 @@ code review alike. Read them as follows:
      — A `models/` folder that holds a lookup table teaches the wrong mental model (see also 6.10).
 
 1.3. A domain model may export factory helpers that construct it (e.g. `createEmpty<X>()`),
-     co-located in the model file.
-     — Construction knowledge belongs next to the shape it constructs.
+     co-located in the model file. When the model backs a **reactive store** (held as `reactive` +
+     `toRefs`, replaced via `Object.assign` — see 3.4), the model must be **total**: `createEmpty<X>()`
+     sets *every* field including optionals (`field: undefined`), optionals are typed `field: T |
+     undefined` (not `field?: T`), and a required-but-defaulted field is filled by a factory (e.g. a
+     message factory defaulting `isError: boolean` to `false`) rather than by each call site.
+     — Construction knowledge belongs next to the shape it constructs; a partial model silently breaks
+     `toRefs` (no ref minted for an absent key) and `Object.assign` resets (a stale value survives).
 
 1.4. Every persisted entity has a **DTO owned by the DB layer**. The DTO is the only shape the
      database reads or writes; persistence keys/ids live on the DTO, never on the domain model.
@@ -106,8 +111,12 @@ code review alike. Read them as follows:
 2.3. **A store holds reactive in-memory state and thin commit actions only.** A store action does
      at most two things: assign the reactive state, and persist via the db module. No business
      logic, no orchestration, no inline queries. Only ruleless state transitions (append to a
-     list, set a flag) may be semantic store actions.
-     — The store is the live copy the UI binds to, not a repository and not a brain.
+     list, set a flag) may be semantic store actions. **Reactive state is not structured-clone-safe**:
+     a deep `reactive` object (and any value spread out of one) carries Vue proxies that IndexedDB's
+     structured clone rejects, and `toRaw()` only strips the top level — so the persist path hands the
+     db module a **deep-plain copy** (for a JSON-safe record, `JSON.parse(JSON.stringify(state))`).
+     — The store is the live copy the UI binds to, not a repository and not a brain; the durable copy
+     must cross the persistence boundary as plain data.
 
 2.4. **Services own app logic and orchestration** — decisions, multi-step flows, external calls
      such as the LLM. Behavior the user triggers lives in a service, not a view or a store.
@@ -158,8 +167,14 @@ code review alike. Read them as follows:
 
 3.4. **A store returns a flat surface.** `ref`s, `computed`s, and actions at the top level of the
      setup return — no nesting, no grouping objects, no spreads. Name `ref`s for the state they
-     hold and `computed`s for the derived value.
-     — Flat surfaces keep destructuring, typing, and reactivity predictable.
+     hold and `computed`s for the derived value. "No grouping objects" forbids ad-hoc return
+     groupings (`{ foo: { … } }`), **not** a single domain aggregate: when the store's truth is one
+     object, hold it as `reactive<Feature>(createEmpty…())` and expose a flat surface via
+     `toRefs(state)` — those refs are live views onto the object. **Never rebind the reactive target**
+     (`state = next` orphans the `toRefs` refs); a whole-record swap (load/reset/save-complete) mutates
+     in place with `Object.assign(state, next)`.
+     — Flat surfaces keep destructuring, typing, and reactivity predictable; the `toRefs` binding is
+     what makes the flat surface live, so reassigning the target severs it.
 
 3.5. **Stores are leaf.** A store imports only its own models and its db module — never a service,
      never another store.
@@ -430,7 +445,11 @@ code review alike. Read them as follows:
 7.17. A caller (store or view/page) either **propagates** the exception or **catches it into
       reactive error state** (a store error field or a local ref) for the UI to present. It never
       logs-and-swallows mid-flow. Surfacing and presenting an error is the view's job, not the
-      service's.
+      service's. A **leaf store** that catches into its own error field **surfaces, it does not log**
+      (it has no logger import — the originating layer already logged, see 7.18) and it **does not
+      rethrow** (catch-into-state is one strategy, 7.19). It **sets** the error on failure but does not
+      **clear** it on a background/auto commit's success (that would wipe an unrelated pushed error);
+      only an explicit user-triggered lifecycle action (load/reset) clears the error when it succeeds.
       — Predictable failure paths: thrown error or visible error state, nothing silent.
 
 7.18. A store or view logs only errors specific to *its own* layer. Errors bubbling up from below

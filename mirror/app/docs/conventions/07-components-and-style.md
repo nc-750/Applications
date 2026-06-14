@@ -103,7 +103,12 @@ into error state** — no sentinels, no log-and-swallow mid-flow.
     libraries that return a `Result`, throw on the error branch). They never return a sentinel value
     (`"N/A"`, `null`-as-success) to signal failure.
 17. A caller (store or view/page) either **propagates** the exception or **catches it into reactive
-    error state** for the UI to present. It must not log-and-swallow mid-flow.
+    error state** for the UI to present. It must not log-and-swallow mid-flow. A **leaf store** that
+    catches into its own error field **surfaces, it does not log** (it has no logger import — the
+    originating layer already logged, rule 18) and **does not rethrow** (catch-into-state is the one
+    strategy, rule 19). It **sets** the error on failure but does **not clear** it on a background/auto
+    commit's success (that would wipe an unrelated error the view/service pushed); only an explicit
+    user-triggered lifecycle action (load/reset) clears the error when it succeeds.
 18. A store or view logs only errors specific to *its own* layer. Errors bubbling up from a lower layer
     are already logged there — don't double-log; propagate or surface them.
 19. One function uses one strategy. Do not mix throw, swallow-return, and sentinels in a single flow
@@ -258,7 +263,9 @@ try {
   provides).
 - **Errors — chosen: services log+throw; edge propagates or catches into error state; layer-local
   logging only; no sentinels.** Rejected: Result-objects-everywhere and store-owned-error-state as the
-  blanket rule (a store may still hold error state, but it is not the mandated single catcher).
+  blanket rule (a store may still hold error state, but it is not the mandated single catcher). When a
+  leaf store *does* catch into its own error field, it surfaces-not-logs, does not rethrow, and clears
+  the error only on an explicit lifecycle success (not on a background commit's success).
 
 ## Open / deferred
 - The concrete refactor (promote `DataInputStep` over `InterviewPreparation`, build `useFileIntake`,
