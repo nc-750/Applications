@@ -45,9 +45,11 @@ real tree.
 ### Phase 3 — Store `[<feature>]`
 - Goal: a real reactive store that is a thin commit layer over the db module.
 - In scope: useFeatureStore as a defineStore setup store — flat surface of ref/computed/actions;
-  actions assign state + persist via <feature>/db; leaf store (own model + own db only).
+  actions assign state + persist via <feature>/db; leaf store (own model + own db only). If the
+  store's truth is ONE domain aggregate, prefer reactive<Feature> + toRefs over N hand-synced refs,
+  and mind the no-rebind / Object.assign and structured-clone rules.
 - Out of scope: any LLM/orchestration logic (services rung); cross-store work.
-- Conventions: vue-feature-architecture › stores, layering.
+- Conventions: vue-feature-architecture › stores, layering, reactive-persistence.
 - Deliverable: <feature>/stores/.
 - Verify: bunx tsc --noEmit; store test (Pinia + fake-indexeddb): actions assign + persist; load rehydrates.
 

@@ -20,7 +20,13 @@ edits across unrelated code and "which model is the real one" stops having an an
    domain type — lookup/reference tables, pricing data, prompt text, configuration — lives in a
    service or reference module, never in `models/`, even though it is "data".
 3. A domain model may export **factory helpers** that construct it (e.g. `createEmpty<X>()`),
-   co-located in the model file.
+   co-located in the model file. **When the model backs a reactive store** (consumed via `toRefs` and
+   replaced via `Object.assign` — see [reactive-persistence.md](reactive-persistence.md)) it must be
+   **total**: `createEmpty<X>()` sets *every* field including optionals (`field: undefined`), optional
+   fields are typed `field: T | undefined` (not `field?: T`), and a field with a meaningful default is
+   filled by its factory (e.g. a `createX()` that defaults a required `isError: boolean` to `false`)
+   rather than left to each call site. A partial model silently breaks `toRefs` (no ref minted for an
+   absent key) and `Object.assign` resets (a stale value survives).
 4. **Every persisted entity has a DTO owned by the DB layer.** The DTO is the only shape the database
    reads or writes; persistence keys/ids live on the DTO, **never** on the domain model.
 5. **Data crosses a layer boundary only through a transform function** — never by passing one layer's
@@ -112,6 +118,8 @@ export function fromFooDTO(dto: FooDTO): Foo { return deserialize(dto); }
 ## Verify
 
 - `models/` imports only types + factories — grep for any exported `const` table or function with I/O.
+- A model backing a reactive store is total: `createEmpty<X>()` sets every field; optionals typed
+  `T | undefined`, not `T?`; required-but-defaulted fields filled by a factory.
 - Every persisted entity has a DTO in the db layer and a `to`/`from` pair in `mappers.ts`.
 - No domain interface carries a persistence key; no view template reshapes a model inline.
 - Every Zod schema sits at an untrusted boundary and feeds a `z.infer` type.

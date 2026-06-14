@@ -23,7 +23,11 @@ be a single cached `defineStore`. Call such a factory directly and you mint an u
    aggregator to reach state through.
 4. **A store returns a flat surface.** Return `ref`s, `computed`s, and actions at the top level of the
    setup return — no nesting, no grouping objects, no spreads. Name `ref`s for the state they hold and
-   `computed`s for the derived value (`isReady`, not `readyComputed`).
+   `computed`s for the derived value (`isReady`, not `readyComputed`). "No grouping objects" forbids
+   ad-hoc return groupings (`{ foo: { … }, bar: { … } }`), **not** a single domain model held in a
+   `ref`/`reactive`: when the store's truth is one aggregate, exposing it as a flat surface via
+   `toRefs(state)` is exactly this rule satisfied — see
+   [reactive-persistence.md](reactive-persistence.md).
 5. **A store holds state only — no app logic.** Actions are thin commits: assign reactive state and
    persist via the db module. Decisions and orchestration live in services.
 6. **Stores stay leaf.** A store imports only its own models and its db module — never another store,
@@ -81,6 +85,13 @@ export const useFooStore = defineStore("foo", () => {
 });
 ```
 
+## Persisting a reactive aggregate
+
+When the store holds one reactive domain object that is also persisted, the `reactive` + `toRefs`
+shape, the no-rebind / `Object.assign` replacement rule, and the deep-reactivity-vs-structured-clone
+trap are governed by [reactive-persistence.md](reactive-persistence.md). Consult it before wiring the
+persist path — `structuredClone(toRaw(state))` looks correct and still throws at runtime.
+
 ## Confirmed preferences (and what was rejected)
 
 - **Chosen:** delete any spread-facade; each feature store is a real `defineStore` singleton;
@@ -96,3 +107,6 @@ export const useFooStore = defineStore("foo", () => {
 - Grep for `{ ...use` and nested return objects — there should be none.
 - Each store imports only its models + its db module (no store/service import).
 - The return object is flat: only refs, computeds, and actions at top level.
+- For a single-aggregate store: no assignment rebinds the `reactive` target; whole-record swaps use
+  `Object.assign(state, …)`; the persist path hands the db a structured-clone-safe (deep-plain) value,
+  not the reactive object or a shallow `toRaw` of it.

@@ -141,6 +141,13 @@ the spine:
 - **The presentation rung is deferred to the end and to the other skill.** Do not style as you go.
   Layout and visual contract are the last rung and are governed entirely by
   `instrument-design-system` — the lower rungs are structure-only.
+- **Pre-convention tests are outdated, not the spec.** A feature that predates the conventions usually
+  ships tests that *pin the rejected shape* — a god-store `record`, a `Result`-object surface, an old
+  `db/schema` path, business logic the new layer must not hold. Derive the layer's API from the
+  **rules**, then **delete-and-replace** the stale test against the new shape. Never bend the new
+  design to make an outdated test pass — shaping conformant code to a pre-convention test is the most
+  common way a refactor silently re-imports the very pattern it was meant to remove. (Updating a test
+  to a new shape is not "deleting coverage" — replace it, don't leave it red.)
 
 ## Verification gate
 
@@ -151,6 +158,11 @@ Each rung carries its own **Verify** line — satisfy it before the rung is done
   `npm`/`npx`/`node`.)
 - The relevant `bun run test` (vitest) suite is green; update tests that referenced old shapes rather
   than leaving them red or deleted-without-replacement.
+- **Read a gate failure as a possible design signal, not just a coding slip.** A `tsc` or test failure
+  on new code often means the *shape* is wrong, not that the test needs appeasing — run the gate
+  *before* declaring a rung done, and when it fails on conformant-looking code, re-examine the design
+  before forcing it green (a wrong reactive/persistence shape, a leaky boundary type, an inverted
+  contract surface this way).
 - No new `console.log`, dead code, or silent stub was introduced; any dead code the rung replaced is
   gone (git is the history).
 - The dependency direction holds — grep the diff for an upward edge (a store importing another

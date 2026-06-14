@@ -57,6 +57,14 @@ re-invents its own.
 12. **A store or view logs only errors specific to its own layer.** Errors bubbling up from below are
     already logged there — don't double-log; propagate or surface them.
 13. **One function, one strategy.** Never mix throw, swallow-return, and sentinels in a single flow.
+14. **A store catching into its own error field follows three refinements.** (a) A **leaf store
+    surfaces, it does not log** — it has no logger import (that would break the leaf rule), so it
+    records the message into reactive error state and lets the view present it; the originating layer
+    already logged. (b) Catching into error state means **no rethrow** — that is the one strategy for
+    that function (rule 13); surfacing *and* throwing is two strategies. (c) **Set on failure, but be
+    careful clearing on success:** a background/auto commit (a save fired by another action) should
+    **not** clear the error on success, or it wipes an unrelated error the view/service pushed; only
+    explicit lifecycle entry points (a user-triggered load/reset) clear the error when they succeed.
 
 ## Rationale
 
@@ -139,4 +147,6 @@ catch (e) { flowError.value = e instanceof Error ? e.message : "Flow failed."; }
 - Any behavior appearing in two files is extracted to a composable (behavior) or component (markup).
 - Each flow uses one error strategy: services `throw` (and log once); views catch into reactive error
   state; no sentinels; no double-logging up the stack.
+- A store that catches into its error field does not log, does not rethrow, and does not clear the
+  error on a background (non-lifecycle) successful commit.
 - Indentation is 4 spaces in touched files.
