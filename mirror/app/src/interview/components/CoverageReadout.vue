@@ -10,8 +10,8 @@
 // meters. Same component, one v-if — not a second component.
 import { computed } from "vue";
 import { Coverage } from "@nc-750/lab-vue";
-import { FACETS, type CoverageMap, type ProbeSignal } from "../../types/interview";
-import { SATURATION_LOCKED } from "../prompts/analysisPrompt";
+import type { CoverageMap, ProbeSignal } from "../models";
+import { FACETS, SATURATION_LOCKED } from "../reference";
 
 const props = withDefaults(
   defineProps<{
@@ -39,71 +39,62 @@ const signal = computed(() => {
 </script>
 
 <template>
-  <div class="nc-monitor mr-readout">
-    <div v-if="context" class="mr-readout__note">
-      <span class="nc-label mr-readout__note-key">▸ INSTRUMENT NOTE</span>
-      <p class="mr-readout__note-text">{{ context }}</p>
+  <div class="flex flex-col gap-4">
+    <div v-if="context" class="flex flex-col gap-1 pb-3 cov-note">
+      <span class="nc-label cov-note-key">▸ INSTRUMENT NOTE</span>
+      <p class="nc-text-sm cov-note-text">{{ context }}</p>
     </div>
 
-    <div class="mr-readout__signal">
+    <div>
       <span class="nc-led" :class="signal.cls">{{ signal.text }}</span>
     </div>
 
-    <div v-if="!minimal" class="nc-label mr-readout__heading">COVERAGE / SATURATION</div>
+    <div v-if="!minimal" class="nc-label mb-1">COVERAGE / SATURATION</div>
 
-    <div class="mr-readout__rows">
-      <div v-for="f in FACETS" :key="f.key" class="mr-cov-row" :title="f.blurb">
-        <span class="nc-label mr-cov-row__key">{{ f.label }}</span>
-        <Coverage class="mr-cov-row__meter" :value="pct(f.key)" :locked="locked(f.key)" />
-        <span v-if="!minimal" class="mr-cov-row__pct">{{ pct(f.key) }}%</span>
+    <div class="flex flex-col gap-2">
+      <div v-for="f in FACETS" :key="f.key" class="cov-row" :title="f.blurb">
+        <span class="nc-label cov-row-key">{{ f.label }}</span>
+        <Coverage class="cov-row-meter" :value="pct(f.key)" :locked="locked(f.key)" />
+        <span v-if="!minimal" class="nc-text-xs text-right cov-row-pct">{{ pct(f.key) }}%</span>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.mr-readout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--nc-space-4);
-}
-.mr-readout__note {
-    display: flex;
-    flex-direction: column;
-    gap: var(--nc-space-1);
-    padding-bottom: var(--nc-space-3);
+/* kept: no .nc-* class for bottom-border seam */
+.cov-note {
     border-bottom: var(--nc-border-width) solid var(--nc-line);
 }
-.mr-readout__note-key {
+
+/* kept: no .nc-* class for this ink tone */
+.cov-note-key {
     color: var(--nc-ink-3);
 }
-.mr-readout__note-text {
+
+/* kept: no .nc-* class for ink-2 text colour */
+.cov-note-text {
     margin: 0;
     color: var(--nc-ink-2);
-    font-size: var(--nc-text-sm);
     line-height: 1.4;
 }
-.mr-readout__heading {
-    margin-bottom: var(--nc-space-1);
-}
-.mr-readout__rows {
-    display: flex;
-    flex-direction: column;
-    gap: var(--nc-space-2);
-}
-.mr-cov-row {
+
+/* kept: Tailwind grid-cols arbitrary value for this specific facet row layout */
+.cov-row {
     display: grid;
     grid-template-columns: 84px 1fr 40px;
     align-items: center;
     gap: var(--nc-space-3);
 }
-.mr-cov-row__meter {
+
+/* kept: no .nc-* class for min-width constraint on Coverage meter */
+.cov-row-meter {
     min-width: 0;
 }
-.mr-cov-row__pct {
+
+/* kept: no .nc-* class for mono font + tabular-nums on percentage readout */
+.cov-row-pct {
     font-family: var(--nc-font-mono);
-    font-size: var(--nc-text-xs);
-    text-align: right;
     color: var(--nc-ink-3);
     font-variant-numeric: tabular-nums;
 }

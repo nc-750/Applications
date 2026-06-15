@@ -15,16 +15,16 @@ const emit = defineEmits<{ generate: []; continue: [] }>();
 </script>
 
 <template>
-  <div class="mr-conclude">
-    <Facet class="mr-conclude__tag">● SIGNAL SUFFICIENT · COVERAGE LOCKED</Facet>
+  <div class="flex flex-col gap-3">
+    <Facet>● SIGNAL SUFFICIENT · COVERAGE LOCKED</Facet>
 
-    <h2 class="nc-heading-3 mr-conclude__q">The reading has converged.</h2>
-    <p class="nc-text-sm mr-conclude__note">
+    <h2 class="nc-heading-3 concl-q">The reading has converged.</h2>
+    <p class="nc-text-sm concl-note">
       Coverage is sufficient across all facets. You can generate your profile now, or keep feeding
       the instrument — the reading will keep refining. There is no fixed number of probes.
     </p>
 
-    <div class="mr-conclude__row">
+    <div class="flex flex-wrap gap-3 mt-3">
       <button class="nc-btn nc-btn--accent" :disabled="busy" @click="emit('generate')">
         {{ busy ? "Generating…" : "Generate profile ▸" }}
       </button>
@@ -33,30 +33,24 @@ const emit = defineEmits<{ generate: []; continue: [] }>();
       </button>
     </div>
 
-    <p v-if="busy && phase" class="nc-label mr-conclude__phase">{{ phase }}…</p>
+    <p v-if="busy && phase" class="nc-label concl-phase">{{ phase }}…</p>
   </div>
 </template>
 
 <style scoped>
-.mr-conclude {
-    display: flex;
-    flex-direction: column;
-    gap: var(--nc-space-3);
-}
-.mr-conclude__q {
+/* kept: no .nc-* class for heading top margin */
+.concl-q {
     margin: var(--nc-space-2) 0 0;
 }
-.mr-conclude__note {
+
+/* kept: no .nc-* class for constrained-text colour + max-width */
+.concl-note {
     color: var(--nc-ink-2);
     max-width: 56ch;
 }
-.mr-conclude__row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--nc-space-3);
-    margin-top: var(--nc-space-3);
-}
-.mr-conclude__phase {
+
+/* kept: no .nc-* class for phase-label ink tone */
+.concl-phase {
     color: var(--nc-ink-3);
     margin-top: var(--nc-space-2);
 }

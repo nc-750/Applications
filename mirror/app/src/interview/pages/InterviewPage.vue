@@ -1,272 +1,302 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import InterviewPreparation from '../components/InterviewPreparation.vue';
-import { useAppStore } from '../../AppStore.ts';
-import { logger } from '../../logger/index.ts';
-import { AttachedFile } from '../../fileManager/services/fileExtractor.ts';
-import { ContentPart, createLLMClient, LLMClient, Message, ProviderKind } from '@nc-750/llm-ts';
-import { Persona, PersonaMetrics } from '../../persona/models/Persona.ts';
-import { buildInterviewSystemPrompt, buildNextQuestionSystemPrompt, buildPersonaMetricsSystemPrompt, buildPersonaMetricsUserPrompt } from '../prompts/index.ts';
-import { ANALYZE_SCHEMA_NAME } from '../../persona/personaSchemas.ts';
-import { ANALYSIS_JSON_SCHEMA, TurnAnalysisSchema } from '../prompts/analysisPrompt.ts';
-import { extractFencedJSON } from '../prompts/interviewExtractor.ts';
-import { TurnAnalysis } from '../../types/interview.ts';
-import { PROBE_JSON_SCHEMA, PROBE_SCHEMA_NAME } from '../prompts/interviewPrompt.ts';
-import { LLMProvider } from '../../llm';
+// Interview page — the top rung of the interview feature. Binds to the interview
+// store read-only, delegates all LLM work to the Phase 2.5 services, and renders
+// via the Lab Chassis→Band→Cell/MonitorCell contract (CONVENTIONS 7.2–7.7).
+//
+// Five states, driven by InterviewStatus:
+//   idle         → data input
+//   active       → coverage readout + probe (or conclude if saturated)
+//   synthesizing → coverage readout + completion spinner
+//   completed    → coverage readout + completion success
+//   error        → coverage readout + completion error
 
-interface ProbeResult {
-    context: string;
-    question: string;
-}
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { Band, Cell, MonitorCell } from "@nc-750/lab-vue";
+import type { LLMClient } from "@nc-750/llm-ts";
+import { logger } from "../../logger";
+import { createClientFromConfig } from "../../llm/factory";
+import { useInterviewStore } from "../stores/InterviewStore";
+import { useSettingsStore } from "../../settings/stores";
+import { usePersonaStore } from "../../persona/stores";
+import {
+    beginInterview,
+    submitAnswer,
+    probeMore,
+    finishEarly,
+    runSynthesis,
+    abort,
+    canConclude,
+    needsDigestion,
+} from "../services";
+import DataInputForm from "../components/DataInputForm.vue";
+import CoverageReadout from "../components/CoverageReadout.vue";
+import ProbePanel from "../components/ProbePanel.vue";
+import ConcludePanel from "../components/ConcludePanel.vue";
+import TranscriptLog from "../components/TranscriptLog.vue";
+import CompletionPanel from "../components/CompletionPanel.vue";
 
-const personaStore = useAppStore().persona;
-const isInterviewStarted = ref(false);
-const isAnalyzing = ref(false);
+// ── Stores ──────────────────────────────────────────────────────────────────
+const interviewStore = useInterviewStore();
+const settingsStore = useSettingsStore();
+const personaStore = usePersonaStore();
+const router = useRouter();
 
-function alertError(message: string) {
-    logger.error("app", message);
-}
+// ── Local UI state ──────────────────────────────────────────────────────────
+const pageError = ref<string | null>(null);
+const isBusy = ref(false);
 
-async function startInterview(userInput: string, files?: AttachedFile[]) {    
-    const llm = getLLMForInterview();
-   
-    if (!llm) {
+// ── Derived ─────────────────────────────────────────────────────────────────
+const status = computed(() => interviewStore.status);
+const isIdle = computed(() => status.value === "idle");
+const isActive = computed(() => status.value === "active");
+const isSynthesizing = computed(() => status.value === "synthesizing");
+const isCompleted = computed(() => status.value === "completed");
+const isError = computed(() => status.value === "error");
+const showCompletion = computed(
+    () => isSynthesizing.value || isCompleted.value || isError.value,
+);
+const hasConcluded = computed(() => canConclude(interviewStore.coverage));
+
+/** The last non-error assistant message — the current question. */
+const lastQuestion = computed(() => {
+    const msgs = interviewStore.messages;
+    for (let i = msgs.length - 1; i >= 0; i--) {
+        if (msgs[i].role === "assistant" && !msgs[i].isError) return msgs[i].content;
+    }
+    return "";
+});
+
+// ── LLM client ──────────────────────────────────────────────────────────────
+const llmClient = ref<LLMClient | null>(null);
+
+function buildClient(): void {
+    const config = settingsStore.llmConfig;
+    if (!config) {
+        llmClient.value = null;
         return;
     }
-
-    isAnalyzing.value = true;
-
-    const persona = personaStore.persona;
-    const userMessage = transformInputDataForLLMInput(userInput, files);
-
     try {
-        let metrics = await runPersonaMetricsAnalysis(
-            "Can you please provide information about yourself?", 
-            userMessage, 
-            persona,
-            llm
-        );
-
-        if (isPersonaAnalysisFinished(metrics.coverage)) {
-            logger.debug("app", "Interview is finished: metrics reached coverage goals");
-            finishInterview();
-            return;
-        }
-
-        let result = await runFirstAnalysis(userMessage, metrics, persona, llm);
+        llmClient.value = createClientFromConfig(config);
+        pageError.value = null;
     } catch (e) {
+        llmClient.value = null;
+        pageError.value = e instanceof Error ? e.message : "Failed to create LLM client";
+    }
+}
+
+watch(() => settingsStore.llmConfig, buildClient, { immediate: true });
+
+// ── Lifecycle ───────────────────────────────────────────────────────────────
+onMounted(async () => {
+    try {
+        await interviewStore.loadInterview();
+    } catch {
+        // loadInterview surfaces read failures into interviewStore.error
+    }
+});
+
+// ── Event handlers (all named onX — CONVENTIONS 6.6) ────────────────────────
+
+async function onDataContinue(data: string, inputText: string, fileNames: string[]) {
+    const client = llmClient.value;
+    if (!client) {
+        pageError.value = "LLM not configured. Check your settings.";
         return;
+    }
+
+    isBusy.value = true;
+    try {
+        const model = settingsStore.llmConfig?.model ?? "";
+        const filesForDigestion = fileNames.map((n) => ({ name: n, text: "" }));
+        const wasDigested = needsDigestion(filesForDigestion, inputText, model);
+        // Note: actual digestion (LLM summarisation) is future work;
+        // needsDigestion only reports whether it would be needed.
+        await beginInterview(client, interviewStore, data, inputText, fileNames, wasDigested);
+    } catch (e) {
+        pageError.value = e instanceof Error ? e.message : "Failed to begin interview.";
+        logger.error("app", "beginInterview failed", { error: e instanceof Error ? e : undefined });
     } finally {
-        isAnalyzing.value = true;
+        isBusy.value = false;
     }
-} 
-
-function getLLMForInterview(): LLMClient | undefined {
-    const settingsStore = useAppStore().settings;
-    const llmConfig = settingsStore.llmConfig;
-
-    if (!settingsStore.isLLMConfigured) {
-        alertError("LLM not configured.");
-        return undefined;
-    }
-
-    let provider: ProviderKind = "openai-compatible";
-         
-    switch (Number(llmConfig!.provider)) {
-        case LLMProvider.OpenAI: 
-            provider = "openai";
-            break;
-        case LLMProvider.Anthropic: 
-            provider = "anthropic";
-            break;
-        case LLMProvider.CompatibleOpenAI: 
-            provider = "openai-compatible";
-            break;
-    }
-    
-    const keyProvider = async () => llmConfig!.apiKey;
-
-    const clientResult = createLLMClient({
-        provider: provider,
-        model: llmConfig!.model,
-        keyProvider,
-        baseUrl: llmConfig!.endpoint,
-    });
-
-    if (clientResult.ok) {
-        return clientResult.value;
-    }
-
-    alertError(`Unable to create LLM Client: ${clientResult.error.message}`);
-    return undefined;
 }
 
-function transformInputDataForLLMInput(userInput: string, files?: AttachedFile[]): Message {
-    let fileContents: ContentPart[] = files?.map((file) => ({
-        type: "text",
-        text: file.text
-    })) ?? [];
+async function onSubmitAnswer(answer: string) {
+    const client = llmClient.value;
+    if (!client) return;
 
-    let userMessage: ContentPart = {
-        type: "text",
-        text: userInput
-    };
-
-    return {
-        role: "user",
-        content: [
-            ...fileContents,
-            userMessage
-        ]
-    };
-}
-
-function updateDiscussion(inputMessage: Message, persona: Persona): Message[] {
-    let previousMessages = persona.interview.messages
-    
-    return [
-        ...previousMessages,
-        inputMessage
-    ]
-}
-
-async function runPersonaMetricsAnalysis(question: string, userAnswer: Message, persona: Persona, llm: LLMClient): Promise<TurnAnalysis> {
-    const systemPrompt = buildPersonaMetricsSystemPrompt(persona.metrics);
-    const userPrompt = buildPersonaMetricsUserPrompt(question, userAnswer, persona);
-    const messages = [ systemPrompt, userPrompt ];
-
-    const structuredResult = await llm.message(messages, {
-        structured: {
-            name: ANALYZE_SCHEMA_NAME,
-            schema: ANALYSIS_JSON_SCHEMA,
-            strict: false
-        }
-    });
-
-    if (!structuredResult.ok && structuredResult.error.isAborted) {
-        alertError(`Analysis aborted`);
-        throw Error("Analysis aborted");
+    isBusy.value = true;
+    try {
+        await submitAnswer(client, interviewStore, answer);
+    } catch (e) {
+        pageError.value = e instanceof Error ? e.message : "Failed to process answer.";
+        logger.error("app", "submitAnswer failed", { error: e instanceof Error ? e : undefined });
+    } finally {
+        isBusy.value = false;
     }
+}
 
-    let parsedResponse = structuredResult.ok ? TurnAnalysisSchema.safeParse(structuredResult.value) : null;
+async function onContinue() {
+    const client = llmClient.value;
+    if (!client) return;
 
-    if (parsedResponse?.error) {
-        alertError(`Couldn't parse structured response: ${parsedResponse.error.message}. Trying plain completion + lenient JSON extraction.`);
-        
-        const plainResult = await llm.message(messages);
-
-        if (!plainResult.ok) {
-            alertError(`Analysis failed: ${plainResult.error.message}`);
-        }
-
-        parsedResponse = plainResult.ok ? TurnAnalysisSchema.safeParse(extractFencedJSON(plainResult.value as string)) : null;
-
-        if (parsedResponse?.error) {
-            alertError(`Couldn't parse plain response: ${parsedResponse.error.message}`);
-            throw Error(`Couldn't parse plain response: ${parsedResponse.error.message}`);
-        }
+    isBusy.value = true;
+    try {
+        await probeMore(client, interviewStore);
+    } catch (e) {
+        pageError.value = e instanceof Error ? e.message : "Failed to generate next probe.";
+        logger.error("app", "probeMore failed", { error: e instanceof Error ? e : undefined });
+    } finally {
+        isBusy.value = false;
     }
-
-    return parsedResponse!.data;
 }
 
-/** Coerce a raw structured/extracted value into a probe, or null if unusable.
- *  Accepts a parsed object OR a JSON string (some providers return the JSON as
- *  text rather than a parsed object). */
-function coerceProbe(raw: unknown): ProbeResult | null {
-    let obj: unknown = raw;
-
-    if (typeof obj === "string") obj = extractFencedJSON(obj);
-    
-    if (!obj || typeof obj !== "object") return null;
-    
-    const o = obj as Record<string, unknown>;
-    const question = typeof o.question === "string" ? o.question.trim() : "";
-    
-    if (!question) return null;
-    
-    const context = typeof o.context === "string" ? o.context.trim() : "";
-    
-    return { context, question };
-}
-
-async function runFirstAnalysis(userMessage: Message, turnAnalysis: TurnAnalysis, persona: Persona, llm: LLMClient): Promise<ProbeResult> {
-    const systemPrompt: Message = buildInterviewSystemPrompt(userMessage);
-    
-    persona.interview.messages.push(systemPrompt);
-
-    return await runAnalysisForNextQuestion(turnAnalysis, persona, llm);
-}
-
-async function runAnalysisForNextQuestion(turnAnalysis: TurnAnalysis, persona: Persona, llm: LLMClient): Promise<ProbeResult> {
-    const systemPrompt = buildNextQuestionSystemPrompt(turnAnalysis, persona);
-    const history: Message[] = persona.interview.messages;
-    const messages: Message[] = [ systemPrompt, ...history ];
-
-    const structuredResponse = await llm.message(messages, {
-        structured: { name: PROBE_SCHEMA_NAME, schema: PROBE_JSON_SCHEMA, strict: false }
-    });
-
-    let probe: ProbeResult | null = null
-    
-    if (structuredResponse.ok) {
-        probe = coerceProbe(structuredResponse.value);
-    } else {
-        // The user aborted.
-        return { context: "End of interview requested by user", question: "N/A" };
+async function onFinishEarly() {
+    try {
+        await finishEarly(interviewStore);
+    } catch (e) {
+        pageError.value = e instanceof Error ? e.message : "Failed to finish early.";
+        return;
     }
+    await onGenerate();
+}
 
-    if (!probe) {
-        const plainResponse = await llm.message(messages);
+async function onGenerate() {
+    const client = llmClient.value;
+    if (!client) return;
 
-        if (!plainResponse.ok && !plainResponse.error.isAborted) {
-            alertError(`Failed to get a response: ${plainResponse.error.message}`);
-            return { context: `Failed to get a response: ${plainResponse.error.message}`, question: "N/A" };
-        }
-
-        const text = plainResponse.ok && typeof plainResponse.value === "string" ? plainResponse.value : "";
-        probe = coerceProbe(text) ?? { context: "", question: text.trim() };
+    isBusy.value = true;
+    try {
+        await runSynthesis(client, interviewStore, personaStore);
+        // runSynthesis sets status to "completed" and commits the persona;
+        // on failure it sets status to "error" and calls interviewStore.setError().
+    } catch (e) {
+        // Synthesis already surfaced the error into interviewStore.error.
+        // Log only unexpected re-throws from infrastructure.
+        logger.error("app", "Synthesis failed", { error: e instanceof Error ? e : undefined });
+    } finally {
+        isBusy.value = false;
     }
+}
 
-    if (!probe.question) {
-        alertError(`Didn't get a question in the LLM response`);
-        return { context: `Didn't get a question in the LLM response`, question: "N/A" };
+function onAbort() {
+    abort();
+    isBusy.value = false;
+}
+
+async function onRestart() {
+    pageError.value = null;
+    try {
+        await interviewStore.clearInterview();
+    } catch (e) {
+        pageError.value = e instanceof Error ? e.message : "Failed to clear interview.";
     }
-
-    persona.interview.messages.push({
-        role: "assistant",
-        content: [{
-            type: "text",
-            text: `
-            Acknowledge: ${probe.context}
-            Question: ${probe.question}
-            `
-        }]
-    });
-
-    return probe;
-}
-
-function isPersonaAnalysisFinished(metrics: PersonaMetrics): boolean {
-    const threshold = 0.75;
-    const canConclude = Object.entries(metrics).every((m) => m[1] > threshold);
-
-    return canConclude;
-}
-
-function finishInterview() {
-    isAnalyzing.value = true;
-}
-
-function restartInterview() {
-
 }
 </script>
 
 <template>
-    <InterviewPreparation
-        v-if="!isInterviewStarted"
-        @start-interview="startInterview"
-    />
-    <!-- <InterviewInstrument/> -->
+    <!-- IDLE — Data input -->
+    <Band v-if="isIdle" :grow="1">
+        <Cell title="DATA INPUT" spec="IVW // 0x01" :grow="1">
+            <DataInputForm :disabled="isBusy" @continue="onDataContinue" />
+        </Cell>
+    </Band>
+
+    <!-- ACTIVE / SYNTHESIZING / COMPLETED / ERROR -->
+    <template v-else>
+        <!-- Working band: coverage readout + interaction -->
+        <Band :grow="1">
+            <!-- Live coverage readout — MonitorCell = read-only, rule 7.6 -->
+            <MonitorCell title="COVERAGE" spec="IVW // 0x02">
+                <CoverageReadout
+                    :coverage="interviewStore.coverage"
+                    :probe-signal="interviewStore.probeSignal"
+                    :acquiring="isBusy"
+                />
+            </MonitorCell>
+
+            <!-- Interaction cell — the active surface for input/actions -->
+            <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3">
+                <!-- Page-level error banner -->
+                <div
+                    v-if="pageError"
+                    class="flex items-center gap-2 p-3 mb-4 ivw-error"
+                    role="alert"
+                >
+                    <p class="nc-text-sm ivw-error-text">{{ pageError }}</p>
+                    <button
+                        class="nc-btn nc-btn--ghost nc-btn--sm"
+                        @click="pageError = null"
+                    >
+                        Dismiss
+                    </button>
+                </div>
+
+                <!-- Synthesizing / Completed / Error -->
+                <CompletionPanel
+                    v-if="showCompletion"
+                    :status="(status as 'synthesizing' | 'completed' | 'error')"
+                    :error-message="interviewStore.error ?? undefined"
+                    @go-insight="router.push('/insight')"
+                    @go-profile="router.push('/profile')"
+                    @retry="onGenerate"
+                    @restart="onRestart"
+                />
+
+                <!-- Concluded: coverage saturated — offer generate or continue -->
+                <ConcludePanel
+                    v-else-if="hasConcluded && isActive"
+                    :busy="isBusy"
+                    @generate="onGenerate"
+                    @continue="onContinue"
+                />
+
+                <!-- Active probe: question + answer input -->
+                <ProbePanel
+                    v-else-if="isActive"
+                    :facet="interviewStore.currentFacet ?? 'story'"
+                    :question="lastQuestion"
+                    :disabled="isBusy"
+                    @submit="onSubmitAnswer"
+                />
+
+                <!-- Action bar (visible during active interview) -->
+                <div v-if="isActive" class="flex justify-between mt-4">
+                    <button
+                        class="nc-btn nc-btn--ghost nc-btn--sm"
+                        @click="onFinishEarly"
+                    >
+                        Finish early &amp; generate
+                    </button>
+                    <button
+                        class="nc-btn nc-btn--danger nc-btn--sm"
+                        @click="onAbort"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </Cell>
+        </Band>
+
+        <!-- Session log band -->
+        <Band>
+            <Cell title="SESSION LOG" spec="IVW // 0x04">
+                <TranscriptLog :messages="interviewStore.messages" />
+            </Cell>
+        </Band>
+    </template>
 </template>
+
+<style scoped>
+/* kept: no .nc-* class for error-banner background or error-text colour */
+.ivw-error {
+    background: color-mix(in srgb, var(--nc-error) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--nc-error) 20%, transparent);
+    border-radius: var(--nc-radius-md);
+}
+
+.ivw-error-text {
+    color: var(--nc-error);
+    flex: 1;
+}
+</style>

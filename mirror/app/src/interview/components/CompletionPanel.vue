@@ -40,18 +40,18 @@ const phaseDetail = computed(
   <!-- Error -->
   <div
     v-if="status === 'error'"
-    class="flex flex-col items-center justify-center text-center banner__error"
+    class="flex flex-col items-center justify-center text-center py-12 px-6 comp-error"
     role="alert"
   >
-    <AlertTriangle :size="32" class="banner__icon" aria-hidden="true" />
+    <AlertTriangle :size="32" class="comp-icon" aria-hidden="true" />
     <div>
-      <p class="nc-text-md nc-font-semibold banner__title">Couldn't build your profile</p>
-      <p class="nc-text-sm nc-text-secondary max-w-sm banner__subtitle">
+      <p class="nc-text-md nc-font-semibold comp-title">Couldn't build your profile</p>
+      <p class="nc-text-sm nc-text-secondary max-w-sm comp-sub">
         {{ errorMessage ? `Synthesis failed — ${errorMessage}` : "Something went wrong while building your profile." }}
         Your interview answers are saved, so you can try again.
       </p>
     </div>
-    <div class="flex flex-col banner__actions">
+    <div class="flex flex-col gap-3">
       <button class="nc-btn nc-btn--accent justify-center" @click="emit('retry')">
         <RotateCcw :size="15" aria-hidden="true" />
         Try again
@@ -65,32 +65,32 @@ const phaseDetail = computed(
   <!-- Synthesizing -->
   <div
     v-else-if="status === 'synthesizing'"
-    class="flex flex-col items-center justify-center text-center banner__synthesizing"
+    class="flex flex-col items-center justify-center text-center gap-4 py-12"
   >
-    <Loader2 :size="32" class="animate-spin banner__icon" aria-hidden="true" />
+    <Loader2 :size="32" class="animate-spin comp-icon" aria-hidden="true" />
     <div aria-live="polite" aria-atomic="true">
-      <p class="nc-text-md nc-font-semibold banner__title">{{ phaseLabel }}</p>
-      <p class="nc-text-sm nc-text-secondary banner__detail">{{ phaseDetail }}</p>
+      <p class="nc-text-md nc-font-semibold comp-title">{{ phaseLabel }}</p>
+      <p class="nc-text-sm nc-text-secondary comp-detail">{{ phaseDetail }}</p>
     </div>
   </div>
 
   <!-- Completed -->
   <div
     v-else
-    class="flex flex-col items-center justify-center text-center banner__completed"
+    class="flex flex-col items-center justify-center text-center gap-6 py-12 px-6"
   >
-    <CheckCircle :size="36" class="banner__icon" aria-hidden="true" />
+    <CheckCircle :size="36" class="comp-icon" aria-hidden="true" />
 
     <div>
-      <p class="nc-text-lg nc-font-semibold banner__title">
+      <p class="nc-text-lg nc-font-semibold comp-title">
         {{ personaName ? `${personaName}'s mirror is ready` : "Mirror ready" }}
       </p>
-      <p class="nc-text-sm nc-text-secondary max-w-sm banner__subtitle">
+      <p class="nc-text-sm nc-text-secondary max-w-sm comp-sub">
         Your interview is complete. View your private insight document or your public profile.
       </p>
     </div>
 
-    <div class="flex flex-col banner__actions">
+    <div class="flex flex-col gap-3">
       <button class="nc-btn nc-btn--accent justify-center" @click="emit('goInsight')">
         <User :size="15" aria-hidden="true" />
         View Insight
@@ -101,7 +101,7 @@ const phaseDetail = computed(
       </button>
     </div>
 
-    <button class="banner__restart" @click="emit('restart')">
+    <button class="comp-restart" @click="emit('restart')">
       <RotateCcw :size="12" aria-hidden="true" />
       Start new interview
     </button>
@@ -109,60 +109,47 @@ const phaseDetail = computed(
 </template>
 
 <style scoped>
-.banner__error {
-  gap: var(--nc-space-5);
-  padding: var(--nc-space-12) 0;
-  padding-left: var(--nc-space-6);
-  padding-right: var(--nc-space-6);
+/* kept: no .nc-* class for accent-coloured icon */
+.comp-icon {
+    color: var(--nc-accent);
 }
 
-.banner__synthesizing {
-  gap: var(--nc-space-4);
-  padding: var(--nc-space-12) 0;
+/* kept: no .nc-* class for ink title colour */
+.comp-title {
+    color: var(--nc-ink);
 }
 
-.banner__completed {
-  gap: var(--nc-space-6);
-  padding: var(--nc-space-12) 0;
-  padding-left: var(--nc-space-6);
-  padding-right: var(--nc-space-6);
+/* kept: no .nc-* class for subtitle top-margin + line-height */
+.comp-sub {
+    margin-top: var(--nc-space-2);
+    line-height: var(--nc-leading-relaxed);
 }
 
-.banner__icon {
-  color: var(--nc-accent);
+/* kept: no .nc-* class for detail top-margin */
+.comp-detail {
+    margin-top: var(--nc-space-1);
 }
 
-.banner__title {
-  color: var(--nc-ink);
+/* kept: no .nc-* class for error-section gap */
+.comp-error {
+    gap: var(--nc-space-5);
 }
 
-.banner__subtitle {
-  margin-top: var(--nc-space-2);
-  line-height: var(--nc-leading-relaxed);
+/* kept: no .nc-* class for accent-ink text link button */
+.comp-restart {
+    display: flex;
+    align-items: center;
+    gap: var(--nc-space-1);
+    font-size: var(--nc-text-xs);
+    margin-top: var(--nc-space-1);
+    color: var(--nc-accent-ink);
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.banner__detail {
-  margin-top: var(--nc-space-1);
-}
-
-.banner__actions {
-  gap: var(--nc-space-3);
-}
-
-.banner__restart {
-  display: flex;
-  align-items: center;
-  gap: var(--nc-space-1);
-  font-size: var(--nc-text-xs);
-  margin-top: var(--nc-space-1);
-  color: var(--nc-accent-ink);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.banner__restart:focus-visible {
-  outline: 2px solid var(--nc-accent);
-  outline-offset: 2px;
+.comp-restart:focus-visible {
+    outline: 2px solid var(--nc-accent);
+    outline-offset: 2px;
 }
 </style>

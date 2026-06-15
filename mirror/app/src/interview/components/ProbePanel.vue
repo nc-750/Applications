@@ -4,9 +4,9 @@
 // box). While the analysis runs (acquiring), an nc-acquire overlay takes the
 // cell — the wait shown as the signal being read, not a spinner (Rule I1).
 import { ref, computed } from "vue";
-import { Facet, Acquire } from "@nc-750/lab-vue";
-import FileUploader from "../FileUploader.vue";
-import { FACETS, type FacetKey } from "../../types/interview";
+import { Acquire } from "@nc-750/lab-vue";
+import type { FacetKey } from "../models";
+import { FACETS } from "../reference";
 import { logger } from "../../logger";
 
 const props = withDefaults(
@@ -21,10 +21,8 @@ const props = withDefaults(
   { working: false, disabled: false },
 );
 
-const emit = defineEmits<{ 
+const emit = defineEmits<{
   submit: [answer: string]
-  restartInterview: [],
-  generatePersona: []
 }>();
 
 const answer = ref("");
@@ -57,14 +55,7 @@ function submit() {
       @keydown.enter.exact.prevent="submit"
     />
 
-    <FileUploader class="justify-start"/>
     <button class="nc-btn nc-btn--accent" :disabled="!canSubmit" @click="submit">Submit ▸</button>
-
-
-    <div class="flex justify-between">
-      <button class="nc-btn nc-btn--danger nc-btn--sm" @click="emit('restartInterview')">Clear & Restart</button>
-      <button class="nc-btn nc-btn--primary nc-btn--sm" @click="emit('generatePersona')">Generate Persona</button>
-    </div>
 
     <div v-if="working" class="overlay">
       <Acquire label="ANALYZING RESPONSE · READING SIGNAL" />
