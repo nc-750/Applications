@@ -1,16 +1,16 @@
-import { isWithinTokenLimit } from "tokenx";
-import { AttachedFile } from "../../fileManager/services/fileExtractor";
-import { getContextWindowLimit } from "../reference";
-import { Message } from "@nc-750/llm-ts";
+// Barrel for the Interview feature's service layer.
+//
+// Each concern is one file:
+//   Helpers         — pure functions (transcriptOf, mergeCoverage, canConclude, coerceProbe)
+//   Digestion       — needsDigestion check
+//   InterviewFlow   — turn-by-turn orchestration (beginInterview, submitAnswer, probeMore, finishEarly, abort)
+//   SynthesisBridge — boundary (SynthesisResult) → domain (Persona) transform
+//   SynthesisFlow   — end-of-interview synthesis (runSynthesis)
+//
+// See the Phase 2.5 plan for the full flow map.
 
-export function isDigestionNeeded(attachedFiles: AttachedFile[], userInput: string, model: string) {
-    const filesConcatData = attachedFiles.map((file) => `${file.name} ${file.text}`).join("\n");
-    const data = `${filesConcatData}\n\n${userInput}`;
-    const contextWindowLimit = getContextWindowLimit(model);
-
-    return isWithinTokenLimit(data, contextWindowLimit);
-}
-
-export function digestData(messages: Message[]) {
-    // TODO: Implement
-}
+export * from "./Helpers";
+export * from "./Digestion";
+export * from "./InterviewFlow";
+export * from "./SynthesisBridge";
+export * from "./SynthesisFlow";

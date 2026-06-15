@@ -1,0 +1,210 @@
+// Boundary-to-domain transform: SynthesisResult → Persona.
+//
+// The LLM is an untrusted boundary — it returns string enums, nullable fields,
+// and snake_case keys. This module is the SINGLE place where those boundary
+// shapes cross into the domain (CONVENTIONS 1.5 / 1.6). Every enum mapping,
+// every nullable default, and every field rename lives here and nowhere else.
+//
+// The Persona model defects (missing `name` on PersonaSkill, singular
+// `strength`, `carreer` misspelling, missing `derived` field) were fixed in
+// this same phase — so this bridge maps cleanly with no documented gaps.
+
+import type { Message } from "@nc-750/llm-ts";
+import {
+    type Persona,
+    type PersonaCareer,
+    PersonaSkillCategory,
+    PersonaSkillLevel,
+    PersonaSkillSource,
+    PersonaGoalType,
+    type PersonaGoal,
+    createEmptyPersona,
+} from "../../persona/models/Persona";
+import type { CoverageMap, TranscriptMessage } from "../models";
+import type { SynthesisResult } from "../prompts/Synthesis";
+
+// ── Enum mappers ──────────────────────────────────────────────────────────
+
+const CATEGORY_MAP: Record<string, PersonaSkillCategory> = {
+    Technical: PersonaSkillCategory.Technical,
+    Soft: PersonaSkillCategory.Soft,
+    Domain: PersonaSkillCategory.Domain,
+    Language: PersonaSkillCategory.Language,
+    Transversal: PersonaSkillCategory.Transversal,
+    Tool: PersonaSkillCategory.Tool,
+    Other: PersonaSkillCategory.Other,
+};
+
+function mapCategory(raw: string): PersonaSkillCategory {
+    return CATEGORY_MAP[raw] ?? PersonaSkillCategory.Other;
+}
+
+const LEVEL_MAP: Record<string, PersonaSkillLevel> = {
+    Beginner: PersonaSkillLevel.Beginner,
+    Intermediate: PersonaSkillLevel.Intermediate,
+    Advanced: PersonaSkillLevel.Advanced,
+    Expert: PersonaSkillLevel.Expert,
+    Native: PersonaSkillLevel.Native,
+};
+
+function mapLevel(raw: string | null): PersonaSkillLevel {
+    if (!raw) return PersonaSkillLevel.Beginner;
+    return LEVEL_MAP[raw] ?? PersonaSkillLevel.Beginner;
+}
+
+const SOURCE_MAP: Record<string, PersonaSkillSource> = {
+    professional: PersonaSkillSource.Professional,
+    personal: PersonaSkillSource.Personal,
+    inferred: PersonaSkillSource.Inferred,
+};
+
+function mapSource(raw: string | null): PersonaSkillSource {
+    if (!raw) return PersonaSkillSource.Inferred;
+    return SOURCE_MAP[raw] ?? PersonaSkillSource.Inferred;
+}
+
+// ── Field helpers ─────────────────────────────────────────────────────────
+
+function parseYearEnd(raw: number | string): number {
+    if (typeof raw === "number") return raw;
+    if (raw === "present") return new Date().getFullYear();
+    const parsed = parseInt(raw, 10);
+    return isNaN(parsed) ? new Date().getFullYear() : parsed;
+}
+
+function transcriptToWireMessages(transcript: TranscriptMessage[]): Message[] {
+    return transcript.map((m) => ({
+        role: m.role as Message["role"],
+        content: [{ type: "text" as const, text: m.content }],
+    }));
+}
+
+/** Format an analysis strength for the `Persona.strengths: string[]` field. */
+function formatStrength(s: {
+    label: string;
+    description: string;
+    evidence: string | null;
+}): string {
+    const evidence = s.evidence ? ` (${s.evidence})` : "";
+    return `${s.label}: ${s.description}${evidence}`;
+}
+
+/** Format an analysis weakness for the `Persona.weaknesses: string[]` field. */
+function formatWeakness(w: {
+    label: string;
+    description: string;
+    growth_note: string | null;
+}): string {
+    const growth = w.growth_note ? ` → ${w.growth_note}` : "";
+    return `${w.label}: ${w.description}${growth}`;
+}
+
+/** Build `PersonaGoal[]` from the synthesis boundary's `{ short_term, long_term }`. */
+function buildGoals(g: {
+    short_term: string | null;
+    long_term: string | null;
+}): PersonaGoal[] {
+    const goals: PersonaGoal[] = [];
+    if (g.short_term) {
+        goals.push({
+            type: PersonaGoalType.ShortTerm,
+            description: g.short_term,
+        });
+    }
+    if (g.long_term) {
+        goals.push({
+            type: PersonaGoalType.LongTerm,
+            description: g.long_term,
+        });
+    }
+    return goals;
+}
+
+// ── Public transform ──────────────────────────────────────────────────────
+
+/**
+ * Transform the LLM boundary output (`SynthesisResult` + transcript + coverage)
+ * into the domain `Persona` model.
+ *
+ * The returned Persona has `derived.howIWorkBest` set to `[]` — the caller
+ * (SynthesisFlow) fills it after the "How I Work Best" LLM call completes.
+ * `derived.cvSummary`, `derived.linkedinAbout`, and `derived.interviewPitch`
+ * are populated from the polish phase's `use_cases`.
+ */
+export function toPersona(
+    result: SynthesisResult,
+    transcript: TranscriptMessage[],
+    coverage: CoverageMap,
+): Persona {
+    const persona = createEmptyPersona();
+
+    // Metadata
+    persona.metadata.sourceUsed = result.metadata.sources_used;
+    persona.metadata.language = result.metadata.language;
+    persona.metadata.createdAt = Date.now();
+    persona.metadata.version = result.metadata.version;
+
+    // Metrics (coverage)
+    persona.metrics.story = coverage.story;
+    persona.metrics.strengths = coverage.strengths;
+    persona.metrics.hidden = coverage.hidden;
+    persona.metrics.growth = coverage.growth;
+    persona.metrics.drivers = coverage.drivers;
+
+    // Strengths / weaknesses
+    persona.strengths = result.strengths.map(formatStrength);
+    persona.weaknesses = result.weaknesses.map(formatWeakness);
+
+    // Skills (with name, enum mapping)
+    persona.skills = result.skills.map((s) => ({
+        name: s.name,
+        category: mapCategory(s.category),
+        level: mapLevel(s.level),
+        source: mapSource(s.source),
+    }));
+
+    // Career timeline → career (not carreer)
+    persona.career = result.career_timeline.map((c): PersonaCareer => ({
+        dateStart: c.year_start,
+        dateEnd: parseYearEnd(c.year_end),
+        role: c.role,
+        organization: c.organization,
+        highlights: c.highlight ? [c.highlight] : [],
+        realStory: c.real_story ?? undefined,
+    }));
+
+    // Non-professional → personal
+    persona.personal = result.non_professional.map((n): PersonaCareer => ({
+        dateStart: 0,
+        dateEnd: 0,
+        role: n.activity,
+        highlights: n.skills_revealed,
+        realStory: undefined,
+        note: n.note ?? undefined,
+    }));
+
+    // Traits
+    persona.traits = result.personality_traits.map((t) => ({
+        dimension: t.dimension,
+        position: t.position,
+        note: t.note ?? undefined,
+    }));
+
+    // Direct arrays
+    persona.values = result.values;
+    persona.hiddenAssets = result.hidden_assets;
+
+    // Goals
+    persona.goals = buildGoals(result.goals);
+
+    // Interview transcript → wire messages
+    persona.interview.messages = transcriptToWireMessages(transcript);
+
+    // Derived fields from polish's use_cases
+    persona.derived.howIWorkBest = []; // filled by SynthesisFlow after HWB call
+    persona.derived.cvSummary = result.use_cases.cv_summary;
+    persona.derived.linkedinAbout = result.use_cases.linkedin_about;
+    persona.derived.interviewPitch = result.use_cases.interview_pitch;
+
+    return persona;
+}
