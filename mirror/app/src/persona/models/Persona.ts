@@ -1,33 +1,42 @@
 import { Message } from "@nc-750/llm-ts"
 
+export interface PersonaDerived {
+    howIWorkBest: string[]
+    cvSummary: string | null
+    linkedinAbout: string | null
+    interviewPitch: string | null
+}
+
 export interface Persona {
     metadata: PersonaMetadata,
     metrics: PersonaMetrics,
     strengths: string[],
     weaknesses: string[],
     skills: PersonaSkill[],
-    carreer: PersonaCareer[],
+    career: PersonaCareer[],
     personal: PersonaCareer[],
     traits: PersonaTrait[],
     values: string[],
     hiddenAssets: string[],
     goals: PersonaGoal[],
-    interview: PersonaInterview
+    interview: PersonaInterview,
+    derived: PersonaDerived,
 }
 
 export interface PersonaMetrics {
     story: number
-    strength: number,
+    strengths: number,
     hidden: number,
     growth: number,
     drivers: number
 }
 
-export enum PersonaSkillCategory { Technical, Soft, Domain, Language, Transversal, Tool }
+export enum PersonaSkillCategory { Technical, Soft, Domain, Language, Transversal, Tool, Other }
 export enum PersonaSkillLevel { Beginner, Intermediate, Advanced, Expert, Native }
 export enum PersonaSkillSource { Professional, Personal, Inferred }
 
 export interface PersonaSkill {
+    name: string,
     category: PersonaSkillCategory,
     level: PersonaSkillLevel,
     source: PersonaSkillSource
@@ -79,14 +88,14 @@ export function createEmptyPersona(): Persona {
         metrics: {
             drivers: 0,
             story: 0,
-            strength: 0,
+            strengths: 0,
             hidden: 0,
             growth: 0
         },
         strengths: [],
         weaknesses: [],
         skills: [],
-        carreer: [],
+        career: [],
         personal: [],
         traits: [],
         values: [],
@@ -94,6 +103,12 @@ export function createEmptyPersona(): Persona {
         goals: [],
         interview: {
             messages: []
-        }
+        },
+        derived: {
+            howIWorkBest: [],
+            cvSummary: null,
+            linkedinAbout: null,
+            interviewPitch: null,
+        },
     };
 }

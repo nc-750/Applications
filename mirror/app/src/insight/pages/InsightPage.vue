@@ -25,7 +25,7 @@ const skillsByCategory = computed(() => {
 
 const timelineSorted = computed(() => {
   if (!persona.value) return [];
-  return [...persona.value.carreer].sort(
+  return [...persona.value.career].sort(
     (a, b) => b.dateStart - a.dateStart,
   );
 });
