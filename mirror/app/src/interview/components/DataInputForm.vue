@@ -228,13 +228,6 @@ function fileIconColorClass(name: string): string {
         <ArrowRight :size="15" aria-hidden="true" />
         Start interview
       </button>
-      <button
-        class="nc-btn nc-btn--secondary dif-action-btn"
-        @click="emit('continue', '', '', [])"
-      >
-        <SkipForward :size="15" aria-hidden="true" />
-        Skip
-      </button>
     </div>
   </div>
 </template>

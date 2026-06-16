@@ -56,7 +56,6 @@ const displayError = computed(() => pageError.value ?? clientError.value);
 
 // ── Derived ─────────────────────────────────────────────────────────────────
 const status = computed(() => interviewStore.status);
-const isIdle = computed(() => status.value === "idle");
 const isActive = computed(() => status.value === "active");
 const isSynthesizing = computed(() => status.value === "synthesizing");
 const isCompleted = computed(() => status.value === "completed");
