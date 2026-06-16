@@ -71,13 +71,20 @@ const lastQuestion = computed(() => {
 const llmClient = ref<LLMClient | null>(null);
 
 function buildClient(): void {
-    const config = settingsStore.llmConfig;
-    if (!config) {
+    if (!settingsStore.isLLMConfigured) {
         llmClient.value = null;
         return;
     }
     try {
-        llmClient.value = createClientFromConfig(config);
+        // The settings store exposes a flat surface; assemble the LLMConfig the
+        // factory expects from those refs. `isLLMConfigured` guarantees provider
+        // is set, so the non-null assertion is safe.
+        llmClient.value = createClientFromConfig({
+            provider: settingsStore.provider!,
+            model: settingsStore.model,
+            apiKey: settingsStore.apiKey,
+            endpoint: settingsStore.endpoint,
+        });
         pageError.value = null;
     } catch (e) {
         llmClient.value = null;
@@ -85,7 +92,11 @@ function buildClient(): void {
     }
 }
 
-watch(() => settingsStore.llmConfig, buildClient, { immediate: true });
+watch(
+    () => [settingsStore.provider, settingsStore.model, settingsStore.apiKey, settingsStore.endpoint],
+    buildClient,
+    { immediate: true },
+);
 
 // ── Lifecycle ───────────────────────────────────────────────────────────────
 onMounted(async () => {
@@ -107,7 +118,7 @@ async function onDataContinue(data: string, inputText: string, fileNames: string
 
     isBusy.value = true;
     try {
-        const model = settingsStore.llmConfig?.model ?? "";
+        const model = settingsStore.model;
         const filesForDigestion = fileNames.map((n) => ({ name: n, text: "" }));
         const wasDigested = needsDigestion(filesForDigestion, inputText, model);
         // Note: actual digestion (LLM summarisation) is future work;

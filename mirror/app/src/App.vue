@@ -9,9 +9,9 @@ import {
   ChassisFooter
 } from "@nc-750/lab-vue";
 
-import { useAppStore } from "./AppStore.ts";
+import { useSettingsStore } from "./settings/stores";
 
-const appStore = useAppStore();
+const settingsStore = useSettingsStore();
 
 const route = useRoute()
 
@@ -22,7 +22,6 @@ const cellLayout = computed(() => {
     let layout = "flex";
 
     if (isSettingsPage.value) {
-        console.log(isSettingsPage)
         return layout + " justify-start";
     }
 
@@ -34,7 +33,7 @@ const cellLayout = computed(() => {
 });
 
 onMounted(() => {
-  appStore.settings.loadSettings();
+  settingsStore.loadSettings();
 });
 </script>
 

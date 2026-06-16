@@ -185,7 +185,7 @@ export async function runSynthesis(
         const persona = toPersona(result, messages, coverage);
         persona.derived.howIWorkBest = howIWorkBest;
 
-        await personaStore.savePerson(persona);
+        await personaStore.savePersona(persona);
         await interviewStore.setStatus("completed");
 
         return persona;
