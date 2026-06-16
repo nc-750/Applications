@@ -1,6 +1,6 @@
 # Mirror (NODE-0M) — Coding Conventions
 
-Consolidated from the seven decision files in `docs/conventions/` (the verbose, example-heavy
+Consolidated from the decision files in `docs/conventions/` (the verbose, example-heavy
 records of each decision, including rejected alternatives). This document is the binding summary.
 
 ## How to read this document
@@ -349,8 +349,13 @@ code review alike. Read them as follows:
 
 6.13. **Fix on touch.** When touching code for any reason, correct any dishonest, inverted,
       mis-scoped, or misspelled name in what you touch. Naming fixes are in-scope for refactors,
-      feature updates, and new work.
-      — Naming debt is only ever cheap to repay before the next import.
+      feature updates, and new work. This extends **across a feature boundary**: a minimal
+      honesty-fix to a name or type you must *cross* to do the current work — rename it, add an
+      identifying field, give a reused type its own name — is in-scope even when the owning feature's
+      broader refactor is deferred to a later phase. Fix the field you cross; do not expand into the
+      sibling's whole model.
+      — Naming debt is only ever cheap to repay before the next import; a transform that maps into a
+        lying field cannot be honest until the field is.
 
 ---
 
@@ -459,6 +464,36 @@ code review alike. Read them as follows:
 7.19. **One function, one strategy.** Never mix throw, swallow-return, and sentinels in a single
       flow.
       — Mixed strategies make a flow's failure behavior unguessable.
+
+---
+
+## 8. Verification
+
+*Source: `docs/conventions/08-verification.md`*
+
+8.1. **The type-check gate is no NEW errors, not absolute zero.** The repo carries a standing
+     baseline of pre-existing errors (stale tests referencing removed modules, half-migrated sibling
+     features). A run is therefore judged by **baseline-diff with per-file attribution**: a change is
+     green when it introduces zero new errors and the files it touched are themselves clean. "`tsc`
+     reports N errors" is meaningless without the baseline; "zero errors in the files I touched" is
+     the real bar.
+     — A permanently-red baseline makes an absolute-clean gate unachievable and trains everyone to
+       ignore the gate; attribution keeps it honest.
+
+8.2. **`tsc --noEmit` does not type-check `.vue` SFCs — `vue-tsc --noEmit` does.** A plain `tsc` run
+     silently skips every single-file component, so a view can ship type errors that `tsc` calls
+     clean. Any work that touches a `.vue` file must run `vue-tsc --noEmit` (the `build` script) as
+     its gate, not `tsc` alone.
+     — `tsc` greens are a false floor for view code; only the SFC-aware compiler sees template and
+       `<script setup>` types.
+
+8.3. **A gate failure on conformant-looking code is a design signal, not just a slip.** Run the gate
+     *before* declaring work done; when it fails on code that looks right, re-examine the shape (a
+     wrong reactive/persistence shape, a leaky boundary type, an inverted contract) before forcing it
+     green. Never reshape conformant code to satisfy a **pre-convention test** that pins a rejected
+     shape — delete-and-replace that test against the new shape instead.
+     — `tsc`/`vitest` catch design-level faults reasoning misses; appeasing a stale test silently
+       re-imports the pattern the work was meant to remove.
 
 ---
 

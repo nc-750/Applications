@@ -67,7 +67,11 @@ every import.
     different concept — give the second concept its own type.
 13. When you touch code for any reason, correct a dishonest, inverted, mis-scoped, or misspelled name
     in what you touch. Naming fixes are in-scope for refactors, feature updates, and new work — a
-    correct name is cheaper now than after the next import.
+    correct name is cheaper now than after the next import. This holds **across a feature boundary**:
+    a minimal honesty-fix to a name or type you must *cross* to do the current work (a rename, a
+    missing identifying field, a reused type given its own name) is in-scope even when the owning
+    feature's full refactor is deferred — fix the field you cross, do not expand into the sibling's
+    whole model.
 
 ## Rationale
 - **Honest accessors (R1–R3):** code is read assuming `get*`/`is*` are safe to call, reorder, or skip.
