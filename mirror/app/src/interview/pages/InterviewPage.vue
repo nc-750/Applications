@@ -236,7 +236,7 @@ async function onRestart() {
                 @continue="onContinue"
             />
 
-            <DataInputForm v-if="!isActive" :disabled="isBusy" @continue="onDataContinue" />
+            <DataInputForm v-if="!isActive && !showCompletion" :disabled="isBusy" @continue="onDataContinue" />
 
             <!-- Active probe: question + answer input -->
             <ProbePanel
