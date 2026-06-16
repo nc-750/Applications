@@ -1,308 +1,220 @@
 <script setup lang="ts">
-import { computed } from "vue";
+// Insight — the private, in-app reflection view over the synthesized persona.
+//
+// A read-only instrument view (CONVENTIONS 2.7): it binds the persona store and
+// renders. It owns no persisted state, makes no LLM/HTTP call, and mutates no model.
+// Presentation follows the Lab Chassis→Band→Cell contract; the Chassis header/footer
+// are owned by App.vue, so this page contributes Bands only. Every content field on
+// the Persona model is rendered: metadata nameplate, metrics, strengths/growth areas,
+// values/hidden assets, skills map, personality dimensions, goals, career timeline,
+// outside work, how I work best, ready-to-use text, and interview transcript.
+
+import { computed, onMounted } from "vue";
 import { BookOpen } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
-import { useAppStore } from "../../AppStore";
-import { SKILL_CATEGORIES } from "../../types/persona";
+import { usePersonaStore } from "../../persona/stores";
+import { PersonaGoalType } from "../../persona/models";
+import MetricsMonitorCell from "../components/MetricsMonitorCell.vue";
+import StringListCell from "../components/StringListCell.vue";
+import SkillsMapCell from "../components/SkillsMapCell.vue";
+import DimensionsCell from "../components/DimensionsCell.vue";
+import CareerTimelineCell from "../components/CareerTimelineCell.vue";
+import DerivedTextCell from "../components/DerivedTextCell.vue";
+import TranscriptCell from "../components/TranscriptCell.vue";
 
-const personaStore = useAppStore().persona;
+const personaStore = usePersonaStore();
 
+// The store seeds a total, never-null persona (createEmptyPersona), so "is there a
+// mirror yet?" is a content question, not a null check: an insight exists once
+// synthesis has filled any of the persona's content fields.
 const persona = computed(() => personaStore.persona);
 
-const skillsByCategory = computed(() => {
-  const skills = persona.value?.skills ?? [];
-  const map = new Map<string, typeof skills>();
-  for (const cat of SKILL_CATEGORIES) {
-    map.set(cat, []);
-  }
-  for (const s of skills) {
-    const bucket = map.get(String(s.category));
-    if (bucket) bucket.push(s);
-  }
-  // Return only categories that have skills
-  return Array.from(map.entries()).filter(([, items]) => items.length > 0);
-});
-
-const timelineSorted = computed(() => {
-  if (!persona.value) return [];
-  return [...persona.value.career].sort(
-    (a, b) => b.dateStart - a.dateStart,
-  );
+const hasInsight = computed(() => {
+    const p = persona.value;
+    return (
+        p.strengths.length > 0 ||
+        p.weaknesses.length > 0 ||
+        p.skills.length > 0 ||
+        p.career.length > 0 ||
+        p.personal.length > 0 ||
+        p.traits.length > 0 ||
+        p.values.length > 0 ||
+        p.hiddenAssets.length > 0 ||
+        p.goals.length > 0 ||
+        p.derived.howIWorkBest.length > 0 ||
+        p.derived.cvSummary !== null ||
+        p.derived.linkedinAbout !== null ||
+        p.derived.interviewPitch !== null ||
+        p.interview.messages.length > 0
+    );
 });
 
 const formattedDate = computed(() => {
-  const raw = persona.value.metadata.createdAt;
-  if (!raw) return "";
-  try {
-    return new Date(raw).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return raw;
-  }
+    const raw = persona.value.metadata.createdAt;
+    if (!raw) return "";
+    try {
+        return new Date(raw).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+    } catch {
+        return "";
+    }
+});
+
+// Nameplate metadata line: language · date · sources.
+const metaLine = computed(() => {
+    const meta = persona.value.metadata;
+    const parts: string[] = [meta.language.toUpperCase()];
+    if (formattedDate.value) parts.push(formattedDate.value);
+    if (meta.sourceUsed.length > 0) parts.push(meta.sourceUsed.join(", "));
+    return parts.join("  ·  ");
+});
+
+const shortTermGoals = computed(() =>
+    persona.value.goals
+        .filter(g => g.type === PersonaGoalType.ShortTerm)
+        .map(g => g.description)
+);
+const longTermGoals = computed(() =>
+    persona.value.goals
+        .filter(g => g.type === PersonaGoalType.LongTerm)
+        .map(g => g.description)
+);
+
+const hasDerivedText = computed(() =>
+    persona.value.derived.cvSummary !== null ||
+    persona.value.derived.linkedinAbout !== null ||
+    persona.value.derived.interviewPitch !== null
+);
+
+// Rehydrate the persisted persona on entry (mirrors InterviewPage's loadInterview).
+// loadPersona surfaces any read failure into personaStore.error and never throws.
+onMounted(() => {
+    void personaStore.loadPersona();
 });
 </script>
 
 <template>
-  <!-- Empty state -->
-  <Band v-if="!persona" :grow="1">
-    <Cell title="INSIGHT" spec="// 0x00">
-      <div class="flex flex-col items-center justify-center text-center py-12 gap-3">
-        <div class="mr-empty-icon">
-          <BookOpen :size="22" />
-        </div>
-        <h2 class="nc-heading-4">No mirror yet</h2>
-        <p class="nc-text-sm nc-text-muted max-w-xs">
-          Complete an interview to generate your private insight document.
-        </p>
-      </div>
-    </Cell>
-  </Band>
+    <!-- No synthesized persona yet -->
+    <Band v-if="!hasInsight" :grow="1">
+        <Cell title="INSIGHT" spec="INS // 0x00" :grow="1">
+            <div class="flex flex-col items-center justify-center text-center py-12 gap-3">
+                <div class="ins-empty-icon">
+                    <BookOpen :size="22" />
+                </div>
+                <h2 class="nc-heading-4">No mirror yet</h2>
+                <p class="nc-text-sm nc-text-muted max-w-xs">
+                    Complete an interview to generate your private insight document.
+                </p>
+            </div>
+        </Cell>
+    </Band>
 
-  <!-- Loaded state -->
-  <Band v-else :grow="1" class="overflow-y-auto">
-    <!-- 0x01 Identity -->
-    <Cell title="IDENTITY" spec="// 0x01">
-      <!-- <div class="flex flex-col gap-3">
-        <h2 class="nc-heading-3">{{ persona.identity.name }}</h2>
-        <p class="nc-text-md nc-text-secondary">{{ persona.identity.tagline }}</p>
-        <p class="nc-text-sm">{{ persona.identity.elevator_pitch }}</p>
-        <p class="nc-text-xs nc-text-muted">
-          {{ persona.metadata.language }} &middot; {{ formattedDate }}
-        </p>
-      </div> -->
-    </Cell>
+    <!-- Synthesized persona — the instrument readout -->
+    <template v-else>
+        <!-- Nameplate: private-document metadata -->
+        <Band>
+            <Cell title="INSIGHT" spec="INS // 0x00">
+                <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                    <span class="nc-text-sm">Private reflection document</span>
+                    <span class="nc-text-xs nc-text-muted">{{ metaLine }}</span>
+                </div>
+            </Cell>
+        </Band>
 
-    <!-- 0x02 Strengths -->
-    <Cell title="STRENGTHS" spec="// 0x02">
-      <!-- <div class="flex flex-col gap-4">
-        <div
-          v-for="(s, i) in persona.strengths"
-          :key="i"
-          class="flex flex-col gap-1"
-        >
-          <span class="nc-label">{{ s.label }}</span>
-          <p class="nc-text-sm">{{ s.description }}</p>
-          <p v-if="s.evidence" class="nc-text-xs nc-text-muted italic">
-            {{ s.evidence }}
-          </p>
-        </div>
-      </div> -->
-    </Cell>
+        <!-- METRICS Band -->
+        <Band>
+            <MetricsMonitorCell :metrics="persona.metrics" />
+        </Band>
 
-    <!-- 0x03 Growth Areas -->
-    <Cell title="GROWTH AREAS" spec="// 0x03">
-      <!-- <div class="flex flex-col gap-4">
-        <div
-          v-for="(w, i) in persona.weaknesses"
-          :key="i"
-          class="flex flex-col gap-1"
-        >
-          <span class="nc-label">{{ w.label }}</span>
-          <p class="nc-text-sm">{{ w.description }}</p>
-          <p v-if="w.growth_note" class="nc-text-xs nc-text-muted italic">
-            {{ w.growth_note }}
-          </p>
-        </div>
-      </div> -->
-    </Cell>
+        <!-- STRENGTHS + GROWTH AREAS Band -->
+        <Band>
+            <StringListCell title="STRENGTHS"    spec="INS // 0x02" :items="persona.strengths" />
+            <StringListCell title="GROWTH AREAS" spec="INS // 0x03" :items="persona.weaknesses" />
+        </Band>
 
-    <!-- 0x04 Skills Map -->
-    <Cell title="SKILLS MAP" spec="// 0x04">
-      <!-- <div class="flex flex-col gap-4">
-        <div
-          v-for="[category, skills] in skillsByCategory"
-          :key="category"
-          class="flex flex-col gap-2"
-        >
-          <span class="nc-label">{{ category }}</span>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="(sk, j) in skills"
-              :key="j"
-              class="skill-tag"
-            >
-              {{ sk.name }}
-              <span v-if="sk.level" class="nc-text-muted ml-1">{{ sk.level }}</span>
-            </span>
-          </div>
-        </div>
-      </div> -->
-    </Cell>
+        <!-- VALUES + HIDDEN ASSETS Band -->
+        <Band>
+            <StringListCell title="VALUES"        spec="INS // 0x04" :items="persona.values" />
+            <StringListCell title="HIDDEN ASSETS" spec="INS // 0x05" :items="persona.hiddenAssets" />
+        </Band>
 
-    <!-- 0x05 Career Timeline -->
-    <Cell title="CAREER TIMELINE" spec="// 0x05">
-      <!-- <div class="flex flex-col gap-4">
-        <div
-          v-for="(entry, i) in timelineSorted"
-          :key="i"
-          class="timeline-row"
-        >
-          <span class="timeline-year">
-            {{ entry.year_start }} &ndash; {{ entry.year_end }}
-          </span>
-          <div class="flex flex-col gap-1">
-            <span class="nc-label">
-              {{ entry.role }}
-              <span class="nc-text-muted">&#64; {{ entry.organization }}</span>
-            </span>
-            <p v-if="entry.highlight" class="nc-text-sm">{{ entry.highlight }}</p>
-            <p
-              v-if="entry.real_story"
-              class="nc-text-xs nc-text-muted italic"
-            >
-              {{ entry.real_story }}
-            </p>
-          </div>
-        </div>
-      </div> -->
-    </Cell>
+        <!-- SKILLS MAP Band -->
+        <Band>
+            <SkillsMapCell :skills="persona.skills" />
+        </Band>
 
-    <!-- 0x06 Hidden Assets -->
-    <Cell title="HIDDEN ASSETS" spec="// 0x06">
-      <!-- <ul class="flex flex-col gap-2">
-        <li
-          v-for="(asset, i) in persona.hidden_assets"
-          :key="i"
-          class="nc-text-sm list-disc ml-4"
-        >
-          {{ asset }}
-        </li>
-      </ul> -->
-    </Cell>
+        <!-- PERSONALITY DIMENSIONS Band -->
+        <Band>
+            <DimensionsCell :traits="persona.traits" />
+        </Band>
 
-    <!-- 0x07 Personality Dimensions -->
-    <Cell title="PERSONALITY DIMENSIONS" spec="// 0x07">
-      <!-- <div class="flex flex-col gap-4">
-        <div
-          v-for="(trait, i) in persona.personality_traits"
-          :key="i"
-          class="flex flex-col gap-1"
-        >
-          <div class="flex justify-between items-baseline">
-            <span class="nc-label">{{ trait.dimension }}</span>
-            <span class="nc-text-xs nc-text-muted">{{ trait.position }} / 10</span>
-          </div>
-          <div class="personality-bar">
-            <div
-              class="personality-bar__fill"
-              :style="{ width: `${trait.position * 10}%` }"
+        <!-- GOALS Band -->
+        <Band>
+            <StringListCell title="SHORT-TERM" spec="INS // 0x08" :items="shortTermGoals" />
+            <StringListCell title="LONG-TERM"  spec="INS // 0x09" :items="longTermGoals" />
+        </Band>
+
+        <!-- CAREER TIMELINE Band — shown only when there are career entries -->
+        <Band v-if="persona.career.length > 0">
+            <CareerTimelineCell
+                title="CAREER TIMELINE"
+                spec="INS // 0x0A"
+                :entries="persona.career"
             />
-          </div>
-          <p v-if="trait.note" class="nc-text-xs nc-text-muted italic">
-            {{ trait.note }}
-          </p>
-        </div>
-      </div> -->
-    </Cell>
+        </Band>
 
-    <!-- 0x08 Values & Goals -->
-    <Cell title="VALUES &amp; GOALS" spec="// 0x08">
-      <!-- <div class="flex flex-col gap-4"> -->
-        <!-- Values -->
-        <!-- <div class="flex flex-col gap-2">
-          <span class="nc-label">Values</span>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="(v, i) in persona.values"
-              :key="i"
-              class="skill-tag"
-            >
-              {{ v }}
-            </span>
-          </div>
-        </div> -->
-        <!-- Goals -->
-        <!-- <div class="flex flex-col gap-3">
-          <div v-if="persona.goals.short_term" class="flex flex-col gap-1">
-            <span class="nc-label">Short-term</span>
-            <p class="nc-text-sm">{{ persona.goals.short_term }}</p>
-          </div>
-          <div v-if="persona.goals.long_term" class="flex flex-col gap-1">
-            <span class="nc-label">Long-term</span>
-            <p class="nc-text-sm">{{ persona.goals.long_term }}</p>
-          </div>
-        </div>
-      </div> -->
-    </Cell>
+        <!-- OUTSIDE WORK Band — shown only when there are personal entries -->
+        <Band v-if="persona.personal.length > 0">
+            <CareerTimelineCell
+                title="OUTSIDE WORK"
+                spec="INS // 0x0B"
+                :entries="persona.personal"
+                tone="personal"
+            />
+        </Band>
 
-    <!-- 0x09 Ready-to-use Text -->
-    <!-- <Cell v-if="hasUseCases" title="READY-TO-USE TEXT" spec="// 0x09">
-      <button
-        class="flex items-center gap-2 w-full text-left nc-text-sm nc-label py-1"
-        @click="useCasesExpanded = !useCasesExpanded"
-      >
-        <ChevronDown v-if="useCasesExpanded" :size="14" />
-        <ChevronRight v-else :size="14" />
-        Ready-to-use copy
-      </button>
-      <div v-if="useCasesExpanded" class="flex flex-col gap-4 mt-3">
-        <div v-if="persona.use_cases.cv_summary" class="flex flex-col gap-1">
-          <span class="nc-label">CV Summary</span>
-          <p class="nc-text-sm">{{ persona.use_cases.cv_summary }}</p>
-        </div>
-        <div v-if="persona.use_cases.interview_pitch" class="flex flex-col gap-1">
-          <span class="nc-label">Interview Pitch</span>
-          <p class="nc-text-sm">{{ persona.use_cases.interview_pitch }}</p>
-        </div>
-        <div v-if="persona.use_cases.linkedin_about" class="flex flex-col gap-1">
-          <span class="nc-label">LinkedIn About</span>
-          <p class="nc-text-sm">{{ persona.use_cases.linkedin_about }}</p>
-        </div>
-      </div>
-    </Cell> -->
-  </Band>
+        <!-- HOW I WORK BEST Band — shown only when there are statements -->
+        <Band v-if="persona.derived.howIWorkBest.length > 0">
+            <StringListCell
+                title="HOW I WORK BEST"
+                spec="INS // 0x0C"
+                :items="persona.derived.howIWorkBest"
+            />
+        </Band>
+
+        <!-- READY-TO-USE TEXT Band — shown when any derived text field is present -->
+        <Band v-if="hasDerivedText">
+            <DerivedTextCell
+                :cv-summary="persona.derived.cvSummary"
+                :linkedin-about="persona.derived.linkedinAbout"
+                :interview-pitch="persona.derived.interviewPitch"
+            />
+        </Band>
+
+        <!-- TRANSCRIPT Band — shown when interview messages exist -->
+        <Band v-if="persona.interview.messages.length > 0">
+            <TranscriptCell :messages="persona.interview.messages" />
+        </Band>
+    </template>
 </template>
 
 <style scoped>
-.mr-empty-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--nc-radius-md);
-  background: var(--nc-metal-key);
-  border: var(--nc-border-width) solid var(--nc-line-strong);
-  box-shadow: var(--nc-edge-raised);
-  color: var(--nc-ink-3);
-}
-
-.personality-bar {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--nc-panel-2);
-  overflow: hidden;
-}
-
-.personality-bar__fill {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--nc-accent);
-}
-
-.timeline-year {
-  font-family: var(--nc-font-mono);
-  font-size: var(--nc-text-xs);
-  color: var(--nc-ink-3);
-  white-space: nowrap;
-}
-
-.skill-tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--nc-radius-sm);
-  background: var(--nc-panel-2);
-  font-size: var(--nc-text-xs);
-  color: var(--nc-ink);
-}
-
-.timeline-row {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: start;
+/* Empty-state glyph plate: a sized key-metal chip. No .nc-* class expresses a fixed
+   icon chip, so this uses design tokens directly (rule 7.5); --nc-edge-raised is the
+   system's machined-edge bevel token, not an ad-hoc elevation shadow. */
+.ins-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--nc-radius-md);
+    background: var(--nc-metal-key);
+    border: var(--nc-border-width) solid var(--nc-line-strong);
+    box-shadow: var(--nc-edge-raised);
+    color: var(--nc-ink-3);
 }
 </style>
