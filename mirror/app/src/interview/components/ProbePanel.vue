@@ -56,10 +56,6 @@ function submit() {
     />
 
     <button class="nc-btn nc-btn--accent" :disabled="!canSubmit" @click="submit">Submit ▸</button>
-
-    <div v-if="working" class="overlay">
-      <Acquire label="ANALYZING RESPONSE · READING SIGNAL" />
-    </div>
   </div>
 </template>
 

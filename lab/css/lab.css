@@ -1986,6 +1986,15 @@ fieldset {
 .nc-coverage--locked .nc-coverage__fill {
     background: var(--nc-success);
 }
+.nc-coverage--small {
+    background-color: var(--nc-warning);
+}
+.nc-coverage--medium {
+    background-color: var(--nc-info);
+}
+.nc-coverage--good {
+    background-color: var(--nc-success);
+}
 
 /* ── Acquisition — working/analysing state (foreground) ───── */
 .nc-acquire {

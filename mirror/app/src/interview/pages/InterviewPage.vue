@@ -101,6 +101,7 @@ async function onDataContinue(data: string, inputText: string, fileNames: string
         // Note: actual digestion (LLM summarisation) is future work;
         // needsDigestion only reports whether it would be needed.
         await beginInterview(client, interviewStore, data, inputText, fileNames, wasDigested);
+        logger.debug("app", "beginInterview has finished");
     } catch (e) {
         pageError.value = e instanceof Error ? e.message : "Failed to begin interview.";
         logger.error("app", "beginInterview failed", { error: e instanceof Error ? e : undefined });
@@ -173,6 +174,7 @@ function onAbort() {
 }
 
 async function onRestart() {
+    logger.debug("app", "Restarting interview");
     pageError.value = null;
     try {
         await interviewStore.clearInterview();
@@ -183,99 +185,129 @@ async function onRestart() {
 </script>
 
 <template>
-    <!-- IDLE — Data input -->
-    <Band v-if="isIdle" :grow="1">
-        <Cell title="DATA INPUT" spec="IVW // 0x01" :grow="1">
-            <DataInputForm :disabled="isBusy" @continue="onDataContinue" />
+    <!-- Working band: coverage readout + interaction -->
+    <Band :grow="1">
+        <!-- Live coverage readout — MonitorCell = read-only, rule 7.6 -->
+        <MonitorCell title="COVERAGE" spec="IVW // 0x01">
+            <CoverageReadout
+                :coverage="interviewStore.coverage"
+                :probe-signal="interviewStore.probeSignal"
+                :acquiring="isBusy"
+            />
+        </MonitorCell>
+
+
+    <!-- <Cell v-show="isActive" title="DATA INPUT" spec="IVW // 0x02">
+        
+    </Cell> -->
+    
+        <!-- Interaction cell — the active surface for input/actions -->
+        <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3">
+            <!-- Page-level error banner -->
+            <div
+                v-if="displayError"
+                class="flex items-center gap-2 p-3 mb-4 ivw-error"
+                role="alert"
+            >
+                <p class="nc-text-sm ivw-error-text">{{ displayError }}</p>
+                <button
+                    class="nc-btn nc-btn--ghost nc-btn--sm"
+                    @click="pageError = null"
+                >
+                    Dismiss
+                </button>
+            </div>
+
+            <!-- Synthesizing / Completed / Error -->
+            <CompletionPanel
+                v-if="showCompletion"
+                :status="(status as 'synthesizing' | 'completed' | 'error')"
+                :error-message="interviewStore.error ?? undefined"
+                @go-insight="router.push('/insight')"
+                @go-profile="router.push('/profile')"
+                @retry="onGenerate"
+                @restart="onRestart"
+            />
+
+            <!-- Concluded: coverage saturated — offer generate or continue -->
+            <ConcludePanel
+                v-else-if="hasConcluded && isActive"
+                :busy="isBusy"
+                @generate="onGenerate"
+                @continue="onContinue"
+            />
+
+            <DataInputForm v-if="!isActive" :disabled="isBusy" @continue="onDataContinue" />
+
+            <!-- Active probe: question + answer input -->
+            <ProbePanel
+                v-else-if="isActive"
+                :facet="interviewStore.currentFacet ?? 'story'"
+                :question="lastQuestion"
+                :disabled="isBusy"
+                @submit="onSubmitAnswer"
+            />
+
+            <!-- Action bar (visible during active interview) -->
+            <div v-if="isActive" class="flex justify-between mt-4">
+                <button
+                    class="nc-btn nc-btn--ghost nc-btn--sm"
+                    @click="onFinishEarly"
+                >
+                    Finish early &amp; generate
+                </button>
+                <button
+                    v-if="isBusy"
+                    class="nc-btn nc-btn--danger nc-btn--sm"
+                    @click="onAbort"
+                >
+                    Cancel
+                </button>
+                <button
+                    v-else
+                    class="nc-btn nc-btn--danger nc-btn--sm"
+                    @click="onRestart"
+                >
+                    Restart Interview
+                </button>
+            </div>
+
+            <div v-if="isBusy" class="ivw-overlay">
+                <div class="nc-acquire flex justify-center h-full">
+                    <div class="nc-acquire__wave">
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                    </div>
+                    <div class="nc-acquire__label">ANALYZING · READING SIGNAL</div>
+                </div>
+            </div>
         </Cell>
     </Band>
 
-    <!-- ACTIVE / SYNTHESIZING / COMPLETED / ERROR -->
-    <template v-else>
-        <!-- Working band: coverage readout + interaction -->
-        <Band :grow="1">
-            <!-- Live coverage readout — MonitorCell = read-only, rule 7.6 -->
-            <MonitorCell title="COVERAGE" spec="IVW // 0x02">
-                <CoverageReadout
-                    :coverage="interviewStore.coverage"
-                    :probe-signal="interviewStore.probeSignal"
-                    :acquiring="isBusy"
-                />
-            </MonitorCell>
-
-            <!-- Interaction cell — the active surface for input/actions -->
-            <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3">
-                <!-- Page-level error banner -->
-                <div
-                    v-if="displayError"
-                    class="flex items-center gap-2 p-3 mb-4 ivw-error"
-                    role="alert"
-                >
-                    <p class="nc-text-sm ivw-error-text">{{ displayError }}</p>
-                    <button
-                        class="nc-btn nc-btn--ghost nc-btn--sm"
-                        @click="pageError = null"
-                    >
-                        Dismiss
-                    </button>
-                </div>
-
-                <!-- Synthesizing / Completed / Error -->
-                <CompletionPanel
-                    v-if="showCompletion"
-                    :status="(status as 'synthesizing' | 'completed' | 'error')"
-                    :error-message="interviewStore.error ?? undefined"
-                    @go-insight="router.push('/insight')"
-                    @go-profile="router.push('/profile')"
-                    @retry="onGenerate"
-                    @restart="onRestart"
-                />
-
-                <!-- Concluded: coverage saturated — offer generate or continue -->
-                <ConcludePanel
-                    v-else-if="hasConcluded && isActive"
-                    :busy="isBusy"
-                    @generate="onGenerate"
-                    @continue="onContinue"
-                />
-
-                <!-- Active probe: question + answer input -->
-                <ProbePanel
-                    v-else-if="isActive"
-                    :facet="interviewStore.currentFacet ?? 'story'"
-                    :question="lastQuestion"
-                    :disabled="isBusy"
-                    @submit="onSubmitAnswer"
-                />
-
-                <!-- Action bar (visible during active interview) -->
-                <div v-if="isActive" class="flex justify-between mt-4">
-                    <button
-                        class="nc-btn nc-btn--ghost nc-btn--sm"
-                        @click="onFinishEarly"
-                    >
-                        Finish early &amp; generate
-                    </button>
-                    <button
-                        class="nc-btn nc-btn--danger nc-btn--sm"
-                        @click="onAbort"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </Cell>
-        </Band>
-
-        <!-- Session log band -->
-        <Band>
-            <Cell title="SESSION LOG" spec="IVW // 0x04">
-                <TranscriptLog :messages="interviewStore.messages" />
-            </Cell>
-        </Band>
-    </template>
+    <!-- Session log band -->
+    <Band>
+        <Cell title="SESSION LOG" spec="IVW // 0x04">
+            <TranscriptLog :messages="interviewStore.messages" />
+        </Cell>
+    </Band>
 </template>
 
 <style scoped>
+.ivw-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    border: none;
+    background-color: rgba(236, 228, 228, 0.726);
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+
 /* kept: no .nc-* class for error-banner background or error-text colour */
 .ivw-error {
     background: color-mix(in srgb, var(--nc-error) 8%, transparent);

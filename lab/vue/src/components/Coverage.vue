@@ -10,14 +10,35 @@ const props = withDefaults(
   { value: 0, locked: false },
 );
 
+const coverageStatus = computed(() => {
+  if (!props.value) {
+    return "nc-coverage--small";
+  }
+
+  if (props.value < 30) {
+    return "nc-coverage--small"
+  }
+
+  if (props.value >= 30 && props.value <= 60) {
+    return "nc-coverage--medium";
+  }
+
+  return "nc-coverage--good";
+});
+
 const classes = computed(() => [
   "nc-coverage",
-  props.locked && "nc-coverage--locked",
+  props.locked && "nc-coverage--locked"
+]);
+
+const coverageFillClasses = computed(() => [
+  "nc-coverage__fill",
+  coverageStatus.value
 ]);
 </script>
 
 <template>
   <div :class="classes" role="meter" :aria-valuenow="value" aria-valuemin="0" aria-valuemax="100">
-    <div class="nc-coverage__fill" :style="{ width: value + '%' }" />
+    <div :class="coverageFillClasses" :style="{ width: value + '%' }" />
   </div>
 </template>
