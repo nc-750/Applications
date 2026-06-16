@@ -6,7 +6,12 @@
  * On Linux:   Secret Service / KWallet.
  *
  * In the PWA (no Tauri), every function here is a no-op and the API key
- * is held in IndexedDB via the settings store instead.
+ * is held in IndexedDB via the persisted settings DTO instead.
+ *
+ * This is a *persistence backend*, not app logic — it lives in the settings
+ * db layer and is called only from `SettingsDb.ts` (CONVENTIONS 2.2). The
+ * platform key-vs-IndexedDB split is the db layer's implementation detail,
+ * hidden from the store and the view.
  *
  * All calls are wrapped in try/catch: a keyring failure must not crash app
  * boot or block saveSettings.

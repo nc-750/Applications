@@ -1,202 +1,157 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
-import {
-    Band,
-    Button,
-    Cell,
-    Form,
-    FormField,
-    TextField,
-} from "@nc-750/lab-vue";
-import { useAppStore } from "../../AppStore";
-import { LLMProvider, testConnection } from "../../llm";
-import { logger } from "../../logger";
+// Settings page — the top rung of the settings feature. Binds the settings, persona,
+// and logger surfaces read-only, delegates every side effect to a service or a thin
+// store action (testConnection, persona import/export, factoryReset, clearSettings),
+// and renders via the Lab Chassis→Band→Cell contract (CONVENTIONS 7.2–7.7). The view
+// holds no LLM call, no file parsing, and no persistence — it only orchestrates the
+// `onX` handlers and surfaces errors visibly (2.7, 7.17).
+
+import { ref, computed } from "vue";
+import { Band, Cell } from "@nc-750/lab-vue";
+import { useSettingsStore } from "../stores";
+import { usePersonaStore } from "../../persona/stores";
+import { setDebugEnabled } from "../../logger";
+import { testConnection } from "../services";
+import { importPersona, exportPersona } from "../../persona/services";
 import { factoryReset } from "../services/wipe";
+import type { LLMConfig } from "../../llm";
+import LLMConfigCell from "../components/LLMConfigCell.vue";
+import ConnectionMonitorCell from "../components/ConnectionMonitorCell.vue";
+import DataManagementCell from "../components/DataManagementCell.vue";
+import SystemControlCell from "../components/SystemControlCell.vue";
 
-const appStore = useAppStore();
-const settingsStore = appStore.settings;
-const logStore = appStore.logger;
+const settingsStore = useSettingsStore();
+const personaStore = usePersonaStore();
 
-const localConfig = reactive({
-    provider: "" as LLMProvider | "",
-    model: "",
-    apiKey: "",
-    endpoint: "",
-});
+// Debug flag — toggled through the logger foundational module's `setDebugEnabled`
+// (Rule 5.3: foundational state a UI only toggles). Default matches the module-level
+// `debugEnabled` ref (false per CONVENTIONS example).
+const debugEnabled = ref(false);
 
-// Sync store -> local when store loads or config changes
-watch(() => settingsStore.llmConfig, (config) => {
-    if (config) {
-        localConfig.provider = config.provider;
-        localConfig.model = config.model;
-        localConfig.apiKey = config.apiKey;
-        localConfig.endpoint = config.endpoint;
-    } else {
-        localConfig.provider = "";
-        localConfig.model = "";
-        localConfig.apiKey = "";
-        localConfig.endpoint = "";
-    }
-}, { immediate: true });
+// Connection-test reading — an honest live readout rendered in the monitor cavity.
+const linkStatus = ref<"idle" | "testing" | "ok" | "error">("idle");
+const linkLatencyMs = ref<number | undefined>(undefined);
+const linkMessage = ref<string | undefined>(undefined);
 
-const testMessage = ref("");
-const testing = ref(false);
-const isDebugOn = ref(false);
+// Page-level error from a service throw (import/export). Store persistence failures
+// surface in each store's own `error` ref; the banner shows whichever is set (7.17).
+const pageError = ref<string | null>(null);
+const displayError = computed(
+    () => pageError.value ?? settingsStore.error ?? personaStore.error ?? null,
+);
 
-async function save() {
-    if (!localConfig.provider || !localConfig.model || !localConfig.apiKey || !localConfig.endpoint) return;
-    
-    await settingsStore.saveSettings({
-        provider: localConfig.provider,
-        model: localConfig.model,
-        apiKey: localConfig.apiKey,
-        endpoint: localConfig.endpoint,
-    });
+// ── Event handlers (all named onX — CONVENTIONS 6.6) ────────────────────────
+
+async function onSave(config: LLMConfig) {
+    await settingsStore.saveSettings(config);
 }
 
-async function testConnectionHandler() {
-    if (!localConfig.provider || !localConfig.model || !localConfig.apiKey) {
-        testMessage.value = "Please fill in provider, model, and API key first.";
-        return;
-    }
-
-    testing.value = true;
-    testMessage.value = "";
-
+async function onTest(config: LLMConfig) {
+    linkStatus.value = "testing";
+    linkMessage.value = undefined;
     try {
-        const latencyMs = await testConnection({
-            provider: localConfig.provider as LLMProvider,
-            model: localConfig.model,
-            apiKey: localConfig.apiKey,
-            endpoint: localConfig.endpoint,
-        });
-        testMessage.value = `Connected! Latency: ${latencyMs}ms`;
+        linkLatencyMs.value = await testConnection(config);
+        linkStatus.value = "ok";
     } catch (e) {
-        testMessage.value = `Error: ${e instanceof Error ? e.message : String(e)}`;
-    } finally {
-        testing.value = false;
+        linkStatus.value = "error";
+        linkMessage.value = e instanceof Error ? e.message : String(e);
     }
 }
 
-function onAIProviderSelected() {
-    localConfig.model = "";
-    localConfig.apiKey = "";
-    localConfig.endpoint = "";
+async function onImportPersona(file: File) {
+    pageError.value = null;
+    try {
+        await importPersona(file, personaStore);
+    } catch (e) {
+        pageError.value = `Import failed: ${e instanceof Error ? e.message : String(e)}`;
+    }
 }
 
-// Import / Export persona
-const fileInputRef = ref<HTMLInputElement | null>(null);
-
-// async function importPersonaFromJSON(json: string) {
-//     // parsePersonaJSON validates every field against the Zod schema and throws
-//     // a single-line, field-pointing error on the first issue.
-//     const parsed = parsePersonaJSON(JSON.parse(json));
-//     persona.value = await writePersona(parsed, []);
-//     logger.info("import", "Mirror imported successfully");
-// }
-
-async function handleImportPersona(e: Event) {
-    logger.debug("app", "TODO: Implement import Persona from JSON");
-    // const target = e.target as HTMLInputElement;
-    // if (target.files?.length) {
-    //     try {
-    //         const text = await target.files[0].text();
-            
-    //         // let newPersona = await importPersonaFromJSON(text);
-
-    //         // personaStore.savePersona(newPersona);
-    //     } catch (err) {
-    //         testMessage.value = `Import failed: ${err instanceof Error ? err.message : String(err)}`;
-    //     }
-    //     target.value = "";
-    // }
+function onExportPersona() {
+    pageError.value = null;
+    try {
+        exportPersona(personaStore);
+    } catch (e) {
+        pageError.value = `Export failed: ${e instanceof Error ? e.message : String(e)}`;
+    }
 }
 
-function handleExportPersona() {
-    logger.debug("app", "TODO: Implement exporting Persona data");
-    // const p = personaStore.persona;
-    // if (!p) return;
-    // const json = JSON.stringify(p.data, null, 2);
-    // const name = p.data.persona.identity.name.replace(/\s+/g, "-").toLowerCase() || "mirror";
-    // downloadFile(json, `${name}-mirror.json`, "application/json");
+async function onDeletePersona() {
+    await personaStore.clearPersona();
 }
 
-async function handleDeletePersona() {
-    logger.debug("app", "Implement deleting Persona data");
-    // await mirrorStore.clearPersona();
-}
-
-async function handleClearLLMConfig() {
+async function onClearConfig() {
     await settingsStore.clearSettings();
-    localConfig.provider = "";
-    localConfig.model = "";
-    localConfig.apiKey = "";
-    localConfig.endpoint = "";
+    linkStatus.value = "idle";
+    linkLatencyMs.value = undefined;
+    linkMessage.value = undefined;
 }
 
-function toggleDebug() {
-    isDebugOn.value = logStore.debugEnabled;
+function onToggleDebug() {
+    debugEnabled.value = !debugEnabled.value;
+    setDebugEnabled(debugEnabled.value);
+}
 
-    if (isDebugOn.value) {
-        logStore.setDebugEnabled(false);
-    } else {
-        logStore.setDebugEnabled(true);
-    }
+function onFactoryReset() {
+    factoryReset();
+}
 
-    isDebugOn.value = logStore.debugEnabled;
+function onDismissError() {
+    pageError.value = null;
+    settingsStore.setError(null);
+    personaStore.setError(null);
 }
 </script>
 
 <template>
+    <!-- Config + live link readout: dense operable form paired with the dark cavity -->
     <Band :grow="1">
-        <Cell title="LLM CONFIG" spec="CFG // 0x01">
-            <Form class="flex flex-col gap-4" @submit.prevent="save">
-                <FormField label="AI Provider">
-                    <select class="nc-select" v-model="localConfig.provider" @change="onAIProviderSelected">
-                        <option value="openai">OpenAI</option>
-                        <option value="anthropic">Anthropic</option>
-                        <option value="openai-compatible">OpenAI-Compatible (Groq, Together, Ollama, LM Studio...)</option>
-                    </select>
-                </FormField>
-                <FormField label="Model">
-                    <input class="nc-input" type="text" placeholder="gpt-4o" v-model="localConfig.model"/>
-                </FormField>
-                <FormField label="Endpoint">
-                    <input class="nc-input" type="url" placeholder="https://api.aiprovider.com" v-model="localConfig.endpoint" />
-                </FormField>
-                <FormField label="API Key">
-                    <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" v-model="localConfig.apiKey"/>
-                </FormField>
-                <p v-if="testMessage" class="nc-text-sm" :class="testMessage.startsWith('Connected') ? 'text-green-600' : 'text-red-600'">{{ testMessage }}</p>
-                <div class="flex gap-4 justify-between">
-                    <Button variant="secondary" :disabled="testing" @click="testConnectionHandler">{{ testing ? 'Testing...' : 'Test Connection' }}</Button>
-                    <Button variant="accent" submit :disabled="!localConfig.provider || !localConfig.model || !localConfig.apiKey">Save</Button>
-                </div>
-                <router-link to="/privacy" class="nc-btn nc-btn--ghost">Read the privacy details →</router-link>
-            </Form>
-        </Cell>
-        <Cell title="DATA" spec="CFG // 0x02">
-            <div class="flex gap-4 justify-between mb-4">
-                <Button @click="fileInputRef?.click()">Import persona</Button>
-                <Button @click="handleExportPersona">Export persona</Button>
-            </div>
-            <input
-                ref="fileInputRef"
-                type="file"
-                accept=".json"
-                class="hidden"
-                @change="handleImportPersona"
-            />
-            <h3 class="nc-label nc-label--danger">Danger Zone</h3>
-            <div class="flex flex-wrap gap-2 mb-4">
-                <Button variant="danger" class="flex-1" @click="handleDeletePersona">Delete persona</Button>
-                <Button variant="danger" class="flex-1" @click="handleClearLLMConfig">Clear LLM Config</Button>
-                <Button variant="danger" class="flex-2" @click="factoryReset">Factory reset</Button>
-            </div>
-            <h3 class="nc-label">Debug</h3>
-            <div class="flex">
-                <Button variant="secondary" @click="toggleDebug">Debug {{ isDebugOn ? "On" : "Off" }}</Button>
+        <LLMConfigCell
+            :provider="settingsStore.provider"
+            :model="settingsStore.model"
+            :api-key="settingsStore.apiKey"
+            :endpoint="settingsStore.endpoint"
+            :testing="linkStatus === 'testing'"
+            @save="onSave"
+            @test="onTest"
+        />
+        <ConnectionMonitorCell
+            :status="linkStatus"
+            :latency-ms="linkLatencyMs"
+            :message="linkMessage"
+        />
+    </Band>
+
+    <!-- Data management + system controls -->
+    <Band>
+        <DataManagementCell
+            @import="onImportPersona"
+            @export="onExportPersona"
+            @delete="onDeletePersona"
+        />
+        <SystemControlCell
+            :debug-enabled="debugEnabled"
+            @clear-config="onClearConfig"
+            @factory-reset="onFactoryReset"
+            @toggle-debug="onToggleDebug"
+        />
+    </Band>
+
+    <!-- Service/persistence error banner — kept inside a Cell (no content outside, 7.2) -->
+    <Band v-if="displayError">
+        <Cell title="ERROR" spec="SYS // 0xEE">
+            <div class="flex items-center gap-2" role="alert">
+                <p class="nc-text-sm spg-error-text">{{ displayError }}</p>
+                <button class="nc-btn nc-btn--ghost nc-btn--sm" @click="onDismissError">Dismiss</button>
             </div>
         </Cell>
     </Band>
 </template>
+
+<style scoped>
+/* kept: no .nc-* class for error-banner text colour */
+.spg-error-text {
+    color: var(--nc-error);
+    flex: 1;
+}
+</style>
