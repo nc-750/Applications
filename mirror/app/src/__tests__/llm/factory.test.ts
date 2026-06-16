@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { LLMClient } from "@nc-750/llm-ts";
 import {
     createClientFromConfig,
-    testConnection,
     LLMClientError,
 } from "../../llm/factory";
 import { LLMProvider } from "../../llm/types";
@@ -81,43 +80,5 @@ describe("createClientFromConfig", () => {
         });
         expect(() => createClientFromConfig(makeConfig())).toThrow(LLMClientError);
         expect(() => createClientFromConfig(makeConfig())).toThrow("baseUrl required");
-    });
-});
-
-describe("testConnection", () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
-
-    it("resolves to the round-trip latency (a number) when the probe succeeds", async () => {
-        mockCreateLLMClient.mockReturnValue({ ok: true, value: fakeClient() });
-
-        const latencyMs = await testConnection(makeConfig());
-
-        expect(typeof latencyMs).toBe("number");
-        expect(latencyMs).toBeGreaterThanOrEqual(0);
-    });
-
-    it("rejects with LLMClientError when client construction fails", async () => {
-        mockCreateLLMClient.mockReturnValue({
-            ok: false,
-            error: { message: "bad config" },
-        });
-
-        await expect(testConnection(makeConfig())).rejects.toThrow(LLMClientError);
-    });
-
-    it("rejects with LLMClientError when the probe message fails", async () => {
-        mockCreateLLMClient.mockReturnValue({
-            ok: true,
-            value: fakeClient({
-                message: vi.fn().mockResolvedValue({
-                    ok: false,
-                    error: { message: "401 unauthorized" },
-                }),
-            }),
-        });
-
-        await expect(testConnection(makeConfig())).rejects.toThrow("401 unauthorized");
     });
 });

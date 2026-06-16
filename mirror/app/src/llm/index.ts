@@ -3,6 +3,5 @@ export type { LLMConfig } from "./types";
 export {
     LLMClientError,
     createClientFromConfig,
-    testConnection,
 } from "./factory";
 export type { LLMClient } from "@nc-750/llm-ts";

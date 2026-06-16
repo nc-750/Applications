@@ -49,23 +49,3 @@ export function createClientFromConfig(config: LLMConfig): LLMClient {
 
     return result.value;
 }
-
-/**
- * Verifies that a config can reach its provider by sending a single throwaway
- * prompt, and returns the round-trip latency in milliseconds. A bad config
- * propagates the throw from {@link createClientFromConfig}; a failed call throws
- * {@link LLMClientError}. The caller (a view) catches and surfaces the message.
- */
-export async function testConnection(config: LLMConfig): Promise<number> {
-    const client = createClientFromConfig(config);
-
-    const start = Date.now();
-    const result = await client.message("Reply with the single word: ok");
-
-    if (!result.ok) {
-        logger.error("llm", `Connection test failed: ${result.error.message}`);
-        throw new LLMClientError(result.error.message);
-    }
-
-    return Date.now() - start;
-}
