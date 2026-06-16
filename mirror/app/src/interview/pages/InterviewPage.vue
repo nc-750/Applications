@@ -10,15 +10,14 @@
 //   completed    → coverage readout + completion success
 //   error        → coverage readout + completion error
 
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Band, Cell, MonitorCell } from "@nc-750/lab-vue";
-import type { LLMClient } from "@nc-750/llm-ts";
 import { logger } from "../../logger";
-import { createClientFromConfig } from "../../llm/factory";
 import { useInterviewStore } from "../stores/InterviewStore";
 import { useSettingsStore } from "../../settings/stores";
 import { usePersonaStore } from "../../persona/stores";
+import { useInterviewClient } from "../composables/useInterviewClient";
 import {
     beginInterview,
     submitAnswer,
@@ -42,9 +41,18 @@ const settingsStore = useSettingsStore();
 const personaStore = usePersonaStore();
 const router = useRouter();
 
+// ── LLM client ──────────────────────────────────────────────────────────────
+// The settings→client wiring lives in a reactive adapter composable (4.6); the
+// view stays a thin consumer (2.7).
+const { client: llmClient, clientError } = useInterviewClient();
+
 // ── Local UI state ──────────────────────────────────────────────────────────
 const pageError = ref<string | null>(null);
 const isBusy = ref(false);
+
+// Banner shows whichever error is set: a handler failure (pageError) or a
+// client-construction failure surfaced by the composable (clientError).
+const displayError = computed(() => pageError.value ?? clientError.value);
 
 // ── Derived ─────────────────────────────────────────────────────────────────
 const status = computed(() => interviewStore.status);
@@ -66,37 +74,6 @@ const lastQuestion = computed(() => {
     }
     return "";
 });
-
-// ── LLM client ──────────────────────────────────────────────────────────────
-const llmClient = ref<LLMClient | null>(null);
-
-function buildClient(): void {
-    if (!settingsStore.isLLMConfigured) {
-        llmClient.value = null;
-        return;
-    }
-    try {
-        // The settings store exposes a flat surface; assemble the LLMConfig the
-        // factory expects from those refs. `isLLMConfigured` guarantees provider
-        // is set, so the non-null assertion is safe.
-        llmClient.value = createClientFromConfig({
-            provider: settingsStore.provider!,
-            model: settingsStore.model,
-            apiKey: settingsStore.apiKey,
-            endpoint: settingsStore.endpoint,
-        });
-        pageError.value = null;
-    } catch (e) {
-        llmClient.value = null;
-        pageError.value = e instanceof Error ? e.message : "Failed to create LLM client";
-    }
-}
-
-watch(
-    () => [settingsStore.provider, settingsStore.model, settingsStore.apiKey, settingsStore.endpoint],
-    buildClient,
-    { immediate: true },
-);
 
 // ── Lifecycle ───────────────────────────────────────────────────────────────
 onMounted(async () => {
@@ -230,11 +207,11 @@ async function onRestart() {
             <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3">
                 <!-- Page-level error banner -->
                 <div
-                    v-if="pageError"
+                    v-if="displayError"
                     class="flex items-center gap-2 p-3 mb-4 ivw-error"
                     role="alert"
                 >
-                    <p class="nc-text-sm ivw-error-text">{{ pageError }}</p>
+                    <p class="nc-text-sm ivw-error-text">{{ displayError }}</p>
                     <button
                         class="nc-btn nc-btn--ghost nc-btn--sm"
                         @click="pageError = null"

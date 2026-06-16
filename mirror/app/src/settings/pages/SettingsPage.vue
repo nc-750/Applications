@@ -13,7 +13,7 @@ import { usePersonaStore } from "../../persona/stores";
 import { setDebugEnabled } from "../../logger";
 import { testConnection } from "../services";
 import { importPersona, exportPersona } from "../../persona/services";
-import { factoryReset } from "../services/wipe";
+import { factoryReset } from "../../core/Wipe";
 import type { LLMConfig } from "../../llm";
 import LLMConfigCell from "../components/LLMConfigCell.vue";
 import ConnectionMonitorCell from "../components/ConnectionMonitorCell.vue";
@@ -93,7 +93,7 @@ function onToggleDebug() {
 }
 
 function onFactoryReset() {
-    factoryReset();
+    factoryReset(personaStore, settingsStore);
 }
 
 function onDismissError() {

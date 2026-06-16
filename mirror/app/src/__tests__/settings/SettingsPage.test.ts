@@ -17,7 +17,7 @@ vi.mock("../../persona/services", () => ({
     importPersona: vi.fn(),
     exportPersona: vi.fn(),
 }));
-vi.mock("../../settings/services/wipe", () => ({ factoryReset: vi.fn() }));
+vi.mock("../../core/Wipe", () => ({ factoryReset: vi.fn() }));
 vi.mock("../../settings/db/keyStore", () => ({
     isTauri: () => false,
     saveApiKey: vi.fn(),
