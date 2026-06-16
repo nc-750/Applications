@@ -107,11 +107,22 @@ start editing. The plan is a ladder of self-contained briefs, lowest rung first:
    rules.
 4. **Run one brief per session.** A session takes the lowest incomplete rung, plans against its
    brief, implements, verifies, stops. Later rungs may assume earlier ones are done; **no rung reaches
-   up into a later rung's area.**
+   up into a later rung's area.** **The kickoff's phase number may be stale** — confirm the lowest
+   incomplete phase against the plan *and* project memory before planning, rather than trusting the
+   label you were handed (a session kicked off as "Phase 1.3" was actually Phase 2.1).
 
 > If a master plan already exists for this feature, you are *executing* it, not re-authoring it: pick
 > the lowest incomplete phase, honor its **Out of scope** line as a hard wall, and verify against its
 > gate.
+
+**Design checkpoint — decide a real fork before building, don't litigate it mid-implementation.**
+When a rung has a genuine design fork with more than one viable pattern that **no convention
+prescribes** (e.g. how a store holds its state, where a boundary schema lives), stop and surface it as
+a short checkpoint: name the options, give a recommendation, get a decision — *before* writing the
+implementation. Then fold the decided pattern back into the conventions so the next feature inherits
+it (discovery → decision → convention). Guessing and reworking is the single biggest time sink
+observed: one store rung burned ~40 edits because its reactive shape was built before it was decided.
+This is distinct from over-reading an enumerated brief — it is about proactively flagging the fork.
 
 ## The per-phase brief shape
 
@@ -133,11 +144,24 @@ the spine:
   also" fixes the view while doing the store has broken the boundary and is now unreviewable.
 - **Never reach up.** A lower phase may not import, anticipate, or stub a higher phase's code. The
   model phase does not know the store exists; the store phase does not know the view exists.
+- **Order by runtime need, not just the static graph.** The ladder orders by the dependency *graph*,
+  but a rung can be layer-complete yet runtime-broken if a sibling/lower module it *consumes* is still
+  a deferred stub. Before a rung ships, check that every module it consumes at runtime is **real** by
+  then — a real `defineStore` singleton, a real client — not a placeholder whose conversion was
+  pushed to a later phase. If a consumer depends on a provider refactor that is still deferred, either
+  pull the provider earlier or keep the consumer on the old shared path until the provider lands.
+  (A view that dropped a shared facade to import sibling stores "directly" cannot function while those
+  stores are still unshared factory stubs.)
 - **Out of scope is a wall, not a suggestion.** Cross-cutting work you notice mid-phase (a global
   facade to delete, a sibling feature's defect, an export composer) gets **flagged as a follow-up**,
   not done now. Note it; leave it.
 - **Touch-to-fix names, not to-fix scope.** Fix a wrong name on a line you are already editing (per
-  `vue-feature-architecture` naming rules). Do not go hunting through untouched files for more.
+  `vue-feature-architecture` naming rules). Do not go hunting through untouched files for more. This
+  **crosses a feature boundary**: a minimal honesty-fix to a name or type you must *cross* to do the
+  rung's work — a rename, a missing identifying field, a reused type given its own name — is in-scope
+  even when the owning feature's full refactor is deferred. Fix the field you cross; do not refactor
+  the sibling's whole model. (A transform mapping into a misspelled/lying field cannot be honest until
+  that field is fixed.)
 - **The presentation rung is deferred to the end and to the other skill.** Do not style as you go.
   Layout and visual contract are the last rung and are governed entirely by
   `instrument-design-system` — the lower rungs are structure-only.
@@ -154,8 +178,14 @@ the spine:
 Each rung carries its own **Verify** line — satisfy it before the rung is done. On top of that, the
 **global gate applies to every phase** (this is the `vue-feature-architecture` gate; honor it as-is):
 
-- `bunx tsc --noEmit` is clean. (This stack uses **bun** — `bun run <script>`, `bunx <bin>`; never
-  `npm`/`npx`/`node`.)
+- The type-check shows **no new errors**, judged per-file — not an absolute clean. The repo carries a
+  standing red baseline (stale tests for not-yet-refactored features); establish that baseline up
+  front and judge the rung by "zero errors in the files I touched," not a raw total. (This stack uses
+  **bun** — `bun run <script>`, `bunx <bin>`; never `npm`/`npx`/`node`.)
+- **`tsc --noEmit` does not type-check `.vue` files — `vue-tsc --noEmit` does.** A plain `tsc` run
+  silently skips every SFC, so a view can ship type errors `tsc` calls clean. Any rung that touches a
+  `.vue` (the view rung, always) must gate on `bunx vue-tsc --noEmit` (the `build` script), not `tsc`
+  alone; `tsc` is fine as the fast gate only for rungs that touch no `.vue`.
 - The relevant `bun run test` (vitest) suite is green; update tests that referenced old shapes rather
   than leaving them red or deleted-without-replacement.
 - **Read a gate failure as a possible design signal, not just a coding slip.** A `tsc` or test failure

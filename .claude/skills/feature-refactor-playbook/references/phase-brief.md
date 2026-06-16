@@ -82,7 +82,8 @@ real tree.
 - Conventions: instrument-design-system › <target> (presentation) + vue-feature-architecture ›
   structure-and-errors, naming.
 - Deliverable: a conformant view tree; duplicate and dead components removed.
-- Verify: bunx tsc --noEmit; run the app and exercise the feature end-to-end live; bun run build passes;
+- Verify: bunx vue-tsc --noEmit (tsc alone does NOT type-check .vue SFCs — view rungs must use vue-tsc,
+  the build script); run the app and exercise the feature end-to-end live; bun run build passes;
   the presentation anti-pattern checklist passes; the error path surfaces visibly.
 ```
 
