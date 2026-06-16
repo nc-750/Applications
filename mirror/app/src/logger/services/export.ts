@@ -1,14 +1,12 @@
 import { downloadFile } from "../../fileManager/services/utils";
-import { useAppStore } from "../../AppStore";
+import { logEntries } from "./logger";
 
 export function exportDebugLog(): void {
-  const { logEntries: entries } = useAppStore().logger;
-
   const envelope = {
     exportedAt: new Date().toISOString(),
     appVersion: "0.1.0",
-    entryCount: entries.length,
-    entries,
+    entryCount: logEntries.value.length,
+    entries: logEntries.value,
   };
 
   const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD

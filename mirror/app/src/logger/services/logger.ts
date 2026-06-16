@@ -1,12 +1,38 @@
-import { useAppStore } from "../../AppStore";
+import { ref, readonly } from "vue";
 import type { LogLevel, LogCategory, LogEntry } from "../models/types";
 
-// ── API key sanitization ──────────────────────────────────────────────
+// ── Module-level reactive state (CONVENTIONS 5.3) ──────────────────────
+
+const entries = ref<LogEntry[]>([]);
+const debugEnabled = ref(false); // matches CONVENTIONS example + resolves TODO
+const logMaxEntries = ref(500);
+
+export const logEntries = readonly(entries);
+export const maxEntries = readonly(logMaxEntries);
+
+// ── Mutators ───────────────────────────────────────────────────────────
+
+export function clearLogs(): void {
+  entries.value = [];
+}
+
+export function setMaxEntries(max: number): void {
+  if (entries.value.length > max) {
+    entries.value = entries.value.slice(entries.value.length - max);
+  }
+  logMaxEntries.value = max;
+}
+
+export function setDebugEnabled(enabled: boolean): void {
+  debugEnabled.value = enabled;
+}
+
+// ── API key sanitization ───────────────────────────────────────────────
 
 /** Patterns that look like API keys — redacted before storage or console output. */
 const KEY_PATTERNS = [
-  /sk-[a-zA-Z0-9_-]{20,}/g,           // OpenAI / Anthropic / Mistral
-  /sk-ant-[a-zA-Z0-9_-]{20,}/g,       // Anthropic admin keys
+  /sk-[a-zA-Z0-9_-]{20,}/g, // OpenAI / Anthropic / Mistral
+  /sk-ant-[a-zA-Z0-9_-]{20,}/g, // Anthropic admin keys
 ];
 
 function redactKeys(value: unknown): unknown {
@@ -28,11 +54,7 @@ function redactKeys(value: unknown): unknown {
   return value;
 }
 
-// ── Core log function ─────────────────────────────────────────────────
-
-export function setDebugEnabled(enabled: boolean): void {
-  useAppStore().logger.setDebugEnabled(enabled);
-}
+// ── Core log function ──────────────────────────────────────────────────
 
 function log(
   level: LogLevel,
@@ -40,10 +62,8 @@ function log(
   message: string,
   opts?: { data?: unknown; error?: Error },
 ): void {
-  const store = useAppStore().logger;
-
   // Debug-level entries are skipped entirely when the toggle is off
-  if (level === "debug" && !store.debugEnabled) return;
+  if (level === "debug" && !debugEnabled.value) return;
 
   const entry: LogEntry = {
     id: crypto.randomUUID(),
@@ -75,10 +95,14 @@ function log(
   }
 
   // Push to in-memory ring buffer
-  store.appendLog(entry);
+  if (entries.value.length >= logMaxEntries.value) {
+    entries.value = [...entries.value.slice(1), entry];
+  } else {
+    entries.value = [...entries.value, entry];
+  }
 }
 
-// ── Convenience logger object ─────────────────────────────────────────
+// ── Convenience logger object ──────────────────────────────────────────
 
 export const logger = {
   debug: (category: LogCategory, message: string, opts?: { data?: unknown }) =>
