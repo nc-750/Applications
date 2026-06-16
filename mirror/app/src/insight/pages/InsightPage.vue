@@ -9,20 +9,36 @@
 // values/hidden assets, skills map, personality dimensions, goals, career timeline,
 // outside work, how I work best, ready-to-use text, and interview transcript.
 
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { BookOpen } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 import { usePersonaStore } from "../../persona/stores";
 import { PersonaGoalType } from "../../persona/models";
 import MetricsMonitorCell from "../components/MetricsMonitorCell.vue";
 import StringListCell from "../components/StringListCell.vue";
+import ListCell from "../components/ListCell.vue";
 import SkillsMapCell from "../components/SkillsMapCell.vue";
 import DimensionsCell from "../components/DimensionsCell.vue";
 import CareerTimelineCell from "../components/CareerTimelineCell.vue";
 import DerivedTextCell from "../components/DerivedTextCell.vue";
 import TranscriptCell from "../components/TranscriptCell.vue";
+import { logger } from "../../logger/index.ts";
+import { useInterviewStore } from "../../interview/stores/InterviewStore.ts";
+import { useInterviewClient } from "../../interview/composables/useInterviewClient.ts";
+import { runSynthesis } from "../../interview/services/SynthesisFlow.ts";
 
 const personaStore = usePersonaStore();
+const interviewStore = useInterviewStore();
+
+// ── LLM client ──────────────────────────────────────────────────────────────
+// The settings→client wiring lives in a reactive adapter composable (4.6); the
+// view stays a thin consumer (2.7).
+
+// REMARK: Maybe we should create a specific useInsightClient instead?
+const { client: llmClient, clientError } = useInterviewClient();
+
+// ── Local UI state ──────────────────────────────────────────────────────────
+const isBusy = ref(false);
 
 // The store seeds a total, never-null persona (createEmptyPersona), so "is there a
 // mirror yet?" is a content question, not a null check: an insight exists once
@@ -94,6 +110,24 @@ const hasDerivedText = computed(() =>
 onMounted(() => {
     void personaStore.loadPersona();
 });
+
+async function onRegeneratePersona() {
+    const client = llmClient.value;
+    if (!client) return;
+
+    isBusy.value = true;
+    try {
+        await runSynthesis(client, interviewStore, personaStore);
+        // runSynthesis sets status to "completed" and commits the persona;
+        // on failure it sets status to "error" and calls interviewStore.setError().
+    } catch (e) {
+        // Synthesis already surfaced the error into interviewStore.error.
+        // Log only unexpected re-throws from infrastructure.
+        logger.error("app", "Synthesis failed", { error: e instanceof Error ? e : undefined });
+    } finally {
+        isBusy.value = false;
+    }
+}
 </script>
 
 <template>
@@ -117,9 +151,24 @@ onMounted(() => {
         <!-- Nameplate: private-document metadata -->
         <Band>
             <Cell title="INSIGHT" spec="INS // 0x00">
+                <!-- Page-level error banner -->
+                <div
+                    v-if="clientError"
+                    class="flex items-center gap-2 p-3 mb-4 ivw-error"
+                    role="alert"
+                >
+                    <p class="nc-text-sm ivw-error-text">{{ clientError }}</p>
+                    <button
+                        class="nc-btn nc-btn--ghost nc-btn--sm"
+                        @click="clientError = null"
+                    >
+                        Dismiss
+                    </button>
+                </div>
                 <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                     <span class="nc-text-sm">Private reflection document</span>
                     <span class="nc-text-xs nc-text-muted">{{ metaLine }}</span>
+                    <button class="nc-btn nc-btn--ghost" @click="onRegeneratePersona">Regenerate Persona</button>
                 </div>
             </Cell>
         </Band>
@@ -129,10 +178,28 @@ onMounted(() => {
             <MetricsMonitorCell :metrics="persona.metrics" />
         </Band>
 
+        <!-- GOALS Band -->
+        <Band>
+            <StringListCell title="SHORT-TERM GOALS" spec="INS // 0x08" :items="shortTermGoals" />
+            <StringListCell title="LONG-TERM GOALS"  spec="INS // 0x09" :items="longTermGoals" />
+        </Band>
+
         <!-- STRENGTHS + GROWTH AREAS Band -->
         <Band>
-            <StringListCell title="STRENGTHS"    spec="INS // 0x02" :items="persona.strengths" />
-            <StringListCell title="GROWTH AREAS" spec="INS // 0x03" :items="persona.weaknesses" />
+            <Cell title="STRENGTHS" spec="INS // 0x02" :items="persona.strengths">
+                <div class="flex flex-col gap-1">
+                    <span v-if="persona.strengths.length === 0" class="nc-text-sm nc-text-muted">—</span>
+                    <span v-for="(item, i) in persona.strengths" :key="i" class="slc-entry">▸ {{ item.title }}</span>
+                    <span v-for="(item, i) in persona.strengths" :key="i" class="slc-entry">{{ item.description }}</span>
+                </div>
+            </Cell>
+            <Cell title="GROWTH AREAS" spec="INS // 0x03" :items="persona.weaknesses">
+                <div class="flex flex-col gap-1">
+                    <span v-if="persona.weaknesses.length === 0" class="nc-text-sm nc-text-muted">—</span>
+                    <span v-for="(item, i) in persona.weaknesses" :key="i" class="slc-entry">▸ {{ item.title }}</span>
+                    <span v-for="(item, i) in persona.weaknesses" :key="i" class="slc-entry">{{ item.description }}</span>
+                </div>
+            </Cell>            
         </Band>
 
         <!-- VALUES + HIDDEN ASSETS Band -->
@@ -149,12 +216,6 @@ onMounted(() => {
         <!-- PERSONALITY DIMENSIONS Band -->
         <Band>
             <DimensionsCell :traits="persona.traits" />
-        </Band>
-
-        <!-- GOALS Band -->
-        <Band>
-            <StringListCell title="SHORT-TERM" spec="INS // 0x08" :items="shortTermGoals" />
-            <StringListCell title="LONG-TERM"  spec="INS // 0x09" :items="longTermGoals" />
         </Band>
 
         <!-- CAREER TIMELINE Band — shown only when there are career entries -->
@@ -199,6 +260,18 @@ onMounted(() => {
             <TranscriptCell :messages="persona.interview.messages" />
         </Band>
     </template>
+    <div v-if="isBusy" class="ivw-overlay">
+                <div class="nc-acquire flex justify-center h-full">
+                    <div class="nc-acquire__wave">
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                    </div>
+                    <div class="nc-acquire__label">Generating Persona</div>
+                </div>
+            </div>
 </template>
 
 <style scoped>

@@ -10,8 +10,8 @@ export interface PersonaDerived {
 export interface Persona {
     metadata: PersonaMetadata,
     metrics: PersonaMetrics,
-    strengths: string[],
-    weaknesses: string[],
+    strengths: PersonaStrength[],
+    weaknesses: PersonaWeakness[],
     skills: PersonaSkill[],
     career: PersonaCareer[],
     personal: PersonaCareer[],
@@ -30,6 +30,17 @@ export interface PersonaMetrics {
     growth: number,
     drivers: number
 }
+
+export interface PersonaStrength {
+    title: string,
+    description: string
+}
+
+export interface PersonaWeakness {
+    title: string,
+    description: string
+}
+
 
 export enum PersonaSkillCategory { Technical, Soft, Domain, Language, Transversal, Tool, Other }
 export enum PersonaSkillLevel { Beginner, Intermediate, Advanced, Expert, Native }

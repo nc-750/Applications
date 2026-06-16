@@ -35,9 +35,9 @@ import { downloadFile, readFileAsText } from "../../fileManager/services/utils";
 
 const SkillSchema = z.object({
     name: z.string(),
-    category: z.nativeEnum(PersonaSkillCategory),
-    level: z.nativeEnum(PersonaSkillLevel),
-    source: z.nativeEnum(PersonaSkillSource),
+    category: z.enum(PersonaSkillCategory),
+    level: z.enum(PersonaSkillLevel),
+    source: z.enum(PersonaSkillSource),
 });
 
 const CareerSchema = z.object({
@@ -65,8 +65,18 @@ const PersonaSchema = z.object({
         growth: z.number(),
         drivers: z.number(),
     }),
-    strengths: z.array(z.string()),
-    weaknesses: z.array(z.string()),
+    strengths: z.array(
+        z.object({
+            title: z.string(),
+            description: z.string()
+        })
+    ),
+    weaknesses: z.array(
+        z.object({
+            title: z.string(),
+            description: z.string()
+        })
+    ),
     skills: z.array(SkillSchema),
     career: z.array(CareerSchema),
     personal: z.array(CareerSchema),
@@ -81,7 +91,7 @@ const PersonaSchema = z.object({
     hiddenAssets: z.array(z.string()),
     goals: z.array(
         z.object({
-            type: z.nativeEnum(PersonaGoalType),
+            type: z.enum(PersonaGoalType),
             description: z.string(),
         }),
     ),

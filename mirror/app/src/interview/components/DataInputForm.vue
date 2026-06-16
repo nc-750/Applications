@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, type Component } from "vue";
-import { ArrowRight, SkipForward, Paperclip, X, Loader2, FileText, FileCode, File } from "lucide-vue-next";
+import { ArrowRight, Paperclip, X, Loader2, FileText, FileCode, File } from "lucide-vue-next";
 import { extractText, isSupportedFile, ACCEPT_STRING } from "../../fileManager/services/fileExtractor";
 import { estimateTokens, DIGEST_THRESHOLD_CHARS, DIGEST_CHUNK_CHARS } from "../services";
 

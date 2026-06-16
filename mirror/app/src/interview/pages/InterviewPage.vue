@@ -271,7 +271,7 @@ async function onRestart() {
                 </button>
             </div>
 
-            <div v-if="isBusy" class="ivw-overlay">
+            <div v-if="isBusy && !showCompletion" class="ivw-overlay">
                 <div class="nc-acquire flex justify-center h-full">
                     <div class="nc-acquire__wave">
                         <div class="nc-acquire__bar" />

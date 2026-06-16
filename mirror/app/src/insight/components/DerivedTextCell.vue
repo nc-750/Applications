@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-    <Cell title="READY-TO-USE TEXT" spec="INS // 0x0D" :grow="1">
+    <Cell title="READY-TO-USE" spec="INS // 0x0D" :grow="1">
         <div class="flex flex-col gap-4">
             <div v-if="cvSummary">
                 <h4 class="nc-label">CV SUMMARY</h4>
