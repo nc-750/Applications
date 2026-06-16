@@ -20,6 +20,7 @@ import {
     type Persona,
 } from "../models";
 import type { usePersonaStore } from "../stores";
+import { createTranscriptMessage } from "../../core/Transcript";
 import { logger } from "../../logger";
 // `downloadFile`/`readFileAsText` are generic file helpers. They currently live in
 // `fileManager/services/utils` (the project has no `src/lib/` yet); imported here the
@@ -29,8 +30,8 @@ import { downloadFile, readFileAsText } from "../../fileManager/services/utils";
 
 // ── Boundary schema (functional core) ────────────────────────────────────────
 // Mirrors the domain `Persona` so a parsed result is directly assignable to it.
-// Numeric domain enums validate via `z.nativeEnum`; `Message.content` is opaque
-// library data, validated structurally (role + content presence) but not deeply.
+// Numeric domain enums validate via `z.nativeEnum`; the interview transcript is
+// validated against the domain `TranscriptMessage` shape (role + string content).
 
 const SkillSchema = z.object({
     name: z.string(),
@@ -85,11 +86,17 @@ const PersonaSchema = z.object({
         }),
     ),
     interview: z.object({
+        // Parse leniently — `JSON.stringify` drops `context` when undefined, and
+        // older exports may lack timestamp/isError — then normalize through the
+        // core factory so each line is a total `TranscriptMessage`.
         messages: z.array(
             z.object({
-                role: z.enum(["system", "user", "assistant"]),
-                content: z.union([z.string(), z.array(z.any())]),
-            }),
+                role: z.enum(["user", "assistant"]),
+                content: z.string(),
+                context: z.string().optional(),
+                timestamp: z.string().optional(),
+                isError: z.boolean().optional(),
+            }).transform(createTranscriptMessage),
         ),
     }),
     derived: z.object({

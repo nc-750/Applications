@@ -7,10 +7,12 @@
  *
  * @example
  * ```ts
- * const result = await llm.message("Hello");
+ * const result = await llm.message([
+ *   { role: "user", content: [{ type: "text", text: "Hello" }] },
+ * ]);
  * if (result.ok) {
- *   // TypeScript narrows: result is Ok<string>
- *   console.log(result.value.toUpperCase());
+ *   // TypeScript narrows: result is Ok<unknown>
+ *   console.log(String(result.value));
  * } else {
  *   // TypeScript narrows: result is Err<LLMError>
  *   console.error(result.error.message);
@@ -120,22 +122,13 @@ export interface AudioPart {
 /**
  * A single message in a conversation.
  *
- * `content` accepts either a plain string (shorthand for a single text block)
- * or an array of content parts for multi-modal input.
+ * `content` is always an array of content parts — text, image, and/or audio.
+ * Plain text is one `TextPart`: `[{ type: "text", text: "Hello" }]`.
  */
 export interface Message {
   role: "system" | "user" | "assistant";
-  content: string | ContentPart[];
+  content: ContentPart[];
 }
-
-/**
- * Convenience input for {@link LLMClient.message} and {@link LLMClient.stream}.
- *
- * - `string` — shorthand for a single user message: `"Hello"`
- * - `Message` — a single message with explicit role
- * - `Message[]` — a full conversation including system prompt and history
- */
-export type MessageInput = string | Message | Message[];
 
 // ── Options ────────────────────────────────────────────────────────────────
 
@@ -185,9 +178,6 @@ export interface MessageOptions extends StreamOptions {
     strict?: boolean;
   };
 }
-
-/** Definition for structured output, used in overloaded signatures. */
-export type StructuredDef = NonNullable<MessageOptions["structured"]>;
 
 // ── Config ─────────────────────────────────────────────────────────────────
 
@@ -244,13 +234,15 @@ export interface LLMClient {
    * For real-time display, use {@link stream} instead. Streaming cannot provide
    * structured output since valid JSON requires the full response.
    *
-   * The returned value is `string` for plain text, or parsed JSON (`unknown`)
-   * when `options.structured` is set. Check `result.ok` before accessing.
+   * The returned value is the response text (as `unknown`) for plain completions,
+   * or parsed JSON when `options.structured` is set. Check `result.ok` first.
    *
    * @example
    * ```ts
    * // Simple text
-   * const result = await llm.message("What is the capital of France?");
+   * const result = await llm.message([
+   *   { role: "user", content: [{ type: "text", text: "What is the capital of France?" }] },
+   * ]);
    * if (!result.ok) return handleError(result.error);
    * console.log(result.value); // "Paris"
    * ```
@@ -258,19 +250,22 @@ export interface LLMClient {
    * @example
    * ```ts
    * // With structured output
-   * const result = await llm.message("Extract name from: John is 34", {
-   *   structured: {
-   *     name: "person",
-   *     schema: { type: "object", properties: { name: { type: "string" } } }
-   *   }
-   * });
-   * if (result.ok) console.log(result.value.name); // "John"
+   * const result = await llm.message(
+   *   [{ role: "user", content: [{ type: "text", text: "Extract name from: John is 34" }] }],
+   *   {
+   *     structured: {
+   *       name: "person",
+   *       schema: { type: "object", properties: { name: { type: "string" } } },
+   *     },
+   *   },
+   * );
+   * if (result.ok) console.log(result.value); // { name: "John" }
    * ```
    */
   message(
-    input: MessageInput,
+    messages: Message[],
     options?: MessageOptions,
-  ): Promise<Result<string | unknown, LLMError>>;
+  ): Promise<Result<unknown, LLMError>>;
 
   /**
    * Streams an LLM response as it is generated, yielding text deltas.
@@ -284,7 +279,9 @@ export interface LLMClient {
    *
    * @example
    * ```ts
-   * const stream = await llm.stream("Tell me a short story");
+   * const stream = await llm.stream([
+   *   { role: "user", content: [{ type: "text", text: "Tell me a short story" }] },
+   * ]);
    * if (!stream.ok) return handleError(stream.error);
    *
    * for await (const chunk of stream.value) {
@@ -296,7 +293,10 @@ export interface LLMClient {
    * ```ts
    * // Cancellable stream
    * const controller = new AbortController();
-   * const stream = await llm.stream("Long analysis...", { signal: controller.signal });
+   * const stream = await llm.stream(
+   *   [{ role: "user", content: [{ type: "text", text: "Long analysis..." }] }],
+   *   { signal: controller.signal },
+   * );
    *
    * setTimeout(() => controller.abort(), 5000);
    *
@@ -308,7 +308,7 @@ export interface LLMClient {
    * ```
    */
   stream(
-    input: MessageInput,
+    messages: Message[],
     options?: StreamOptions,
   ): Promise<Result<AsyncIterable<string>, LLMError>>;
 }

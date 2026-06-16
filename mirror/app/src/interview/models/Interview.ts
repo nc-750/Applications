@@ -1,6 +1,12 @@
 // The Interview feature's canonical domain model: a single reflection session —
 // its transcript, coverage reading, and lifecycle. Plain data + enums only; no
 // persistence key and no wire (LLM) shape live here (CONVENTIONS 1.1).
+//
+// The transcript line type (`TranscriptMessage`) is shared with the persona
+// feature, so it lives in the foundational `core` layer; re-exported below so
+// existing `interview/models` consumers keep their import path.
+
+import type { TranscriptMessage } from "../../core/Transcript";
 
 export type InterviewStatus =
     | "idle"
@@ -26,41 +32,6 @@ export type ProbeSignal = "thin" | "strong";
 
 /** Per-facet saturation, each 0..1 = how completely that facet is evidenced. */
 export type CoverageMap = Record<FacetKey, number>;
-
-/** A single line of the interview transcript. A domain message — not the LLM
- *  library's `Message` wire type, which stays in the llm/service layers.
- *
- *  Total, like `Interview`: every key is always present. `context` may be
- *  `undefined`; `isError` is a plain boolean (a message either errored or did
- *  not — never "absent"), defaulting to `false`. Build via
- *  `createTranscriptMessage` so the default is applied in one place. */
-export interface TranscriptMessage {
-    role: "user" | "assistant";
-    content: string;
-    /** Assistant probes carry a brief acknowledgement of the prior answer. */
-    context: string | undefined;
-    /** ISO-8601 timestamp. */
-    timestamp: string;
-    isError: boolean;
-}
-
-/** Build a total transcript line, defaulting `context` to `undefined`,
- *  `isError` to `false`, and `timestamp` to now. */
-export function createTranscriptMessage(init: {
-    role: TranscriptMessage["role"];
-    content: string;
-    context?: string;
-    timestamp?: string;
-    isError?: boolean;
-}): TranscriptMessage {
-    return {
-        role: init.role,
-        content: init.content,
-        context: init.context,
-        timestamp: init.timestamp ?? new Date().toISOString(),
-        isError: init.isError ?? false,
-    };
-}
 
 // Optional fields are modelled as required keys whose value may be `undefined`
 // (`x: T | undefined`), not absent keys (`x?: T`). An `Interview` is always

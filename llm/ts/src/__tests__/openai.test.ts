@@ -22,8 +22,14 @@ mock.module("openai", () => ({
 }));
 
 import { createLLMClient } from "../client";
+import type { Message } from "../types";
 
 const keyProvider = async () => "sk-test-key";
+
+/** Single-user-message conversation carrying one text part. */
+const user = (text: string): Message[] => [
+  { role: "user", content: [{ type: "text", text }] },
+];
 
 function makeClient() {
   const result = createLLMClient({
@@ -49,36 +55,40 @@ describe("OpenAI message()", () => {
       choices: [{ message: { content: "Paris" } }],
     });
 
-    const result = await llm.message([
-      { role: "user", content: "hi" },
-    ]);
+    const result = await llm.message(user("hi"));
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value).toBe("Paris");
 
-    // Verify SDK was called correctly
+    // Verify SDK was called correctly — user content maps to a content-part array.
     const call = mockCreate.mock.calls[0];
     expect(call).toBeDefined();
     const params = call?.[0] as any;
     expect(params.model).toBe("gpt-4o");
-    expect(params.messages).toEqual([{ role: "user", content: "hi" }]);
+    expect(params.messages).toEqual([
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+    ]);
     expect(params.stream).toBe(false);
     expect(params.store).toBe(false);
   });
 
-  test("string shorthand becomes user message", async () => {
+  test("system role maps to a plain string content", async () => {
     const llm = makeClient();
     mockCreate.mockResolvedValue({
-      choices: [{ message: { content: "Paris" } }],
+      choices: [{ message: { content: "ok" } }],
     });
 
-    const result = await llm.message("hi");
+    await llm.message([
+      { role: "system", content: [{ type: "text", text: "Be helpful" }] },
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+    ]);
 
-    expect(result.ok).toBe(true);
-    const call = mockCreate.mock.calls[0];
-    const params = call?.[0] as any;
-    expect(params.messages).toEqual([{ role: "user", content: "hi" }]);
+    const params = mockCreate.mock.calls[0]?.[0] as any;
+    expect(params.messages).toEqual([
+      { role: "system", content: "Be helpful" },
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+    ]);
   });
 
   test("with structured output uses parse()", async () => {
@@ -87,7 +97,7 @@ describe("OpenAI message()", () => {
       choices: [{ message: { content: '{"name":"John"}' } }],
     });
 
-    const result = await llm.message("Extract name", {
+    const result = await llm.message(user("Extract name"), {
       structured: {
         name: "person",
         schema: { type: "object", properties: { name: { type: "string" } } },
@@ -107,7 +117,7 @@ describe("OpenAI message()", () => {
   test("store defaults to false", async () => {
     const llm = makeClient();
 
-    await llm.message("hi");
+    await llm.message(user("hi"));
 
     const call = mockCreate.mock.calls[0];
     const params = call?.[0] as any;
@@ -117,7 +127,7 @@ describe("OpenAI message()", () => {
   test("store can be overridden to true", async () => {
     const llm = makeClient();
 
-    await llm.message("hi", { store: true });
+    await llm.message(user("hi"), { store: true });
 
     const call = mockCreate.mock.calls[0];
     const params = call?.[0] as any;
@@ -130,7 +140,7 @@ describe("OpenAI message()", () => {
       Object.assign(new Error("Unauthorized"), { status: 401 }),
     );
 
-    const result = await llm.message("hi");
+    const result = await llm.message(user("hi"));
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -156,7 +166,7 @@ describe("OpenAI stream()", () => {
     });
 
     const llm = makeClient();
-    const result = await llm.stream("Tell me a story");
+    const result = await llm.stream(user("Tell me a story"));
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;

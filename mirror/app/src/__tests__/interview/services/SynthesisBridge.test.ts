@@ -226,15 +226,16 @@ describe("toPersona", () => {
         expect(persona.goals[1].type).toBe(PersonaGoalType.LongTerm);
     });
 
-    it("converts TranscriptMessage[] to wire Message[] for interview.messages", () => {
-        const persona = toPersona(fixtureResult(), fixtureTranscript(), fixtureCoverage());
+    it("stores the domain TranscriptMessage[] verbatim on interview.messages", () => {
+        const transcript = fixtureTranscript();
+        const persona = toPersona(fixtureResult(), transcript, fixtureCoverage());
         expect(persona.interview.messages.length).toBe(2);
         expect(persona.interview.messages[0].role).toBe("assistant");
         expect(persona.interview.messages[1].role).toBe("user");
-        // wire format wraps content in TextPart[]
-        expect(persona.interview.messages[0].content).toEqual([
-            { type: "text", text: "Hello!" },
-        ]);
+        // No wire wrapping — content stays a plain string and the full domain
+        // shape is preserved.
+        expect(persona.interview.messages[0].content).toBe("Hello!");
+        expect(persona.interview.messages).toEqual(transcript);
     });
 
     it("populates derived fields from use_cases", () => {

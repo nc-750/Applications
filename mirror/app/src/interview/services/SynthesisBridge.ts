@@ -9,7 +9,6 @@
 // `strength`, `carreer` misspelling, missing `derived` field) were fixed in
 // this same phase — so this bridge maps cleanly with no documented gaps.
 
-import type { Message } from "@nc-750/llm-ts";
 import {
     type Persona,
     type PersonaCareer,
@@ -70,13 +69,6 @@ function parseYearEnd(raw: number | string): number {
     if (raw === "present") return new Date().getFullYear();
     const parsed = parseInt(raw, 10);
     return isNaN(parsed) ? new Date().getFullYear() : parsed;
-}
-
-function transcriptToWireMessages(transcript: TranscriptMessage[]): Message[] {
-    return transcript.map((m) => ({
-        role: m.role as Message["role"],
-        content: [{ type: "text" as const, text: m.content }],
-    }));
 }
 
 /** Format an analysis strength for the `Persona.strengths: string[]` field. */
@@ -197,8 +189,9 @@ export function toPersona(
     // Goals
     persona.goals = buildGoals(result.goals);
 
-    // Interview transcript → wire messages
-    persona.interview.messages = transcriptToWireMessages(transcript);
+    // Interview transcript is already the domain `TranscriptMessage[]` the
+    // persona stores — keep it as-is (the store JSON-clones on persist).
+    persona.interview.messages = transcript;
 
     // Derived fields from polish's use_cases
     persona.derived.howIWorkBest = []; // filled by SynthesisFlow after HWB call

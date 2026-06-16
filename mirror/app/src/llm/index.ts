@@ -5,3 +5,4 @@ export {
     createClientFromConfig,
 } from "./factory";
 export type { LLMClient } from "@nc-750/llm-ts";
+export { toWireMessages } from "./wire";

@@ -26,8 +26,14 @@ mock.module("@anthropic-ai/sdk", () => ({
 }));
 
 import { createLLMClient } from "../client";
+import type { Message } from "../types";
 
 const keyProvider = async () => "sk-ant-test-key";
+
+/** Single-user-message conversation carrying one text part. */
+const user = (text: string): Message[] => [
+  { role: "user", content: [{ type: "text", text }] },
+];
 
 function makeClient() {
   const result = createLLMClient({
@@ -47,24 +53,28 @@ beforeEach(() => {
 // ── Tests ───────────────────────────────────────────────────────────────────
 
 describe("Anthropic message()", () => {
-  test("extracts system to top-level param", async () => {
+  test("extracts system (from text parts) to top-level param", async () => {
     const llm = makeClient();
     mockCreate.mockResolvedValue({
       content: [{ type: "text", text: "I can help" }],
     });
 
+    // System content arrives as a content-part array (the only supported shape).
+    // This locks in the fix: array content must NOT collapse to an empty system.
     const result = await llm.message([
-      { role: "system", content: "Be helpful" },
-      { role: "user", content: "hi" },
+      { role: "system", content: [{ type: "text", text: "Be helpful" }] },
+      { role: "user", content: [{ type: "text", text: "hi" }] },
     ]);
 
     expect(result.ok).toBe(true);
     const call = mockCreate.mock.calls[0];
     const params = call?.[0] as any;
-    // System prompt extracted to top-level
+    // System prompt extracted to top-level — non-empty.
     expect(params.system).toBe("Be helpful");
-    // Only user messages remain in the messages array
-    expect(params.messages).toEqual([{ role: "user", content: "hi" }]);
+    // Only user messages remain, carrying their content-part array.
+    expect(params.messages).toEqual([
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+    ]);
   });
 
   test("with structured output uses tool_use", async () => {
@@ -73,7 +83,7 @@ describe("Anthropic message()", () => {
       content: [{ type: "tool_use", name: "person", input: { name: "John" } }],
     } as any);
 
-    const result = await llm.message("Extract name", {
+    const result = await llm.message(user("Extract name"), {
       structured: {
         name: "person",
         schema: { type: "object", properties: { name: { type: "string" } } },
@@ -94,7 +104,7 @@ describe("Anthropic message()", () => {
   test("max_tokens defaults to 8192", async () => {
     const llm = makeClient();
 
-    await llm.message("hi");
+    await llm.message(user("hi"));
 
     const call = mockCreate.mock.calls[0];
     const params = call?.[0] as any;
@@ -104,7 +114,7 @@ describe("Anthropic message()", () => {
   test("max_tokens can be overridden", async () => {
     const llm = makeClient();
 
-    await llm.message("hi", { maxTokens: 512 });
+    await llm.message(user("hi"), { maxTokens: 512 });
 
     const call = mockCreate.mock.calls[0];
     const params = call?.[0] as any;
@@ -116,7 +126,7 @@ describe("Anthropic stream()", () => {
   test("yields text deltas", async () => {
     const llm = makeClient();
 
-    const result = await llm.stream("Tell me a story");
+    const result = await llm.stream(user("Tell me a story"));
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -137,7 +147,7 @@ describe("Anthropic error handling", () => {
       new Error("Request failed with key sk-ant-test1234567890abcdef in body"),
     );
 
-    const result = await llm.message("hi");
+    const result = await llm.message(user("hi"));
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -156,7 +166,7 @@ describe("Anthropic error handling", () => {
       new DOMException("The operation was aborted", "AbortError"),
     );
 
-    const result = await llm.message("hi", { signal: controller.signal });
+    const result = await llm.message(user("hi"), { signal: controller.signal });
 
     expect(result.ok).toBe(false);
     if (!result.ok) {

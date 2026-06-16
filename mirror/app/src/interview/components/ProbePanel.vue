@@ -43,14 +43,14 @@ function submit() {
 
     <!-- Fixed-height question box: long questions scroll inside it so the
          textarea + footer below never shift as the question changes. -->
-    <div class=" p-2 h-20 overflow-y-auto">
+    <div class="nc-plate p-2 h-50 overflow-y-auto">
       <h4 class="nc-heading-4">{{ question || "…" }}</h4>
     </div>
 
     <textarea
       v-model="answer"
       class="nc-textarea"
-      :disabled="disabled || working"
+      :disabled="working"
       placeholder="Enter evidence — a paragraph is welcome. The instrument is not in a hurry."
       @keydown.enter.exact.prevent="submit"
     />

@@ -1,4 +1,4 @@
-import { Message } from "@nc-750/llm-ts"
+import type { TranscriptMessage } from "../../core/Transcript"
 
 export interface PersonaDerived {
     howIWorkBest: string[]
@@ -74,7 +74,7 @@ export interface PersonaMetadata {
 }
 
 export interface PersonaInterview {
-    messages: Message[]
+    messages: TranscriptMessage[]
 }
 
 export function createEmptyPersona(): Persona {

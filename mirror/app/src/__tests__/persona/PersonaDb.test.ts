@@ -64,7 +64,13 @@ function populatedPersona(): Persona {
         hiddenAssets: ["Speaks Mandarin natively"],
         goals: [{ type: PersonaGoalType.ShortTerm, description: "Ship a Rust service." }],
         interview: {
-            messages: [{ role: "user", content: "I started in high school." }],
+            messages: [{
+                role: "user",
+                content: "I started in high school.",
+                context: undefined,
+                timestamp: "2026-01-01T00:00:00.000Z",
+                isError: false,
+            }],
         },
         derived: {
             howIWorkBest: ["Small-group collaboration"],

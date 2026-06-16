@@ -2,13 +2,11 @@ import Anthropic from "@anthropic-ai/sdk";
 import { LLMError, Ok, Err } from "./types";
 import type {
   LLMClient,
-  MessageInput,
   MessageOptions,
   StreamOptions,
   Message,
   ContentPart,
   TextPart,
-  ImagePart,
   Result,
   ProviderKind,
 } from "./types";
@@ -25,18 +23,17 @@ function toAnthropicContentBlock(
   part: ContentPart,
 ): Anthropic.Messages.ContentBlockParam {
   if (part.type === "text") {
-    return { type: "text", text: (part as TextPart).text };
+    return { type: "text", text: part.text };
   }
   if (part.type === "image") {
-    const img = part as ImagePart;
     // The Anthropic SDK restricts media_type to specific image MIME types
     // at the type level. Our library accepts any string — the cast is safe.
     return {
       type: "image",
       source: {
         type: "base64" as const,
-        media_type: img.source.media_type,
-        data: img.source.data,
+        media_type: part.source.media_type,
+        data: part.source.data,
       },
     } as Anthropic.Messages.ContentBlockParam;
   }
@@ -44,16 +41,15 @@ function toAnthropicContentBlock(
     // Anthropic Messages API does not support audio input blocks natively.
     return {
       type: "text",
-      text: `[Audio: ${(part as { source: { media_type: string } }).source.media_type}]`,
+      text: `[Audio: ${part.source.media_type}]`,
     };
   }
   throw new Error(`Unknown content part type: ${(part as ContentPart).type}`);
 }
 
 function toAnthropicUserContent(
-  content: string | ContentPart[],
-): string | Anthropic.Messages.ContentBlockParam[] {
-  if (typeof content === "string") return content;
+  content: ContentPart[],
+): Anthropic.Messages.ContentBlockParam[] {
   return content.map(toAnthropicContentBlock);
 }
 
@@ -78,7 +74,12 @@ function extractSystem(
 
   for (const msg of messages) {
     if (msg.role === "system") {
-      const text = typeof msg.content === "string" ? msg.content : "";
+      // System content is text parts — concatenate their text. (Anthropic's
+      // system parameter is plain text, so non-text parts have no place here.)
+      const text = msg.content
+        .filter((p): p is TextPart => p.type === "text")
+        .map((p) => p.text)
+        .join("\n\n");
       systemParts.push(text);
     } else {
       rest.push({
@@ -92,18 +93,6 @@ function extractSystem(
     system: systemParts.length > 0 ? systemParts.join("\n\n") : undefined,
     messages: rest,
   };
-}
-
-// ── Input normalization ────────────────────────────────────────────────────
-
-function normalizeInput(input: MessageInput): Message[] {
-  if (typeof input === "string") {
-    return [{ role: "user", content: input }];
-  }
-  if (Array.isArray(input)) {
-    return input;
-  }
-  return [input];
 }
 
 // ── Structured output via tool use ─────────────────────────────────────────
@@ -181,10 +170,9 @@ export function createAnthropicClient(
 
   const llmClient: LLMClient = {
     async message(
-      input: MessageInput,
+      messages: Message[],
       options?: MessageOptions,
-    ): Promise<Result<string | unknown, LLMError>> {
-      const messages = normalizeInput(input);
+    ): Promise<Result<unknown, LLMError>> {
       const maxTokens = options?.maxTokens ?? DEFAULT_MAX_TOKENS;
       const temperature = options?.temperature;
       const signal = options?.signal;
@@ -227,10 +215,9 @@ export function createAnthropicClient(
     },
 
     async stream(
-      input: MessageInput,
+      messages: Message[],
       options?: StreamOptions,
     ): Promise<Result<AsyncIterable<string>, LLMError>> {
-      const messages = normalizeInput(input);
       const maxTokens = options?.maxTokens ?? DEFAULT_MAX_TOKENS;
       const temperature = options?.temperature;
 

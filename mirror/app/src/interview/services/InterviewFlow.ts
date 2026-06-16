@@ -14,6 +14,7 @@
 // cancel whatever is in flight.
 
 import type { LLMClient, Message } from "@nc-750/llm-ts";
+import { toWireMessages } from "../../llm";
 import { logger } from "../../logger";
 import type { useInterviewStore } from "../stores/InterviewStore";
 import {
@@ -59,14 +60,6 @@ function freshController(): AbortController {
 }
 
 // ── Internal helpers ──────────────────────────────────────────────────────
-
-/** Convert domain transcript messages to wire `Message[]` for LLM calls. */
-function toWireMessages(messages: TranscriptMessage[]): Message[] {
-    return messages.map((m) => ({
-        role: m.role as Message["role"],
-        content: [{ type: "text", text: m.content }],
-    }));
-}
 
 /**
  * Find the last non-error assistant message in the transcript (the question

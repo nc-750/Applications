@@ -17,7 +17,9 @@ export async function testConnection(config: LLMConfig): Promise<number> {
     const client = createClientFromConfig(config);
 
     const start = Date.now();
-    const result = await client.message("Reply with the single word: ok");
+    const result = await client.message([
+        { role: "user", content: [{ type: "text", text: "Reply with the single word: ok" }] },
+    ]);
 
     if (!result.ok) {
         logger.error("llm", `Connection test failed: ${result.error.message}`);

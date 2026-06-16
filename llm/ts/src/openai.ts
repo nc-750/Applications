@@ -2,14 +2,11 @@ import OpenAI from "openai";
 import { LLMError, Ok, Err } from "./types";
 import type {
   LLMClient,
-  MessageInput,
   MessageOptions,
   StreamOptions,
   Message,
   ContentPart,
   TextPart,
-  ImagePart,
-  AudioPart,
   Result,
   ProviderKind,
 } from "./types";
@@ -26,14 +23,13 @@ function toOpenAIContentPart(
   part: ContentPart,
 ): OpenAI.Chat.ChatCompletionContentPart {
   if (part.type === "text") {
-    return { type: "text", text: (part as TextPart).text };
+    return { type: "text", text: part.text };
   }
   if (part.type === "image") {
-    const img = part as ImagePart;
     return {
       type: "image_url",
       image_url: {
-        url: `data:${img.source.media_type};base64,${img.source.data}`,
+        url: `data:${part.source.media_type};base64,${part.source.data}`,
         detail: "auto",
       },
     } as OpenAI.Chat.ChatCompletionContentPart;
@@ -43,10 +39,19 @@ function toOpenAIContentPart(
     // Represent as a text description rather than silently dropping.
     return {
       type: "text",
-      text: `[Audio: ${(part as AudioPart).source.media_type}]`,
+      text: `[Audio: ${part.source.media_type}]`,
     } as OpenAI.Chat.ChatCompletionContentPart;
   }
   throw new Error(`Unknown content part type: ${(part as ContentPart).type}`);
+}
+
+/** Concatenate the text parts of a message — used where the OpenAI SDK wants a
+ *  plain string (system / assistant roles). Non-text parts are ignored there. */
+function textOf(content: ContentPart[]): string {
+  return content
+    .filter((p): p is TextPart => p.type === "text")
+    .map((p) => p.text)
+    .join("\n\n");
 }
 
 function toOpenAIMessages(
@@ -54,38 +59,14 @@ function toOpenAIMessages(
 ): OpenAI.Chat.ChatCompletionMessageParam[] {
   return messages.map((msg) => {
     if (msg.role === "system") {
-      return {
-        role: "system",
-        content: typeof msg.content === "string" ? msg.content : "",
-      };
+      return { role: "system", content: textOf(msg.content) };
     }
     if (msg.role === "assistant") {
-      return {
-        role: "assistant",
-        content: typeof msg.content === "string" ? msg.content : "",
-      };
+      return { role: "assistant", content: textOf(msg.content) };
     }
-    // user — can be string or content parts
-    if (typeof msg.content === "string") {
-      return { role: "user", content: msg.content };
-    }
-    return {
-      role: "user",
-      content: msg.content.map(toOpenAIContentPart),
-    };
+    // user — full multi-modal content parts
+    return { role: "user", content: msg.content.map(toOpenAIContentPart) };
   });
-}
-
-// ── Input normalization ────────────────────────────────────────────────────
-
-function normalizeInput(input: MessageInput): Message[] {
-  if (typeof input === "string") {
-    return [{ role: "user", content: input }];
-  }
-  if (Array.isArray(input)) {
-    return input;
-  }
-  return [input];
 }
 
 // ── Provider creation ──────────────────────────────────────────────────────
@@ -116,10 +97,9 @@ export function createOpenAIClient(
   // but TypeScript cannot verify overload compatibility with a plain object literal.
   const llmClient: LLMClient = {
     async message(
-      input: MessageInput,
+      messages: Message[],
       options?: MessageOptions,
-    ): Promise<Result<string | unknown, LLMError>> {
-      const messages = normalizeInput(input);
+    ): Promise<Result<unknown, LLMError>> {
       const maxTokens = options?.maxTokens ?? DEFAULT_MAX_TOKENS;
       const temperature = options?.temperature;
       const signal = options?.signal;
@@ -159,10 +139,9 @@ export function createOpenAIClient(
     },
 
     async stream(
-      input: MessageInput,
+      messages: Message[],
       options?: StreamOptions,
     ): Promise<Result<AsyncIterable<string>, LLMError>> {
-      const messages = normalizeInput(input);
       const maxTokens = options?.maxTokens ?? DEFAULT_MAX_TOKENS;
       const temperature = options?.temperature;
       const signal = options?.signal;
