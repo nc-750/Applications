@@ -181,30 +181,30 @@ describe("runSynthesis", () => {
         const persona = await runSynthesis(fakeLLM, interviewStore, personaStore);
 
         // Persona was committed
-        expect(personaStore.persona.value.metadata.language).toBe("en");
-        expect(personaStore.persona.value.metadata.version).toBe("1.0");
+        expect(personaStore.persona.metadata.language).toBe("en");
+        expect(personaStore.persona.metadata.version).toBe("1.0");
 
         // Skills mapped correctly
-        expect(personaStore.persona.value.skills.length).toBe(1);
-        expect(personaStore.persona.value.skills[0].name).toBe("TypeScript");
+        expect(personaStore.persona.skills.length).toBe(1);
+        expect(personaStore.persona.skills[0].name).toBe("TypeScript");
 
         // Career mapped to career (not carreer)
-        expect(personaStore.persona.value.career.length).toBe(1);
-        expect(personaStore.persona.value.career[0].role).toBe("Engineer");
+        expect(personaStore.persona.career.length).toBe(1);
+        expect(personaStore.persona.career[0].role).toBe("Engineer");
 
         // Derived fields from use_cases
-        expect(personaStore.persona.value.derived.cvSummary).toBe("Experienced engineer.");
-        expect(personaStore.persona.value.derived.linkedinAbout).toBe("LinkedIn story.");
-        expect(personaStore.persona.value.derived.interviewPitch).toBeNull();
+        expect(personaStore.persona.derived.cvSummary).toBe("Experienced engineer.");
+        expect(personaStore.persona.derived.linkedinAbout).toBe("LinkedIn story.");
+        expect(personaStore.persona.derived.interviewPitch).toBeNull();
 
         // HWB stored in persona.derived.howIWorkBest
-        expect(personaStore.persona.value.derived.howIWorkBest).toEqual(fakeHowIWorkBest());
+        expect(personaStore.persona.derived.howIWorkBest).toEqual(fakeHowIWorkBest());
 
         // Interview status = completed
         expect(interviewStore.status).toBe("completed");
 
         // Returned persona has the same content as the stored persona
-        expect(persona).toEqual(personaStore.persona.value);
+        expect(persona).toEqual(personaStore.persona);
     });
 
     it("sets interview status to error when extract phase fails", async () => {
@@ -262,7 +262,7 @@ describe("runSynthesis", () => {
         // HWB failed but the persona was still committed
         expect(persona.derived.howIWorkBest).toEqual([]);
         expect(interviewStore.status).toBe("completed");
-        expect(personaStore.persona.value.skills.length).toBe(1); // rest of pipeline succeeded
+        expect(personaStore.persona.skills.length).toBe(1); // rest of pipeline succeeded
     });
 
     it("is a callable function (compiles correctly)", () => {

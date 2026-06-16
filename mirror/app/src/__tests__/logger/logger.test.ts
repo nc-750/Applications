@@ -1,14 +1,18 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { logger, setDebugEnabled } from "../../logger/services/logger";
-import { useMirrorStore } from "../../stores/mirror";
+import {
+  logger,
+  setDebugEnabled,
+  clearLogs,
+  setMaxEntries,
+  logEntries,
+} from "../../logger";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 function resetLogStore() {
-  const store = useMirrorStore();
-  store.clearLogs();
-  store.setDebugEnabled(false);
-  store.setMaxEntries(500);
+  clearLogs();
+  setDebugEnabled(false);
+  setMaxEntries(500);
 }
 
 // ── API Key Redaction ──────────────────────────────────────────────────────
@@ -16,32 +20,29 @@ function resetLogStore() {
 describe("logger — API key redaction", () => {
   beforeEach(() => {
     resetLogStore();
-    useMirrorStore().setDebugEnabled(true);
+    setDebugEnabled(true);
   });
 
   it("redacts sk-* keys in log messages", () => {
     logger.info("llm", "Using key sk-proj-abcdefghijklmnopqrstuvwxyz123456");
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    expect(entries[0].message).not.toContain("sk-proj-");
-    expect(entries[0].message).toContain("[REDACTED]");
+    expect(logEntries.value.length).toBe(1);
+    expect(logEntries.value[0].message).not.toContain("sk-proj-");
+    expect(logEntries.value[0].message).toContain("[REDACTED]");
   });
 
   it("redacts sk-ant-* keys in log messages", () => {
     logger.info("llm", "Using key sk-ant-admin-abcdefghijklmnopqrst123456");
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    expect(entries[0].message).not.toContain("sk-ant-");
-    expect(entries[0].message).toContain("[REDACTED]");
+    expect(logEntries.value.length).toBe(1);
+    expect(logEntries.value[0].message).not.toContain("sk-ant-");
+    expect(logEntries.value[0].message).toContain("[REDACTED]");
   });
 
   it("redacts keys inside the data object", () => {
     logger.info("llm", "API call", {
       data: { apiKey: "sk-verysecretkey123456789012345" },
     });
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    const data = entries[0].data as Record<string, unknown> | undefined;
+    expect(logEntries.value.length).toBe(1);
+    const data = logEntries.value[0].data as Record<string, unknown> | undefined;
     expect(data).toBeDefined();
     expect(JSON.stringify(data)).not.toContain("sk-verysecretkey");
     expect(JSON.stringify(data)).toContain("[REDACTED]");
@@ -51,9 +52,8 @@ describe("logger — API key redaction", () => {
     logger.info("llm", "Batch call", {
       data: { keys: ["sk-key12345678901234567890", "normal-text"] },
     });
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    const data = entries[0].data as Record<string, unknown> | undefined;
+    expect(logEntries.value.length).toBe(1);
+    const data = logEntries.value[0].data as Record<string, unknown> | undefined;
     const keys = (data as any)?.keys;
     expect(keys[0]).toBe("[REDACTED]");
     expect(keys[1]).toBe("normal-text");
@@ -61,16 +61,14 @@ describe("logger — API key redaction", () => {
 
   it("does not redact non-key strings", () => {
     logger.info("app", "Mirror saved successfully");
-    const entries = useMirrorStore().logEntries;
-    expect(entries[0].message).toBe("Mirror saved successfully");
+    expect(logEntries.value[0].message).toBe("Mirror saved successfully");
   });
 
   it("redacts deeply nested key in object", () => {
     logger.info("settings", "Config", {
       data: { config: { credentials: { token: "sk-api12345678901234567890" } } },
     });
-    const entries = useMirrorStore().logEntries;
-    const str = JSON.stringify(entries[0].data);
+    const str = JSON.stringify(logEntries.value[0].data);
     expect(str).not.toContain("sk-api");
     expect(str).toContain("[REDACTED]");
   });
@@ -84,43 +82,45 @@ describe("logger — debug filter", () => {
   });
 
   it("does not push debug entries when debugEnabled is false", () => {
-    useMirrorStore().setDebugEnabled(false);
+    setDebugEnabled(false);
     logger.debug("llm", "This is a debug message");
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(0);
+    expect(logEntries.value.length).toBe(0);
   });
 
   it("pushes debug entries when debugEnabled is true", () => {
-    useMirrorStore().setDebugEnabled(true);
+    setDebugEnabled(true);
     logger.debug("llm", "This is a debug message");
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    expect(entries[0].level).toBe("debug");
+    expect(logEntries.value.length).toBe(1);
+    expect(logEntries.value[0].level).toBe("debug");
   });
 
   it("always pushes info entries regardless of debugEnabled", () => {
-    useMirrorStore().setDebugEnabled(false);
+    setDebugEnabled(false);
     logger.info("app", "Info message");
-    expect(useMirrorStore().logEntries.length).toBe(1);
+    expect(logEntries.value.length).toBe(1);
   });
 
   it("always pushes warn entries regardless of debugEnabled", () => {
-    useMirrorStore().setDebugEnabled(false);
+    setDebugEnabled(false);
     logger.warn("app", "Warning message");
-    expect(useMirrorStore().logEntries.length).toBe(1);
+    expect(logEntries.value.length).toBe(1);
   });
 
   it("always pushes error entries regardless of debugEnabled", () => {
-    useMirrorStore().setDebugEnabled(false);
+    setDebugEnabled(false);
     logger.error("app", "Error message", { error: new Error("test") });
-    expect(useMirrorStore().logEntries.length).toBe(1);
+    expect(logEntries.value.length).toBe(1);
   });
 
-  it("setDebugEnabled toggles the store flag", () => {
+  it("setDebugEnabled(true) allows debug entries; setDebugEnabled(false) suppresses them", () => {
     setDebugEnabled(true);
-    expect(useMirrorStore().debugEnabled).toBe(true);
+    logger.debug("llm", "Should appear");
+    expect(logEntries.value.length).toBe(1);
+
+    clearLogs();
     setDebugEnabled(false);
-    expect(useMirrorStore().debugEnabled).toBe(false);
+    logger.debug("llm", "Should not appear");
+    expect(logEntries.value.length).toBe(0);
   });
 });
 
@@ -133,9 +133,8 @@ describe("logger — entry shape", () => {
 
   it("produces entries with id, timestamp, level, category, message", () => {
     logger.info("app", "Test message");
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(1);
-    const entry = entries[0];
+    expect(logEntries.value.length).toBe(1);
+    const entry = logEntries.value[0];
     expect(entry.id).toBeDefined();
     expect(typeof entry.id).toBe("string");
     expect(entry.timestamp).toBeDefined();
@@ -146,21 +145,21 @@ describe("logger — entry shape", () => {
 
   it("includes data when provided", () => {
     logger.info("app", "With data", { data: { count: 42 } });
-    const entry = useMirrorStore().logEntries[0];
+    const entry = logEntries.value[0];
     expect(entry.data).toEqual({ count: 42 });
   });
 
   it("includes stack trace for errors", () => {
     const err = new Error("Something went wrong");
     logger.error("system", "System error", { error: err });
-    const entry = useMirrorStore().logEntries[0];
+    const entry = logEntries.value[0];
     expect(entry.stack).toBeDefined();
     expect(entry.stack).toContain("Error: Something went wrong");
   });
 
   it("timestamp is ISO 8601 format", () => {
     logger.info("app", "Timestamp test");
-    const entry = useMirrorStore().logEntries[0];
+    const entry = logEntries.value[0];
     const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
     expect(entry.timestamp).toMatch(isoRegex);
   });
@@ -173,29 +172,28 @@ describe("logger — ring buffer", () => {
     resetLogStore();
   });
 
-  it("appends entries to the store", () => {
+  it("appends entries to the buffer", () => {
     logger.info("app", "First");
     logger.info("app", "Second");
-    expect(useMirrorStore().logEntries.length).toBe(2);
+    expect(logEntries.value.length).toBe(2);
   });
 
   it("shifts old entries when exceeding maxEntries", () => {
-    useMirrorStore().setMaxEntries(3);
+    setMaxEntries(3);
     logger.info("app", "One");
     logger.info("app", "Two");
     logger.info("app", "Three");
     logger.info("app", "Four"); // should kick out "One"
-    const entries = useMirrorStore().logEntries;
-    expect(entries.length).toBe(3);
-    expect(entries[0].message).toBe("Two");
-    expect(entries[2].message).toBe("Four");
+    expect(logEntries.value.length).toBe(3);
+    expect(logEntries.value[0].message).toBe("Two");
+    expect(logEntries.value[2].message).toBe("Four");
   });
 
   it("clears all entries on clearLogs()", () => {
     logger.info("app", "One");
     logger.info("app", "Two");
-    useMirrorStore().clearLogs();
-    expect(useMirrorStore().logEntries.length).toBe(0);
+    clearLogs();
+    expect(logEntries.value.length).toBe(0);
   });
 });
 
@@ -207,25 +205,25 @@ describe("logger — convenience methods", () => {
   });
 
   it("logger.debug writes at debug level", () => {
-    useMirrorStore().setDebugEnabled(true);
+    setDebugEnabled(true);
     logger.debug("llm", "Debug test");
-    const entry = useMirrorStore().logEntries[0];
+    const entry = logEntries.value[0];
     expect(entry.level).toBe("debug");
     expect(entry.category).toBe("llm");
   });
 
   it("logger.info writes at info level", () => {
     logger.info("store", "Info test");
-    expect(useMirrorStore().logEntries[0].level).toBe("info");
+    expect(logEntries.value[0].level).toBe("info");
   });
 
   it("logger.warn writes at warn level", () => {
     logger.warn("synthesis", "Warn test");
-    expect(useMirrorStore().logEntries[0].level).toBe("warn");
+    expect(logEntries.value[0].level).toBe("warn");
   });
 
   it("logger.error writes at error level", () => {
     logger.error("system", "Error test", { error: new Error("fail") });
-    expect(useMirrorStore().logEntries[0].level).toBe("error");
+    expect(logEntries.value[0].level).toBe("error");
   });
 });
