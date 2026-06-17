@@ -66,9 +66,9 @@ const phaseDetail = computed(
   <!-- Synthesizing -->
   <div
     v-else-if="status === 'synthesizing'"
-    class="flex flex-col items-center justify-center text-center gap-4 py-12"
+    class="flex flex-col items-center justify-center text-center gap-4 py-12 h-full"
   >
-    <Loader2 :size="32" class="animate-spin comp-icon" aria-hidden="true" />
+    <Loader2 :size="32" class="animate-spin nc-text--accent" aria-hidden="true" />
     <div aria-live="polite" aria-atomic="true">
       <p class="nc-text-md nc-font-semibold comp-title">{{ phaseLabel }}</p>
       <p class="nc-text-sm nc-text-secondary comp-detail">{{ phaseDetail }}</p>
@@ -76,7 +76,11 @@ const phaseDetail = computed(
   </div>
 
   <!-- Completed -->
-  <CompletedPanel :personaName="personaName" />
+  <CompletedPanel 
+    v-if="status === 'completed'"
+    :personaName="personaName"
+    @restart="emit('restart')"
+  />
 </template>
 
 <style scoped>

@@ -74,6 +74,8 @@ const lastQuestion = computed(() => {
 
 // ── Lifecycle ───────────────────────────────────────────────────────────────
 onMounted(async () => {
+    window.addEventListener("beforeunload", onBeforeUnload);
+
     try {
         await interviewStore.loadInterview();
     } catch {
@@ -179,6 +181,12 @@ async function onRestart() {
         pageError.value = e instanceof Error ? e.message : "Failed to clear interview.";
     }
 }
+
+async function onBeforeUnload() {
+    if (status.value === "synthesizing") {
+        interviewStore.setStatus("active");
+    }
+}
 </script>
 
 <template>
@@ -199,7 +207,7 @@ async function onRestart() {
     </Cell> -->
     
         <!-- Interaction cell — the active surface for input/actions -->
-        <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3">
+        <Cell title="INTERVIEW" spec="IVW // 0x03" :grow="3" class="relative">
             <!-- Page-level error banner -->
             <div
                 v-if="displayError"
@@ -239,7 +247,7 @@ async function onRestart() {
                 v-else-if="isActive"
                 :facet="interviewStore.currentFacet ?? 'story'"
                 :question="lastQuestion"
-                :disabled="isBusy"
+                :is-working="isBusy"
                 @submit="onSubmitAnswer"
             />
 
@@ -266,6 +274,7 @@ async function onRestart() {
                     Restart Interview
                 </button>
             </div>
+
 
             <div v-if="isBusy && !showCompletion" class="ivw-overlay">
                 <div class="nc-acquire flex justify-center h-full">
