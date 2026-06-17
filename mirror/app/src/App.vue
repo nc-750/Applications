@@ -48,5 +48,7 @@ onMounted(() => {
         </Cell>
     </Band>
     <RouterView />
-    <ChassisFooter title="NC-750 // MIRROR // NODE-0M"/>
+    <footer class="nc-chassis-footer">
+        <a href="mailto:support@nc-750.com" class="nc-lcd-sub">NC-750 // MIRROR // SUPPORT</a>
+    </footer>
 </template>
