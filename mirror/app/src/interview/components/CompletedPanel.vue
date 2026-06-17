@@ -17,11 +17,11 @@ const profileTarget = "/profile";
 
 <template>
     <div class="flex flex-col items-center justify-center text-center gap-6 py-12 px-6">
-        <CheckCircle :size="36" class="comp-icon" aria-hidden="true" />
+        <CheckCircle :size="36" class="nc-text--accent" aria-hidden="true" />
     
         <div>
-            <p class="nc-text-lg nc-font-semibold comp-title">
-                {{ personaName ? `${personaName}'s mirror is ready` : "Mirror ready" }}
+            <p class="nc-text-lg nc-font-semibold">
+                {{ personaName ? `${personaName}'s persona is ready` : "Persona ready" }}
             </p>
             <p class="nc-text-sm nc-text-secondary max-w-sm comp-sub">
                 Your interview is complete. View your private insight document or your public profile.
@@ -39,24 +39,9 @@ const profileTarget = "/profile";
             </router-link>
         </div>
 
-        <button class="comp-restart" @click="emit('restart')">
+        <button class="nc-btn nc-btn--ghost" @click="emit('restart')">
             <RotateCcw :size="12" aria-hidden="true" />
             Start new interview
         </button>
   </div>
 </template>
-
-<style scoped>
-/* kept: no .nc-* class for accent-ink text link button */
-.comp-restart {
-    display: flex;
-    align-items: center;
-    gap: var(--nc-space-1);
-    font-size: var(--nc-text-xs);
-    margin-top: var(--nc-space-1);
-    color: var(--nc-accent-ink);
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-</style>

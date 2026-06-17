@@ -80,16 +80,6 @@ const phaseDetail = computed(
 </template>
 
 <style scoped>
-/* kept: no .nc-* class for accent-coloured icon */
-.comp-icon {
-    color: var(--nc-accent);
-}
-
-/* kept: no .nc-* class for ink title colour */
-.comp-title {
-    color: var(--nc-ink);
-}
-
 /* kept: no .nc-* class for subtitle top-margin + line-height */
 .comp-sub {
     margin-top: var(--nc-space-2);

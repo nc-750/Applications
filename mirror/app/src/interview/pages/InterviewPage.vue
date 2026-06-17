@@ -11,7 +11,6 @@
 //   error        → coverage readout + completion error
 
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { Band, Cell, MonitorCell } from "@nc-750/lab-vue";
 import { logger } from "../../logger";
 import { useInterviewStore } from "../stores/InterviewStore";
@@ -39,7 +38,6 @@ import CompletionPanel from "../components/CompletionPanel.vue";
 const interviewStore = useInterviewStore();
 const settingsStore = useSettingsStore();
 const personaStore = usePersonaStore();
-const router = useRouter();
 
 // ── LLM client ──────────────────────────────────────────────────────────────
 // The settings→client wiring lives in a reactive adapter composable (4.6); the
