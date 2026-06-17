@@ -9,7 +9,7 @@
 // values/hidden assets, skills map, personality dimensions, goals, career timeline,
 // outside work, how I work best, ready-to-use text, and interview transcript.
 
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted } from "vue";
 import { BookOpen } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 import { usePersonaStore } from "../../persona/stores";
@@ -21,27 +21,10 @@ import DimensionsCell from "../components/DimensionsCell.vue";
 import CareerTimelineCell from "../components/CareerTimelineCell.vue";
 import DerivedTextCell from "../components/DerivedTextCell.vue";
 import TranscriptCell from "../components/TranscriptCell.vue";
-import { logger } from "../../logger";
-import { useLLMClient } from "../../llm";
 import { useInterviewStore } from "../../interview/stores";
-import { runSynthesis } from "../../interview/services";
 
 const personaStore = usePersonaStore();
 const interviewStore = useInterviewStore();
-
-// ── LLM client ──────────────────────────────────────────────────────────────
-// The settings→client wiring lives in a shared reactive adapter composable (4.6);
-// the view stays a thin consumer (2.7).
-const { client: llmClient, clientError: clientErrorSource } = useLLMClient();
-
-// ── Local UI state ──────────────────────────────────────────────────────────
-const isBusy = ref(false);
-
-// The composable exposes a readonly error; mirror it into a local writable ref so
-// the banner's Dismiss button can clear it. Re-populates if the client rebuilds
-// and fails again.
-const clientError = ref<string | null>(null);
-watch(clientErrorSource, (next) => { clientError.value = next; }, { immediate: true });
 
 // The store seeds a total, never-null persona (createEmptyPersona), so "is there a
 // mirror yet?" is a content question, not a null check: an insight exists once
@@ -115,45 +98,38 @@ const hasDerivedText = computed(() =>
 onMounted(() => {
     void personaStore.loadPersona();
     void interviewStore.loadInterview();
+
+    // window.addEventListener("beforeunload", onBeforeUnload);
 });
 
-async function onRegeneratePersona() {
-    const client = llmClient.value;
-    if (!client) return;
+// TODO: Refactor so it is better integrated into the app and plays well with the other views.
+// QUESTION: Do we need this feature here?
+// async function onRegeneratePersona() {
+//     const client = llmClient.value;
+//     if (!client) return;
 
-    isBusy.value = true;
-    try {
-        await runSynthesis(client, interviewStore, personaStore);
-        // runSynthesis sets status to "completed" and commits the persona;
-        // on failure it sets status to "error" and calls interviewStore.setError().
-    } catch (e) {
-        // Synthesis already surfaced the error into interviewStore.error.
-        // Log only unexpected re-throws from infrastructure.
-        logger.error("app", "Synthesis failed", { error: e instanceof Error ? e : undefined });
-    } finally {
-        isBusy.value = false;
-    }
-}
+//     isBusy.value = true;
+//     try {
+//         await runSynthesis(client, interviewStore, personaStore);
+//         // runSynthesis sets status to "completed" and commits the persona;
+//         // on failure it sets status to "error" and calls interviewStore.setError().
+//     } catch (e) {
+//         // Synthesis already surfaced the error into interviewStore.error.
+//         // Log only unexpected re-throws from infrastructure.
+//         logger.error("app", "Synthesis failed", { error: e instanceof Error ? e : undefined });
+//     } finally {
+//         isBusy.value = false;
+//     }
+// }
+
+// async function onBeforeUnload() {
+//     if (interviewStore.status === "synthesizing") {
+//         interviewStore.setStatus("active");
+//     }
+// }
 </script>
 
 <template>
-    <Band v-if="isBusy" :grow="1">
-        <Cell title="GENERATION" spec="INS // 0x0B">
-            <div class="ivw-overlay flex justify-center h-full">
-                <div class="nc-acquire ">
-                    <div class="nc-acquire__wave">
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                    </div>
-                    <div class="nc-acquire__label">Generating Persona</div>
-                </div>
-            </div>
-        </Cell>
-    </Band>
-
     <!-- No synthesized persona yet -->
     <Band v-if="!hasInsight" :grow="1">
         <Cell title="INSIGHT" spec="INS // 0x00" :grow="1">
@@ -170,28 +146,13 @@ async function onRegeneratePersona() {
     </Band>
 
     <!-- Synthesized persona — the instrument readout -->
-    <template v-else-if="!isBusy && hasInsight">
+    <template v-else>
         <!-- Nameplate: private-document metadata -->
         <Band>
             <Cell title="INSIGHT" spec="INS // 0x00">
-                <!-- Page-level error banner -->
-                <div
-                    v-if="clientError"
-                    class="flex items-center gap-2 p-3 mb-4 ivw-error"
-                    role="alert"
-                >
-                    <p class="nc-text-sm ivw-error-text">{{ clientError }}</p>
-                    <button
-                        class="nc-btn nc-btn--ghost nc-btn--sm"
-                        @click="clientError = null"
-                    >
-                        Dismiss
-                    </button>
-                </div>
                 <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                     <span class="nc-text-sm">Private reflection document</span>
                     <span class="nc-text-xs nc-text-muted">{{ metaLine }}</span>
-                    <button class="nc-btn nc-btn--ghost" @click="onRegeneratePersona">Regenerate Persona</button>
                 </div>
             </Cell>
         </Band>
