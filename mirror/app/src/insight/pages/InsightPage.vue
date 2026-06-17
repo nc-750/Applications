@@ -138,18 +138,20 @@ async function onRegeneratePersona() {
 
 <template>
     <Band v-if="isBusy" :grow="1">
-        <div class="ivw-overlay">
-            <div class="nc-acquire flex justify-center h-full">
-                <div class="nc-acquire__wave">
-                    <div class="nc-acquire__bar" />
-                    <div class="nc-acquire__bar" />
-                    <div class="nc-acquire__bar" />
-                    <div class="nc-acquire__bar" />
-                    <div class="nc-acquire__bar" />
+        <Cell title="GENERATION" spec="INS // 0x0B">
+            <div class="ivw-overlay flex justify-center h-full">
+                <div class="nc-acquire ">
+                    <div class="nc-acquire__wave">
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                        <div class="nc-acquire__bar" />
+                    </div>
+                    <div class="nc-acquire__label">Generating Persona</div>
                 </div>
-                <div class="nc-acquire__label">Generating Persona</div>
             </div>
-        </div>
+        </Cell>
     </Band>
 
     <!-- No synthesized persona yet -->
