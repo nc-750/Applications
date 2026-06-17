@@ -6,7 +6,6 @@ import {
   Band,
   Cell,
   ChassisHeader, 
-  ChassisFooter
 } from "@nc-750/lab-vue";
 
 import { useSettingsStore } from "./settings/stores";

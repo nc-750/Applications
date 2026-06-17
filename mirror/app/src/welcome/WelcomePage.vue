@@ -7,15 +7,16 @@ import { useSettingsStore } from "../settings/stores";
 import { useInterviewStore } from "../interview/stores";
 
 const settingsStore = useSettingsStore();
-const primaryButton = computed(() => ({
-    target: settingsStore.isLLMConfigured ? "/interview" : "/settings",
-    label: settingsStore.isLLMConfigured ? "Interview" : "Configure AI",
-}));
-const insightTarget = "/insight";
-const profileTarget = "/profile";
-
 const interviewStore = useInterviewStore();
-const isActive = computed(() => interviewStore.status === "active");
+
+const links = {
+    interview: "/interview",
+    insight: "/insight",
+    profile: "/profile",
+    settings: "/settings"
+}
+
+const needConfiguration = computed(() => !settingsStore.isLLMConfigured);
 const isCompleted = computed(() => interviewStore.status === "completed");
 </script>
 
@@ -34,17 +35,20 @@ const isCompleted = computed(() => interviewStore.status === "completed");
 
                 <!-- Actions -->
                 <div class="flex flex-col">
-                    <router-link v-if="isActive || isCompleted" :to="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
-                        <MessageSquare :size="15" aria-hidden="true" v-if="settingsStore.isLLMConfigured"/>
-                        <BrainCircuit :size="15" aria-hidden="true" v-else />
-                        {{ primaryButton.label }} 
+                    <router-link v-if="needConfiguration" :to="links.settings" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                        <BrainCircuit :size="15" aria-hidden="true"/>
+                        Configure AI
                     </router-link>
-                    <div class="flex gap-4">
-                        <router-link v-if="isCompleted" :to="insightTarget" class="nc-btn nc-btn--lg mb-2">
+                    <router-link v-if="!needConfiguration" :to="links.interview" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                        <MessageSquare :size="15" aria-hidden="true"/>
+                        Interview 
+                    </router-link>
+                    <div class="flex gap-4" v-if="!needConfiguration && isCompleted">
+                        <router-link :to="links.insight" class="nc-btn nc-btn--lg mb-2">
                             <User :size="15" aria-hidden="true" />
                             Insight
                         </router-link>
-                        <router-link v-if="isCompleted" :to="profileTarget" class="nc-btn nc-btn--lg mb-2">
+                        <router-link :to="links.profile" class="nc-btn nc-btn--lg mb-2">
                             <Globe :size="15" aria-hidden="true" />
                             Profile
                         </router-link>
