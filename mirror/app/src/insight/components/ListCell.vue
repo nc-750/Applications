@@ -11,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-    <Cell :title="title" :spec="spec" :grow="1" :surface="surface">
+    <Cell :title="title" :spec="spec" :grow="1">
         <div class="flex flex-col gap-1">
             <span v-if="items.length === 0" class="nc-text-sm nc-text-muted">—</span>
             <span v-for="(item, i) in items" :key="i" class="slc-entry">▸ {{ item.title }}</span>
