@@ -10,6 +10,9 @@ const emit = defineEmits<{
     goProfile: [];
     restart: [];
 }>();
+
+const insightTarget = "/insight";
+const profileTarget = "/profile";
 </script>
 
 <template>
@@ -26,14 +29,14 @@ const emit = defineEmits<{
         </div>
 
         <div class="flex flex-col gap-3">
-            <button class="nc-btn nc-btn--accent justify-center" @click="emit('goInsight')">
+            <router-link :to="insightTarget" class="nc-btn nc-btn--accent">
                 <User :size="15" aria-hidden="true" />
-                View Insight
-            </button>
-            <button class="nc-btn nc-btn--secondary justify-center" @click="emit('goProfile')">
+                Insight
+            </router-link>
+            <router-link :to="profileTarget" class="nc-btn nc-btn--secondary">
                 <Globe :size="15" aria-hidden="true" />
-                View Profile
-            </button>
+                Profile
+            </router-link>
         </div>
 
         <button class="comp-restart" @click="emit('restart')">

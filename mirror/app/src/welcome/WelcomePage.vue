@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { MessageSquare, Import, BrainCircuit } from "lucide-vue-next";
+import { MessageSquare, Import, BrainCircuit, User, Globe } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
 import { computed } from "vue";
 import { useSettingsStore } from "../settings/stores";
+import { useInterviewStore } from "../interview/stores";
 
 const settingsStore = useSettingsStore();
 const primaryButton = computed(() => ({
     target: settingsStore.isLLMConfigured ? "/interview" : "/settings",
-    label: settingsStore.isLLMConfigured ? "Probe" : "Configure AI",
+    label: settingsStore.isLLMConfigured ? "Interview" : "Configure AI",
 }));
+const insightTarget = "/insight";
+const profileTarget = "/profile";
 
+const interviewStore = useInterviewStore();
+const isActive = computed(() => interviewStore.status === "active");
+const isCompleted = computed(() => interviewStore.status === "completed");
 </script>
 
 <template>
@@ -28,12 +34,23 @@ const primaryButton = computed(() => ({
 
                 <!-- Actions -->
                 <div class="flex flex-col">
-                    <router-link :to="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
+                    <router-link v-if="isActive || isCompleted" :to="primaryButton.target" class="nc-btn nc-btn--accent nc-btn--lg mb-2">
                         <MessageSquare :size="15" aria-hidden="true" v-if="settingsStore.isLLMConfigured"/>
                         <BrainCircuit :size="15" aria-hidden="true" v-else />
                         {{ primaryButton.label }} 
                     </router-link>
-                    <button class="nc-btn nc-btn--secondary nc-btn--lg">
+                    <div class="flex gap-4">
+                        <router-link v-if="isCompleted" :to="insightTarget" class="nc-btn nc-btn--lg mb-2">
+                            <User :size="15" aria-hidden="true" />
+                            Insight
+                        </router-link>
+                        <router-link v-if="isCompleted" :to="profileTarget" class="nc-btn nc-btn--lg mb-2">
+                            <Globe :size="15" aria-hidden="true" />
+                            Profile
+                        </router-link>
+                    </div>
+                    
+                    <button class="nc-btn nc-btn--ghost nc-btn--lg">
                         <Import :size="15" aria-hidden="true" />
                         Import your persona
                     </button>

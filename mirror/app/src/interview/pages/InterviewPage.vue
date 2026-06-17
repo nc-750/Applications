@@ -222,8 +222,6 @@ async function onRestart() {
                 v-if="showCompletion"
                 :status="(status as 'synthesizing' | 'completed' | 'error')"
                 :error-message="interviewStore.error ?? undefined"
-                @go-insight="router.push('/insight')"
-                @go-profile="router.push('/profile')"
                 @retry="onGenerate"
                 @restart="onRestart"
             />
