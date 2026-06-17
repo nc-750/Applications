@@ -2,7 +2,7 @@
 import { MessageSquare, Import, BrainCircuit, User, Globe } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useSettingsStore } from "../settings/stores";
 import { useInterviewStore } from "../interview/stores";
 
@@ -17,7 +17,15 @@ const links = {
 }
 
 const needConfiguration = computed(() => !settingsStore.isLLMConfigured);
-const isCompleted = computed(() => interviewStore.status === "completed");
+const isCompleted = computed(() => interviewStore.status === "completed")
+
+onMounted(async () => {
+    try {
+        await interviewStore.loadInterview();
+    } catch {
+        // loadInterview surfaces read failures into interviewStore.error
+    }
+});
 </script>
 
 <template>
