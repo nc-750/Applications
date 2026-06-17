@@ -17,7 +17,7 @@ import { logger } from "../../logger";
 import { useInterviewStore } from "../stores/InterviewStore";
 import { useSettingsStore } from "../../settings/stores";
 import { usePersonaStore } from "../../persona/stores";
-import { useInterviewClient } from "../composables/useInterviewClient";
+import { useLLMClient } from "../../llm";
 import {
     beginInterview,
     submitAnswer,
@@ -44,7 +44,7 @@ const router = useRouter();
 // ── LLM client ──────────────────────────────────────────────────────────────
 // The settings→client wiring lives in a reactive adapter composable (4.6); the
 // view stays a thin consumer (2.7).
-const { client: llmClient, clientError } = useInterviewClient();
+const { client: llmClient, clientError } = useLLMClient();
 
 // ── Local UI state ──────────────────────────────────────────────────────────
 const pageError = ref<string | null>(null);

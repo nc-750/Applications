@@ -102,20 +102,35 @@ describe("toPersona", () => {
         expect(persona.metrics.drivers).toBe(0.9);
     });
 
-    it("maps strengths array into combined label: description strings", () => {
+    it("maps strengths into PersonaStrength objects, folding evidence into the description", () => {
         const persona = toPersona(fixtureResult(), fixtureTranscript(), fixtureCoverage());
         expect(persona.strengths.length).toBe(1);
-        expect(persona.strengths[0]).toBe(
-            "Problem solving: Finds root causes (Debugged prod outage)"
-        );
+        expect(persona.strengths[0]).toEqual({
+            title: "Problem solving",
+            description: "Finds root causes (Debugged prod outage)",
+        });
     });
 
-    it("maps weaknesses with growth_note", () => {
+    it("maps weaknesses into PersonaWeakness objects, folding growth_note into the description", () => {
         const persona = toPersona(fixtureResult(), fixtureTranscript(), fixtureCoverage());
         expect(persona.weaknesses.length).toBe(1);
-        expect(persona.weaknesses[0]).toBe(
-            "Delegation: Takes on too much → Learning to trust the team"
+        expect(persona.weaknesses[0]).toEqual({
+            title: "Delegation",
+            description: "Takes on too much → Learning to trust the team",
+        });
+    });
+
+    it("omits the folded suffix when evidence / growth_note are null", () => {
+        const persona = toPersona(
+            fixtureResult({
+                strengths: [{ label: "Focus", description: "Stays on task", evidence: null }],
+                weaknesses: [{ label: "Patience", description: "Wants results fast", growth_note: null }],
+            }),
+            fixtureTranscript(),
+            fixtureCoverage(),
         );
+        expect(persona.strengths[0]).toEqual({ title: "Focus", description: "Stays on task" });
+        expect(persona.weaknesses[0]).toEqual({ title: "Patience", description: "Wants results fast" });
     });
 
     it("maps skills with name and correct enum mappings", () => {

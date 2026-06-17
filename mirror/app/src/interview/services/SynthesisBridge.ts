@@ -4,14 +4,14 @@
 // and snake_case keys. This module is the SINGLE place where those boundary
 // shapes cross into the domain (CONVENTIONS 1.5 / 1.6). Every enum mapping,
 // every nullable default, and every field rename lives here and nowhere else.
-//
-// The Persona model defects (missing `name` on PersonaSkill, singular
-// `strength`, `carreer` misspelling, missing `derived` field) were fixed in
-// this same phase — so this bridge maps cleanly with no documented gaps.
+// The analyze boundary names a strength/weakness `label`; the domain calls it
+// `title` (PersonaStrength / PersonaWeakness) — that rename happens here.
 
 import {
     type Persona,
     type PersonaCareer,
+    type PersonaStrength,
+    type PersonaWeakness,
     PersonaSkillCategory,
     PersonaSkillLevel,
     PersonaSkillSource,
@@ -71,24 +71,27 @@ function parseYearEnd(raw: number | string): number {
     return isNaN(parsed) ? new Date().getFullYear() : parsed;
 }
 
-/** Format an analysis strength for the `Persona.strengths: string[]` field. */
-function formatStrength(s: {
+/** Map an analysis strength onto the domain `PersonaStrength` ({ title, description }).
+ *  `label` → `title`; supporting `evidence` is folded into the description so the
+ *  boundary detail isn't lost. */
+function toStrength(s: {
     label: string;
     description: string;
     evidence: string | null;
-}): string {
+}): PersonaStrength {
     const evidence = s.evidence ? ` (${s.evidence})` : "";
-    return `${s.label}: ${s.description}${evidence}`;
+    return { title: s.label, description: `${s.description}${evidence}` };
 }
 
-/** Format an analysis weakness for the `Persona.weaknesses: string[]` field. */
-function formatWeakness(w: {
+/** Map an analysis weakness onto the domain `PersonaWeakness` ({ title, description }).
+ *  `label` → `title`; the constructive `growth_note` is folded into the description. */
+function toWeakness(w: {
     label: string;
     description: string;
     growth_note: string | null;
-}): string {
+}): PersonaWeakness {
     const growth = w.growth_note ? ` → ${w.growth_note}` : "";
-    return `${w.label}: ${w.description}${growth}`;
+    return { title: w.label, description: `${w.description}${growth}` };
 }
 
 /** Build `PersonaGoal[]` from the synthesis boundary's `{ short_term, long_term }`. */
@@ -144,8 +147,8 @@ export function toPersona(
     persona.metrics.drivers = coverage.drivers;
 
     // Strengths / weaknesses
-    persona.strengths = result.strengths.map(formatStrength);
-    persona.weaknesses = result.weaknesses.map(formatWeakness);
+    persona.strengths = result.strengths.map(toStrength);
+    persona.weaknesses = result.weaknesses.map(toWeakness);
 
     // Skills (with name, enum mapping)
     persona.skills = result.skills.map((s) => ({

@@ -29,7 +29,7 @@ import {
 function validPersona(): Persona {
     return {
         ...createEmptyPersona(),
-        strengths: ["Systems thinking"],
+        strengths: [{ title: "Systems thinking", description: "Sees the whole board" }],
         skills: [
             {
                 name: "TypeScript",

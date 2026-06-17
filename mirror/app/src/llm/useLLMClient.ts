@@ -1,16 +1,18 @@
 import { ref, readonly, watch } from "vue";
 import type { LLMClient } from "@nc-750/llm-ts";
-import { createClientFromConfig } from "../../llm/factory";
-import { useSettingsStore } from "../../settings/stores";
+import { createClientFromConfig } from "./factory";
+import { useSettingsStore } from "../settings/stores";
 
 /**
  * Reactive adapter (CONVENTIONS 4.6) that owns the "settings change → rebuild
- * LLM client" wiring, so the view holds no infrastructure construction (2.7).
+ * LLM client" wiring, so a view holds no infrastructure construction (2.7).
+ * It names no feature concept, so it lives in the shared `src/llm/` layer and is
+ * consumed by every feature that needs a client (5.5 / 4.7).
  * Exposes a readonly client (null when settings are incomplete or construction
  * fails) and a readonly error string. Holds no business logic — what to do with
  * the client lives in the plain service functions that receive it as an argument.
  */
-export function useInterviewClient() {
+export function useLLMClient() {
     const settingsStore = useSettingsStore();
     const client = ref<LLMClient | null>(null);
     const error = ref<string | null>(null);

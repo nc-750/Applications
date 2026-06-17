@@ -9,36 +9,39 @@
 // values/hidden assets, skills map, personality dimensions, goals, career timeline,
 // outside work, how I work best, ready-to-use text, and interview transcript.
 
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { BookOpen } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 import { usePersonaStore } from "../../persona/stores";
 import { PersonaGoalType } from "../../persona/models";
 import MetricsMonitorCell from "../components/MetricsMonitorCell.vue";
 import StringListCell from "../components/StringListCell.vue";
-import ListCell from "../components/ListCell.vue";
 import SkillsMapCell from "../components/SkillsMapCell.vue";
 import DimensionsCell from "../components/DimensionsCell.vue";
 import CareerTimelineCell from "../components/CareerTimelineCell.vue";
 import DerivedTextCell from "../components/DerivedTextCell.vue";
 import TranscriptCell from "../components/TranscriptCell.vue";
-import { logger } from "../../logger/index.ts";
-import { useInterviewStore } from "../../interview/stores/InterviewStore.ts";
-import { useInterviewClient } from "../../interview/composables/useInterviewClient.ts";
-import { runSynthesis } from "../../interview/services/SynthesisFlow.ts";
+import { logger } from "../../logger";
+import { useLLMClient } from "../../llm";
+import { useInterviewStore } from "../../interview/stores";
+import { runSynthesis } from "../../interview/services";
 
 const personaStore = usePersonaStore();
 const interviewStore = useInterviewStore();
 
 // ── LLM client ──────────────────────────────────────────────────────────────
-// The settings→client wiring lives in a reactive adapter composable (4.6); the
-// view stays a thin consumer (2.7).
-
-// REMARK: Maybe we should create a specific useInsightClient instead?
-const { client: llmClient, clientError } = useInterviewClient();
+// The settings→client wiring lives in a shared reactive adapter composable (4.6);
+// the view stays a thin consumer (2.7).
+const { client: llmClient, clientError: clientErrorSource } = useLLMClient();
 
 // ── Local UI state ──────────────────────────────────────────────────────────
 const isBusy = ref(false);
+
+// The composable exposes a readonly error; mirror it into a local writable ref so
+// the banner's Dismiss button can clear it. Re-populates if the client rebuilds
+// and fails again.
+const clientError = ref<string | null>(null);
+watch(clientErrorSource, (next) => { clientError.value = next; }, { immediate: true });
 
 // The store seeds a total, never-null persona (createEmptyPersona), so "is there a
 // mirror yet?" is a content question, not a null check: an insight exists once
@@ -105,10 +108,13 @@ const hasDerivedText = computed(() =>
     persona.value.derived.interviewPitch !== null
 );
 
-// Rehydrate the persisted persona on entry (mirrors InterviewPage's loadInterview).
-// loadPersona surfaces any read failure into personaStore.error and never throws.
+// Rehydrate persisted state on entry. The persona backs the readout; the interview
+// transcript is what `runSynthesis` re-synthesizes from, so it must be loaded too or
+// "Regenerate Persona" would run over an empty in-memory transcript. Both loaders
+// surface read failures into their store's error and never throw.
 onMounted(() => {
     void personaStore.loadPersona();
+    void interviewStore.loadInterview();
 });
 
 async function onRegeneratePersona() {
@@ -131,6 +137,21 @@ async function onRegeneratePersona() {
 </script>
 
 <template>
+    <Band v-if="isBusy" :grow="1">
+        <div class="ivw-overlay">
+            <div class="nc-acquire flex justify-center h-full">
+                <div class="nc-acquire__wave">
+                    <div class="nc-acquire__bar" />
+                    <div class="nc-acquire__bar" />
+                    <div class="nc-acquire__bar" />
+                    <div class="nc-acquire__bar" />
+                    <div class="nc-acquire__bar" />
+                </div>
+                <div class="nc-acquire__label">Generating Persona</div>
+            </div>
+        </div>
+    </Band>
+
     <!-- No synthesized persona yet -->
     <Band v-if="!hasInsight" :grow="1">
         <Cell title="INSIGHT" spec="INS // 0x00" :grow="1">
@@ -147,7 +168,7 @@ async function onRegeneratePersona() {
     </Band>
 
     <!-- Synthesized persona — the instrument readout -->
-    <template v-else>
+    <template v-else-if="!isBusy && hasInsight">
         <!-- Nameplate: private-document metadata -->
         <Band>
             <Cell title="INSIGHT" spec="INS // 0x00">
@@ -187,17 +208,15 @@ async function onRegeneratePersona() {
         <!-- STRENGTHS + GROWTH AREAS Band -->
         <Band>
             <Cell title="STRENGTHS" spec="INS // 0x02" :items="persona.strengths">
-                <div class="flex flex-col gap-1">
-                    <span v-if="persona.strengths.length === 0" class="nc-text-sm nc-text-muted">—</span>
-                    <span v-for="(item, i) in persona.strengths" :key="i" class="slc-entry">▸ {{ item.title }}</span>
-                    <span v-for="(item, i) in persona.strengths" :key="i" class="slc-entry">{{ item.description }}</span>
+                <div v-for="(item, i) in persona.strengths" :key="i" class="mb-4">
+                    <span class="nc-label">▸ {{ item.title }}</span><br/>
+                    <span>{{ item.description }}</span>
                 </div>
             </Cell>
             <Cell title="GROWTH AREAS" spec="INS // 0x03" :items="persona.weaknesses">
-                <div class="flex flex-col gap-1">
-                    <span v-if="persona.weaknesses.length === 0" class="nc-text-sm nc-text-muted">—</span>
-                    <span v-for="(item, i) in persona.weaknesses" :key="i" class="slc-entry">▸ {{ item.title }}</span>
-                    <span v-for="(item, i) in persona.weaknesses" :key="i" class="slc-entry">{{ item.description }}</span>
+                <div v-for="(item, i) in persona.weaknesses" :key="i" class="mb-4">
+                    <span class="nc-label">▸ {{ item.title }}</span><br/>
+                    <span>{{ item.description }}</span>
                 </div>
             </Cell>            
         </Band>
@@ -260,18 +279,6 @@ async function onRegeneratePersona() {
             <TranscriptCell :messages="persona.interview.messages" />
         </Band>
     </template>
-    <div v-if="isBusy" class="ivw-overlay">
-                <div class="nc-acquire flex justify-center h-full">
-                    <div class="nc-acquire__wave">
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                        <div class="nc-acquire__bar" />
-                    </div>
-                    <div class="nc-acquire__label">Generating Persona</div>
-                </div>
-            </div>
 </template>
 
 <style scoped>

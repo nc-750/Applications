@@ -6,3 +6,4 @@ export {
 } from "./factory";
 export type { LLMClient } from "@nc-750/llm-ts";
 export { toWireMessages } from "./wire";
+export { useLLMClient } from "./useLLMClient";
