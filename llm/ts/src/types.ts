@@ -311,6 +311,14 @@ export interface LLMClient {
     messages: Message[],
     options?: StreamOptions,
   ): Promise<Result<AsyncIterable<string>, LLMError>>;
+
+  /**
+   * Lists available model IDs from the configured provider.
+   *
+   * Best-effort — providers may omit some models, and openai-compatible
+   * endpoints may return a different shape. The result is a flat snapshot.
+   */
+  models(): Promise<Result<string[], LLMError>>;
 }
 
 // ── Error ───────────────────────────────────────────────────────────────────

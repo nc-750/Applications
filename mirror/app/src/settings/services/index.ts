@@ -1,1 +1,1 @@
-export { testConnection } from "./testConnection";
+export { testConnection, getModels } from "./SettingsService";

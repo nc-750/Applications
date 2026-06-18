@@ -11,7 +11,7 @@ import { Band, Cell } from "@nc-750/lab-vue";
 import { useSettingsStore } from "../stores";
 import { usePersonaStore } from "../../persona/stores";
 import { setDebugEnabled } from "../../logger";
-import { testConnection } from "../services";
+import { testConnection, getModels } from "../services";
 import { importPersona, exportPersona } from "../../persona/services";
 import { factoryReset } from "../../core/Wipe";
 import type { LLMConfig } from "../../llm";
@@ -32,6 +32,9 @@ const debugEnabled = ref(false);
 const linkStatus = ref<"idle" | "testing" | "ok" | "error">("idle");
 const linkLatencyMs = ref<number | undefined>(undefined);
 const linkMessage = ref<string | undefined>(undefined);
+
+// Model list populated by fetch-models events from the config cell.
+const modelList = ref<string[]>([]);
 
 // Page-level error from a service throw (import/export). Store persistence failures
 // surface in each store's own `error` ref; the banner shows whichever is set (7.17).
@@ -55,6 +58,14 @@ async function onTest(config: LLMConfig) {
     } catch (e) {
         linkStatus.value = "error";
         linkMessage.value = e instanceof Error ? e.message : String(e);
+    }
+}
+
+async function onFetchModels(config: LLMConfig) {
+    try {
+        modelList.value = await getModels(config);
+    } catch {
+        // Non-blocking — silently keep the previous list (or empty).
     }
 }
 
@@ -112,8 +123,10 @@ function onDismissError() {
             :api-key="settingsStore.apiKey"
             :endpoint="settingsStore.endpoint"
             :testing="linkStatus === 'testing'"
+            :model-list="modelList"
             @save="onSave"
             @test="onTest"
+            @fetch-models="onFetchModels"
         />
         <ConnectionMonitorCell
             :status="linkStatus"

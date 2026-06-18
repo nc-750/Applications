@@ -28,3 +28,16 @@ export async function testConnection(config: LLMConfig): Promise<number> {
 
     return Date.now() - start;
 }
+
+export async function getModels(config: LLMConfig) {
+    const client = createClientFromConfig(config);
+
+    const result = await client.models();
+
+    if (!result.ok) {
+        logger.error("llm", `Unable to get the models available with the configured provider: ${result.error.message}`);
+        throw new LLMClientError(result.error.message);
+    }
+
+    return result.value;
+}

@@ -17,11 +17,14 @@ const props = defineProps<{
     endpoint: string;
     /** A connection test is in flight — lock the Test button. */
     testing: boolean;
+    /** Model suggestions populated after a successful fetch. */
+    modelList?: string[];
 }>();
 
 const emit = defineEmits<{
     save: [config: LLMConfig];
     test: [config: LLMConfig];
+    "fetch-models": [config: LLMConfig];
 }>();
 
 // Local editable draft. `provider` may be unselected (`""`); the placeholder
@@ -50,6 +53,12 @@ const canSubmit = computed(
     () => draft.provider !== "" && draft.model !== "" && draft.apiKey !== "",
 );
 
+const canFetchModels = computed(() => {
+    if (draft.provider === "" || draft.apiKey === "") return false;
+    if (draft.provider === LLMProvider.CompatibleOpenAI && draft.endpoint === "") return false;
+    return true;
+});
+
 function assembled(): LLMConfig {
     return {
         provider: draft.provider as LLMProvider,
@@ -59,11 +68,11 @@ function assembled(): LLMConfig {
     };
 }
 
-// Switching provider invalidates the model/key/endpoint of the previous one.
+// Switching provider invalidates the model and auto-fills the default endpoint.
+// The API key is preserved — the user enters it after picking a provider.
 function onProviderChange() {
     draft.model = "";
-    draft.apiKey = "";
-    draft.endpoint = "";
+    draft.endpoint = PROVIDER_OPTIONS.find((x) => x.value === draft.provider)?.endpoint || "";
 }
 
 function onSave() {
@@ -74,6 +83,20 @@ function onSave() {
 function onTest() {
     if (!canSubmit.value) return;
     emit("test", assembled());
+}
+
+// Debounced auto-fetch when the config is complete enough.
+let fetchTimer: ReturnType<typeof setTimeout> | undefined;
+watch(canFetchModels, (ready) => {
+    clearTimeout(fetchTimer);
+    if (ready) {
+        fetchTimer = setTimeout(() => emit("fetch-models", assembled()), 300);
+    }
+});
+
+function onRefreshModels() {
+    if (!canFetchModels.value) return;
+    emit("fetch-models", assembled());
 }
 </script>
 
@@ -88,8 +111,8 @@ function onTest() {
                     </option>
                 </select>
             </FormField>
-            <FormField label="Model">
-                <input class="nc-input" type="text" placeholder="gpt-4o" v-model="draft.model" />
+            <FormField label="API Key">
+                <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" v-model="draft.apiKey" />
             </FormField>
             <FormField label="Endpoint">
                 <input
@@ -99,8 +122,28 @@ function onTest() {
                     v-model="draft.endpoint"
                 />
             </FormField>
-            <FormField label="API Key">
-                <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" v-model="draft.apiKey" />
+            <FormField label="Model">
+                <div class="flex gap-2">
+                    <input
+                        class="nc-input flex-1"
+                        type="text"
+                        placeholder="gpt-4o"
+                        v-model="draft.model"
+                        list="llm-models"
+                        autocomplete="off"
+                    />
+                    <datalist id="llm-models">
+                        <option v-for="id in modelList" :key="id" :value="id" />
+                    </datalist>
+                    <Button
+                        variant="ghost"
+                        :disabled="!canFetchModels"
+                        @click="onRefreshModels"
+                        title="Fetch available models"
+                    >
+                        ↻
+                    </Button>
+                </div>
             </FormField>
             <div class="flex gap-4 justify-between">
                 <Button variant="secondary" :disabled="testing || !canSubmit" @click="onTest">

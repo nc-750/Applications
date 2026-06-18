@@ -214,6 +214,18 @@ export function createAnthropicClient(
       }
     },
 
+    async models(): Promise<Result<string[], LLMError>> {
+      try {
+        const apiKey = await keyProvider();
+        const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl });
+        const ids: string[] = [];
+        for await (const m of client.models.list()) ids.push(m.id);
+        return Ok(ids);
+      } catch (err) {
+        return Err(normalizeError(err, provider));
+      }
+    },
+
     async stream(
       messages: Message[],
       options?: StreamOptions,

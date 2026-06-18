@@ -9,13 +9,23 @@ export interface ProviderOption {
     value: LLMProvider;
     /** Display name shown in the provider `<select>`. */
     label: string;
+    endpoint: string;
 }
 
 export const PROVIDER_OPTIONS: readonly ProviderOption[] = [
-    { value: LLMProvider.OpenAI, label: "OpenAI" },
-    { value: LLMProvider.Anthropic, label: "Anthropic" },
+    { 
+        value: LLMProvider.OpenAI, 
+        label: "OpenAI",
+        endpoint: "https://api.openai.com",
+    },
+    { 
+        value: LLMProvider.Anthropic,
+        label: "Anthropic",
+        endpoint: "https://api.anthropic.com"
+    },
     {
         value: LLMProvider.CompatibleOpenAI,
-        label: "OpenAI-Compatible (Groq, Together, Ollama, LM Studio...)",
+        label: "OpenAI-Compatible (DeepSeek, Mistral, Ollama, LM Studio...)",
+        endpoint: "https://localhost:12345"
     },
 ] as const;

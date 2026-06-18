@@ -28,6 +28,7 @@ function fakeClient(overrides: Partial<LLMClient> = {}): LLMClient {
     return {
         message: vi.fn().mockResolvedValue({ ok: true, value: "ok" }),
         stream: vi.fn(),
+        models: vi.fn().mockResolvedValue({ ok: true, value: [] }),
         ...overrides,
     };
 }

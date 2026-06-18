@@ -61,11 +61,6 @@ onMounted(async () => {
                             Profile
                         </router-link>
                     </div>
-                    
-                    <button class="nc-btn nc-btn--ghost nc-btn--lg">
-                        <Import :size="15" aria-hidden="true" />
-                        Import your persona
-                    </button>
                 </div>
             </div>
         </Cell>

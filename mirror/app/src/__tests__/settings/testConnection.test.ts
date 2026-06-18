@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { LLMClient } from "@nc-750/llm-ts";
-import { testConnection } from "../../settings/services/testConnection";
+import { testConnection, getModels } from "../../settings/services/SettingsService";
 import { LLMClientError, LLMProvider } from "../../llm";
 import type { LLMConfig } from "../../llm";
 
@@ -26,6 +26,7 @@ function fakeClient(overrides: Partial<LLMClient> = {}): LLMClient {
     return {
         message: vi.fn().mockResolvedValue({ ok: true, value: "ok" }),
         stream: vi.fn(),
+        models: vi.fn().mockResolvedValue({ ok: true, value: [] }),
         ...overrides,
     };
 }
@@ -65,5 +66,47 @@ describe("testConnection", () => {
         });
 
         await expect(testConnection(makeConfig())).rejects.toThrow("401 unauthorized");
+    });
+});
+
+describe("getModels", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("resolves to a string array on success", async () => {
+        mockCreateLLMClient.mockReturnValue({
+            ok: true,
+            value: fakeClient({
+                models: vi.fn().mockResolvedValue({ ok: true, value: ["gpt-4o", "gpt-4o-mini"] }),
+            }),
+        });
+
+        const models = await getModels(makeConfig());
+
+        expect(models).toEqual(["gpt-4o", "gpt-4o-mini"]);
+    });
+
+    it("rejects with LLMClientError when client construction fails", async () => {
+        mockCreateLLMClient.mockReturnValue({
+            ok: false,
+            error: { message: "bad config" },
+        });
+
+        await expect(getModels(makeConfig())).rejects.toThrow(LLMClientError);
+    });
+
+    it("rejects with LLMClientError when models() fails", async () => {
+        mockCreateLLMClient.mockReturnValue({
+            ok: true,
+            value: fakeClient({
+                models: vi.fn().mockResolvedValue({
+                    ok: false,
+                    error: { message: "403 forbidden" },
+                }),
+            }),
+        });
+
+        await expect(getModels(makeConfig())).rejects.toThrow("403 forbidden");
     });
 });

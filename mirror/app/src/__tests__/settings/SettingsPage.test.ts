@@ -12,7 +12,7 @@ import { LLMProvider, type LLMConfig } from "../../llm";
 // The view binds the store read-only and calls services — mock the side-effecting
 // services so the decomposed view can be exercised without real I/O. The store
 // itself is real (drives the keyStore-backed db, which is mocked to the PWA path).
-vi.mock("../../settings/services", () => ({ testConnection: vi.fn() }));
+vi.mock("../../settings/services", () => ({ testConnection: vi.fn(), getModels: vi.fn().mockResolvedValue([]) }));
 vi.mock("../../persona/services", () => ({
     importPersona: vi.fn(),
     exportPersona: vi.fn(),

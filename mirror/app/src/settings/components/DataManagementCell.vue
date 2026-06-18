@@ -31,7 +31,7 @@ function onFileChange(e: Event) {
     <Cell title="DATA" spec="CFG // 0x03" :grow="1">
         <div class="flex flex-col gap-4">
             <p class="nc-text-sm nc-text-secondary">
-                Import a persona export, save the current mirror to a file, or delete it from this device.
+                Save the current Persona to a file, or delete it from this device.
             </p>
             <div class="flex flex-wrap gap-3">
                 <Button @click="onPickFile">Import persona</Button>
