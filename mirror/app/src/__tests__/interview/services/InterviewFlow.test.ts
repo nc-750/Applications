@@ -62,6 +62,7 @@ function makeFakeLLM(opts: FakeLLMOptions = {}): LLMClient {
             },
         ),
         stream: vi.fn(),
+        models: vi.fn()
     };
 }
 
@@ -302,6 +303,7 @@ describe("InterviewFlow", () => {
                     return { ok: false, error: { message: "Aborted", isAborted: true, provider: "openai" } };
                 }),
                 stream: vi.fn(),
+                models: vi.fn(),
             };
 
             const beginPromise = beginInterview(hangingLLM, store, "Brief");

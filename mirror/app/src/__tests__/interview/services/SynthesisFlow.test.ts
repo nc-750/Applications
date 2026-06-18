@@ -124,6 +124,7 @@ function makeSynthesisFakeLLM(opts: SynthesisFakeLLMOpts = {}): LLMClient {
             },
         ),
         stream: vi.fn(),
+        models: vi.fn()
     };
 }
 

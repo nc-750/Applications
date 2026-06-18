@@ -1,9 +1,9 @@
 [package]
 name = "mirror-app"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+authors = ["nc-750"]
+edition = "2026"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
