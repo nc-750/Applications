@@ -16,6 +16,8 @@ vi.mock("../../settings/services", () => ({ testConnection: vi.fn(), getModels: 
 vi.mock("../../persona/services", () => ({
     importPersona: vi.fn(),
     exportPersona: vi.fn(),
+    deletePersona: vi.fn(),
+    syncInterviewAfterImport: vi.fn(),
 }));
 vi.mock("../../core/Wipe", () => ({ factoryReset: vi.fn() }));
 vi.mock("../../settings/db/keyStore", () => ({
@@ -26,7 +28,7 @@ vi.mock("../../settings/db/keyStore", () => ({
 }));
 
 import { testConnection } from "../../settings/services";
-import { importPersona } from "../../persona/services";
+import { importPersona, deletePersona } from "../../persona/services";
 
 function mountPage(): VueWrapper {
     return mount(SettingsPage, {
@@ -113,5 +115,15 @@ describe("SettingsPage (decomposed)", () => {
 
         expect(importPersona).toHaveBeenCalledOnce();
         expect(wrapper.text()).toContain("Import failed: not a persona");
+    });
+
+    it("a delete calls the deletePersona orchestrator", async () => {
+        vi.mocked(deletePersona).mockResolvedValue(undefined);
+        const wrapper = mountPage();
+
+        await wrapper.findComponent(DataManagementCell).vm.$emit("delete");
+        await flushPromises();
+
+        expect(deletePersona).toHaveBeenCalledOnce();
     });
 });

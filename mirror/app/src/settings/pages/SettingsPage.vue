@@ -10,9 +10,15 @@ import { ref, computed } from "vue";
 import { Band, Cell } from "@nc-750/lab-vue";
 import { useSettingsStore } from "../stores";
 import { usePersonaStore } from "../../persona/stores";
+import { useInterviewStore } from "../../interview/stores";
 import { setDebugEnabled } from "../../logger";
 import { testConnection, getModels } from "../services";
-import { importPersona, exportPersona } from "../../persona/services";
+import {
+    importPersona,
+    exportPersona,
+    deletePersona,
+    syncInterviewAfterImport,
+} from "../../persona/services";
 import { factoryReset } from "../../core/Wipe";
 import type { LLMConfig } from "../../llm";
 import LLMConfigCell from "../components/LLMConfigCell.vue";
@@ -22,6 +28,7 @@ import SystemControlCell from "../components/SystemControlCell.vue";
 
 const settingsStore = useSettingsStore();
 const personaStore = usePersonaStore();
+const interviewStore = useInterviewStore();
 
 // Debug flag — toggled through the logger foundational module's `setDebugEnabled`
 // (Rule 5.3: foundational state a UI only toggles). Default matches the module-level
@@ -73,6 +80,7 @@ async function onImportPersona(file: File) {
     pageError.value = null;
     try {
         await importPersona(file, personaStore);
+        await syncInterviewAfterImport(personaStore.persona, interviewStore);
     } catch (e) {
         pageError.value = `Import failed: ${e instanceof Error ? e.message : String(e)}`;
     }
@@ -88,7 +96,7 @@ function onExportPersona() {
 }
 
 async function onDeletePersona() {
-    await personaStore.clearPersona();
+    await deletePersona(personaStore, interviewStore);
 }
 
 async function onClearConfig() {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MessageSquare, Import, BrainCircuit, User, Globe } from "lucide-vue-next";
+import { MessageSquare, BrainCircuit, User, Globe } from "lucide-vue-next";
 import { Band, Cell } from "@nc-750/lab-vue";
 
 import { computed, onMounted } from "vue";
