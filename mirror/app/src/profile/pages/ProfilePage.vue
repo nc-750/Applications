@@ -15,13 +15,17 @@ import { Band, Cell } from "@nc-750/lab-vue";
         <Cell title="PROFILE" spec="PRF // 0x01">
             <div class="h-full flex flex-col items-center justify-center text-center">
                 <h1 class="nc-heading-3 mb-4">
-                    In Construction
+                    Coming soon
                 </h1>
 
                 <p class="nc-text-secondary nc-text-sm max-w-lg mb-4">
-                    Your personal profile, publisheable.<br/>
-                    Use in portfolio, link to recruiters, use however you want.<br/>
+                    Your personal profile, publishable.<br/>
+                    Use in a portfolio, share with recruiters, use it however you want.<br/>
                     Free to modify.
+                </p>
+
+                <p class="nc-text-secondary nc-text-sm max-w-lg">
+                    This is on the way — for now, your private insight document is ready.
                 </p>
             </div>
         </Cell>

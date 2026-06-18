@@ -1,1 +1,25 @@
+# Dependencies
 node_modules
+
+# Build output
+dist/
+build/
+
+# Tauri / Rust build artifacts
+src-tauri/target/
+
+# Environment / secrets (keep .env.example tracked)
+.env
+.env.local
+.env.*.local
+*.local
+
+# Test coverage
+coverage/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp

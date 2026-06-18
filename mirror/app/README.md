@@ -1,161 +1,164 @@
 # Mirror (NODE-0M)
 
-**A private, bring-your-own-AI app that turns your career history into honest self-knowledge — and a polished public profile you can share.**
+Mirror interviews you with AI, finds patterns you missed, and produces a private insight
+document and a polished public profile. **Nothing leaves your device** except the requests
+you send to your own AI provider.
 
-Mirror interviews you about your work, analyses what you tell it, and produces two outputs:
+Mirror is part of the [NC-750](../../brand/BRAND.md) universe and is built on the
+[Lab design system](../../lab/DESIGN.md). It ships as an installable PWA; a desktop (Tauri)
+build exists but is not distributed yet.
 
-- **Insight** — a private self-knowledge document: strengths with evidence, growth areas, hidden assets, personality dimensions, values, and goals. For your eyes only — reflection, interview prep, working with a coach.
-- **Profile** — a polished, shareable professional page for recruiters, clients, and collaborators. Growth areas are deliberately excluded; in their place is a constructive *"How I Work Best"* section.
+## Privacy stance
 
-It runs as a **cross-platform desktop app** (Windows, macOS, Linux via Tauri) and as an **installable PWA** in the browser.
+- **Local-first.** Your personas, interview state, and settings are stored on-device in
+  IndexedDB. Mirror has no account and no NC-750 server in the request path.
+- **Bring your own key (BYOK).** You supply your own API key for OpenAI, Anthropic,
+  Mistral, or any OpenAI-compatible endpoint (Groq, Together, OpenRouter, Ollama, …).
+  Content is sent **only** to the provider you configure, for the request you make.
+- **Key at rest.** On desktop the key lives in the OS credential store (Windows Credential
+  Manager / macOS Keychain / Linux Secret Service); in the PWA it falls back to IndexedDB.
+- **You can leave.** The Settings panel offers tiered data wipe — clear your mirror, clear
+  your provider settings, or factory-reset everything.
 
----
+See [`brand/ETHOS.md`](../../brand/ETHOS.md) for the binding privacy constraints this app
+satisfies, and the in-app Privacy page for the plain-words disclosure of what is sent where.
 
-## Why it exists
+## Stack
 
-Most "build your profile" tools send your career data to someone else's server and lock you into their model. Mirror is built on three principles:
+Vue 3 + TypeScript (`<script setup>`) · Vite 7 · Pinia · vue-router · idb (IndexedDB) ·
+Zod (boundary validation) · vite-plugin-pwa · Tauri v2 (desktop, not distributed yet).
+UI is `@nc-750/lab-vue` + `@nc-750/lab-css`; Tailwind v4 is used only for app-level layout.
 
-1. **Your data stays yours.** Everything lives locally — your answers, your generated mirror data, your API key. There is no Mirror backend; nothing is uploaded to us, because there is no "us" in the loop.
-2. **Bring your own AI.** You supply an API key for a provider you already trust (OpenAI, Anthropic, Mistral, or any OpenAI-compatible endpoint including a local model via Ollama). The app talks to that provider directly from your machine.
-3. **Honesty over marketing.** The private Insight document is candid about growth areas. The public Profile translates that same self-awareness into something constructive, never exposing weaknesses.
+> **Build tool: [bun](https://bun.sh).** Use `bun run …` / `bunx …`, not npm/npx/node.
 
-## How it works
-
-```
-Your CV / LinkedIn / notes
-          │
-          ▼
-   ┌─────────────┐   targeted interview      ┌──────────────┐
-   │  Interview  │ ───────────────────────▶  │  mirror.json │
-   └─────────────┘   (streamed chat)         └──────┬───────┘
-                                                     │
-                        ┌────────────────────────────┴───────────────┐
-                        ▼                                             ▼
-                 ┌─────────────┐                              ┌──────────────┐
-                 │   Insight   │  private HTML                │   Profile    │  public HTML
-                 │  (full you) │                              │ (shareable)  │
-                 └─────────────┘                              └──────────────┘
-```
-
-1. **Feed it context.** Drop in your CV, a LinkedIn export, or just type freely. PDFs, Markdown, HTML, text, and JSON are supported.
-2. **Get interviewed.** The app runs a focused excavation interview using your chosen model, streaming the conversation in real time.
-3. **Get your mirror.** When the interview concludes, the model emits a structured `mirror.json`, validated against a strict schema.
-4. **Render outputs.** Insight and Profile are produced as **self-contained HTML files** — no remote fonts, scripts, or images — that you can open from disk, host anywhere, or hand to a recruiter.
-
-The *"How I Work Best"* section is synthesised by the LLM exactly once at the end of the interview and cached. Every Insight/Profile render after that is pure, deterministic TypeScript — same input, same output, no further API calls.
-
-## Privacy & security model
-
-- **No backend.** The app has no server of its own. LLM requests go straight from your device to your chosen provider.
-- **Local storage only.** Your mirror data, interview transcript, and settings live in your browser/app's IndexedDB.
-- **API key at rest:**
-  - **Desktop (Tauri):** stored in the OS credential store via the `keyring` crate — Windows Credential Manager, macOS Keychain, or Linux Secret Service. Never written to disk as plaintext.
-  - **PWA:** stored in IndexedDB (the browser has no OS keychain access).
-- **Strict CSP.** A `default-src 'none'` Content-Security-Policy is enforced in the app and baked into every exported document, so a rendered profile can't execute scripts even if opened from disk or hosted.
-- **One mirror per device.** Simple by design — there are no accounts.
-- **Full control.** The Settings panel has tiered data-wipe controls: clear just your mirror, clear just your AI provider settings, or factory-reset everything.
-
-## Supported AI providers
-
-| Provider | Configuration |
-|----------|---------------|
-| OpenAI | API key |
-| Anthropic | API key |
-| Mistral | API key |
-| OpenAI-compatible | API key + endpoint URL (Groq, Together, OpenRouter, Ollama, LM Studio, …) |
-
-Available models are fetched live from the provider's `/models` endpoint — no stale hardcoded lists. You can also type any model name directly. For maximum privacy, point the OpenAI-compatible option at a local model served by Ollama or LM Studio.
-
-## Getting started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) 18+
-- For the desktop build: the [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Rust toolchain + your platform's webview/build tools)
-
-### Install
+## Develop
 
 ```bash
-git clone <repo-url>
-cd app
-npm install
+bun install
+bun run dev          # Vite dev server (browser) on http://localhost:1421
+bun run tauri dev    # Full Tauri desktop app (optional)
 ```
 
-### Run
+Then open **Settings**, pick a provider, paste your API key, choose a model, test the
+connection, and start an interview.
+
+## Build & verify
 
 ```bash
-npm run dev          # Browser / PWA dev server on http://localhost:1420
-npm run tauri dev    # Full desktop app (Tauri)
+bun run build         # vue-tsc --noEmit (SFC-aware type check) + production build → dist/
+bunx vue-tsc --noEmit # Type check only (tsc skips .vue files — use vue-tsc)
+bun run test          # vitest
+bun run preview       # Serve the production dist/ locally to smoke-test the PWA
 ```
 
-Then open **Settings**, pick a provider, paste your API key, fetch the model list (or type a model name), and start an interview.
+> **Build prerequisite:** `vite.config.ts` aliases `@nc-750/lab-vue` and `@nc-750/lab-css`
+> to `../../lab/vue/dist/lab-vue.js` and `../../lab/css/lab.css`. From a clean checkout the
+> `lab/` packages must be built first, or the app build will fail to resolve those imports.
 
-### Build
+A deeper tour of the architecture and conventions lives in [`CLAUDE.md`](./CLAUDE.md) and
+[`CONVENTIONS.md`](./CONVENTIONS.md).
+
+## Deploy (PWA)
+
+The build output is the static `dist/` folder.
+
+### Current target: GitHub Pages → `mirror.nc-750.com`
+
+The live PWA is published to GitHub Pages from a **separate public repo that holds only the
+built `dist/`** — application source stays private. The custom domain serves at the domain
+root, so no base-path configuration is needed.
 
 ```bash
-npm run build        # Type-check + production web build (dist/)
-npm run tauri build  # Native desktop installers
+bun run deploy   # build + 404.html fallback, then push dist/ to the public Pages repo
 ```
 
-## Tech stack
+`deploy` runs `build:pages` (production build + a `scripts/pages-postbuild.mjs` step that
+copies `index.html` → `404.html` for SPA fallback, since GitHub Pages has no rewrite rules)
+and then `gh-pages` pushes `dist/` to the public repo's `gh-pages` branch. The repo URL is set
+in the `deploy` script in [`package.json`](./package.json). `public/CNAME`,
+`public/.nojekyll`, and the generated icons ride along in `dist/` on every build.
 
-- **Vue 3 + TypeScript** — UI
-- **Vite** — build & dev server
-- **Tailwind CSS v4** — layout utilities only
-- **enclosure-vue** — design system
-- **Tauri v2** — desktop shell + native key storage (Rust)
-- **Pinia** — state management
-- **idb** — IndexedDB access
-- **Zod** — schema validation (single source of truth for the output shape)
-- **vite-plugin-pwa** — installable PWA
+One-time setup:
+1. Create the public build repo and set its SSH URL in the `deploy` script.
+2. Repo → **Settings → Pages**: serve from `gh-pages` / root, set custom domain
+   `mirror.nc-750.com`, enable **Enforce HTTPS** once the certificate provisions.
+3. DNS: add `CNAME  mirror  →  <github-username>.github.io.` at the nc-750.com registrar.
 
----
+### Other hosts
 
-## Contributing
+Any static host works if it satisfies: **HTTPS**; **SPA history fallback** (rewrite unknown
+paths to `/index.html`); **cache headers** (`no-cache` for `index.html`/`sw.js`, immutable for
+hashed `assets/*`); and serves `manifest.webmanifest` as `application/manifest+json`.
+Ready-to-use snippets:
 
-Contributions are welcome — bug fixes, provider support, renderer polish, accessibility, and docs all help.
+**Netlify** (`netlify.toml`):
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
-### Project layout
-
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 ```
-src/
-├── types/persona.ts   # Canonical persona schema (Zod) + inferred TS types
-├── db/schema.ts       # IndexedDB connection, record types, wipe helper
-├── stores/            # Pinia stores — read/write IndexedDB directly
-├── llm/               # LLM client: two wire shapes + a provider config table
-├── skills/            # One flat file per skill function (prompt, extractor, renderers, synthesizer)
-└── components/        # UI: layout, settings, interview, insight, profile
+
+**Vercel** (`vercel.json`):
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
+}
 ```
 
-A deeper tour of design decisions lives in [`CLAUDE.md`](./CLAUDE.md).
+**Cloudflare Pages** — `public/_redirects`:
+```
+/*  /index.html  200
+```
+and `public/_headers`:
+```
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+```
 
-### Ground rules
+**nginx**:
+```nginx
+location / {
+    try_files $uri $uri/ /index.html;
+}
+location = /index.html { add_header Cache-Control "no-cache"; }
+location = /sw.js      { add_header Cache-Control "no-cache"; }
+location /assets/      { add_header Cache-Control "public, max-age=31536000, immutable"; }
+```
 
-This codebase deliberately favours **boring, conventional, low-abstraction** code. Before adding a layer, an interface, or a config option, ask whether a real current requirement needs it. A few specifics:
+## Release process
 
-- **No data-access layer.** Stores talk to `getDB()` directly. Don't reintroduce a repository/`operations` wrapper.
-- **LLM providers are data.** If a new provider speaks the OpenAI or Anthropic wire format, add a one-line entry to the `PROVIDERS` table in `src/llm/index.ts` — don't create a new class.
-- **Renderers stay deterministic.** `insightRenderer.ts` / `profileRenderer.ts` are pure `PersonaJSON → string`. Keep LLM calls out of them. Always escape interpolated values with `esc()` from `skills/html.ts` — it's the XSS boundary.
-- **Schema is the source of truth.** Change `PersonaJSONSchema` in `src/types/persona.ts`; the TS types are inferred from it via `z.infer`. Don't hand-write parallel types.
-- **Keep exports self-contained.** Rendered HTML must not reference remote fonts, scripts, or images, and must carry the strict CSP meta tag.
+Versions are kept in sync across `package.json`, `src-tauri/tauri.conf.json`, and
+`src-tauri/Cargo.toml`. To cut a release:
 
-### Workflow
+1. **Bump** the version in all three files.
+2. **Changelog** — add an entry to [`CHANGELOG.md`](./CHANGELOG.md).
+3. **Build & verify** — `bun run build`, `bun run test`, `bun run preview`.
+4. **Tag** — `git tag -a vX.Y.Z -m "Mirror vX.Y.Z"` then `git push origin vX.Y.Z`.
+5. **Deploy** — `bun run deploy` (publishes `dist/` to the public GitHub Pages repo).
 
-1. Fork and create a branch off `master`.
-2. Make your change. Keep commits focused; use clear, conventional messages (e.g. `fix: …`, `feat: …`, `refactor: …`).
-3. **Type-check before pushing:**
-   ```bash
-   npx tsc --noEmit     # must pass clean
-   npm run build        # full build sanity check
-   ```
-   If you touched the Rust side, also confirm `npm run tauri dev` links.
-4. Verify your change in the running app (browser via `npm run dev`, and Tauri if your change touches native code or key storage).
-5. Open a pull request describing **what** changed and **why**, with screenshots for UI changes.
+## License
 
-### Good first contributions
-
-- Additional OpenAI-compatible endpoint presets in Settings.
-- Profile/Insight render themes or templates.
-- Accessibility and keyboard-navigation improvements.
-- Tightening the CSP `connect-src` to match the active endpoint (see the TODO in `index.html`).
-- A small Vitest suite covering store round-trips (load → mutate → reload) and the persona Zod schema.
+The repository is currently private; no open-source license is granted at this time.

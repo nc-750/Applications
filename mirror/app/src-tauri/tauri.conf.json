@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Mirror",
-  "version": "0.1.0",
-  "identifier": "com.vendinois.mirror",
+  "version": "1.0.0",
+  "identifier": "com.nc-750.mirror",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
