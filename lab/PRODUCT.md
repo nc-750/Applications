@@ -18,20 +18,20 @@ The cheatsheet page serves as both documentation and a visual proof: every compo
 
 ## Brand Personality
 
-**Surgical, industrial, calm.** The interface should feel like a precision instrument. Every pixel is intentional. Nothing is decorative. The UI equivalent of a well-machined aluminum enclosure — cool to the touch, precisely toleranced, confident in its restraint.
+**Surgical, industrial, calm.** The interface should feel like a precision instrument. Every pixel is intentional; decoration that means nothing is removed, and what remains earns its place. The UI equivalent of a well-machined aluminum enclosure — cool to the touch, precisely toleranced, confident in its restraint — yet a live device, not a static poster: it reacts, changes state, and is operated by the user, who leads.
 
 ## Anti-references
 
 - **Over-designed / decorative**: No gradients, no glassmorphism, no excessive animation, no box shadows for elevation. The system should feel like precision hardware, not a design portfolio piece.
 - **Material Design**: No floating cards, no FABs, no ripple effects, no elevation-based hierarchy. Shadows are not a separation mechanism.
-- **Generic SaaS templates**: No hero-metric dashboards, no icon-above-heading card grids, no purple-to-blue gradients. If it looks like every startup landing page, it's wrong.
+- **Generic SaaS template *patterns***: not the busy-decoration pattern of hero-metric dashboards, icon-above-heading card grids, or purple-to-blue gradients. The *pattern* is rejected, not the shape — an honest many-metric surface a task genuinely needs is fine, integrated into the grammar (see `../brand/VISUAL_IDENTITY.md §4`). If it looks like every startup landing page, it's wrong.
 - **Brutalist / raw**: Industrial does not mean crude. The system is precise and considered, not deliberately rough or confrontational.
 
 ## Design Principles
 
 1. **Seams, not shadows.** Panels separate through 1px borders and surface-level brightness shifts. No box-shadow elevation. The interface feels assembled from physical panels that meet at seams.
 
-2. **Every pixel intentional.** No decoration. No ornament. If a line, color, or space doesn't serve the user's task, it is removed. Calm comes from absence of noise.
+2. **Every pixel intentional.** Decoration that means nothing is removed — if a line, color, or space doesn't serve the user's task, it goes. This is not asceticism: a dynamic, tactile, or warm detail that *does* serve the task or honestly signals a live state is welcome (see `../brand/VISUAL_IDENTITY.md` P2/P9). Calm comes from absence of noise, not absence of life.
 
 3. **Hardware honesty.** The interface should feel like a physical instrument — anodized aluminum, precisely machined, cool and confident. Typography, spacing, and color should evoke industrial precision, not print design.
 

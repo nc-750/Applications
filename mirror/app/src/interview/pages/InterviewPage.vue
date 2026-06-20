@@ -25,8 +25,10 @@ import {
     runSynthesis,
     abort,
     canConclude,
+    countQuestionsAsked,
     needsDigestion,
 } from "../services";
+import { MAX_QUESTIONS } from "../reference";
 import DataInputForm from "../components/DataInputForm.vue";
 import CoverageReadout from "../components/CoverageReadout.vue";
 import ProbePanel from "../components/ProbePanel.vue";
@@ -62,6 +64,14 @@ const showCompletion = computed(
     () => isSynthesizing.value || isCompleted.value || isError.value,
 );
 const hasConcluded = computed(() => canConclude(interviewStore.coverage));
+// Hard backstop: once the soft question cap is reached, offer the conclude state
+// even if coverage is still short of target (matches the service-side cap).
+const reachedCap = computed(
+    () => countQuestionsAsked(interviewStore.messages) >= MAX_QUESTIONS,
+);
+// True only when the cap — not full coverage — triggered the conclude offer, so
+// the panel can tell the truth rather than claim "coverage locked".
+const cappedShort = computed(() => reachedCap.value && !hasConcluded.value);
 
 /** The last non-error assistant message — the current question. */
 const lastQuestion = computed(() => {
@@ -232,10 +242,11 @@ async function onBeforeUnload() {
                 @restart="onRestart"
             />
 
-            <!-- Concluded: coverage saturated — offer generate or continue -->
+            <!-- Concluded: coverage saturated (or question cap hit) — offer generate or continue -->
             <ConcludePanel
-                v-else-if="hasConcluded && isActive"
+                v-else-if="(hasConcluded || reachedCap) && isActive"
                 :busy="isBusy"
+                :capped="cappedShort"
                 @generate="onGenerate"
                 @continue="onContinue"
             />

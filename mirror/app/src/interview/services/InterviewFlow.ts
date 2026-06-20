@@ -25,6 +25,7 @@ import {
     type TranscriptMessage,
 } from "../models";
 import { FACET_KEYS } from "../models";
+import { MAX_QUESTIONS } from "../reference";
 import {
     buildInterviewSystemPrompt,
 } from "../prompts/InitialAnalysis";
@@ -41,7 +42,7 @@ import {
     PROBE_JSON_SCHEMA,
 } from "../prompts/Probe";
 import { extractFencedJSON } from "../prompts/Json";
-import { transcriptOf, mergeCoverage, canConclude, coerceProbe } from "./Helpers";
+import { transcriptOf, mergeCoverage, canConclude, coerceProbe, countQuestionsAsked } from "./Helpers";
 import type { TurnAnalysis } from "../prompts/TurnAnalysis";
 
 // ── Module-level abort state ──────────────────────────────────────────────
@@ -169,10 +170,17 @@ async function runTurnAnalysis(
     answer: string,
     priorCoverage: CoverageMap,
     messages: TranscriptMessage[],
+    questionsAsked: number,
+    pastBudget: boolean,
     signal: AbortSignal,
 ): Promise<TurnAnalysis | null> {
     const lastQuestion = lastAssistantQuestion(messages);
-    const sys = buildPersonaMetricsSystemPrompt(priorCoverage);
+    const sys = buildPersonaMetricsSystemPrompt(
+        priorCoverage,
+        questionsAsked,
+        MAX_QUESTIONS,
+        pastBudget,
+    );
     const user = buildPersonaMetricsUserPrompt(
         lastQuestion,
         answer,
@@ -279,6 +287,11 @@ export async function submitAnswer(
     );
 
     const prior: CoverageMap = { ...store.coverage };
+    // Question count includes the probe just answered. Past the budget (target
+    // already met, or the cap spent on a "continue" round) the analysis drops its
+    // pacing pressure and measures honestly.
+    const asked = countQuestionsAsked(store.messages);
+    const pastBudget = canConclude(prior) || asked >= MAX_QUESTIONS;
     const ctrl = freshController();
 
     try {
@@ -290,6 +303,8 @@ export async function submitAnswer(
                 answer,
                 prior,
                 store.messages,
+                asked,
+                pastBudget,
                 ctrl.signal,
             );
         } catch (e) {
@@ -301,11 +316,13 @@ export async function submitAnswer(
             );
         }
 
-        // Merge and conclude check.
+        // Merge and conclude check. The question cap is a hard backstop: once the
+        // soft maximum is reached the interview concludes even if a facet is short
+        // of target, so a conservative model can never drag the round on forever.
         const merged = analysis
             ? mergeCoverage(prior, analysis.coverage)
             : prior;
-        const concluded = canConclude(merged);
+        const concluded = canConclude(merged) || asked >= MAX_QUESTIONS;
 
         if (ctrl.signal.aborted) return;
 

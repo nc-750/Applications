@@ -9,6 +9,9 @@ import {
     finishEarly,
     abort,
 } from "../../../interview/services/InterviewFlow";
+import { countQuestionsAsked } from "../../../interview/services/Helpers";
+import { MAX_QUESTIONS } from "../../../interview/reference";
+import { createTranscriptMessage } from "../../../interview/models";
 import {
     TURN_ANALYSIS_SCHEMA_NAME,
     type TurnAnalysis,
@@ -221,6 +224,34 @@ describe("InterviewFlow", () => {
 
             // Nothing should have happened
             expect(store.messages.length).toBe(0);
+        });
+
+        it("concludes at the question cap even when coverage is below target", async () => {
+            const store = setupStore();
+            // Analysis keeps reporting low coverage — it would never converge on its own.
+            const fakeLLM = makeFakeLLM({
+                probe: { question: "this should never be asked past the cap" },
+                analysisResult: fakeAnalysis({
+                    coverage: { story: 0.3, strengths: 0.3, hidden: 0.3, growth: 0.3, drivers: 0.3 },
+                }),
+            });
+
+            await beginInterview(fakeLLM, store, "Brief"); // first probe = 1 question
+            // Seed the transcript up to the hard cap with filler questions.
+            while (countQuestionsAsked(store.messages) < MAX_QUESTIONS) {
+                await store.appendMessage(
+                    createTranscriptMessage({ role: "assistant", content: "Filler question?" }),
+                );
+            }
+            const before = countQuestionsAsked(store.messages);
+            expect(before).toBe(MAX_QUESTIONS);
+
+            await submitAnswer(fakeLLM, store, "Another answer, still below target.");
+
+            // Cap reached → conclude → NO new probe appended.
+            expect(countQuestionsAsked(store.messages)).toBe(before);
+            // Coverage is still committed from the analysis.
+            expect(store.coverage.story).toBe(0.3);
         });
     });
 

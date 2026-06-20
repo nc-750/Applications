@@ -188,7 +188,9 @@ honest instrument data.
 
 **Rule G1 — The grid is not uniform.** Do not force every band to the same column count.
 A narrow control rail beside a wide schematic, then a two-up spec/console, then a
-full-width sampler, is the correct rhythm. Uniform grids read as dashboards.
+full-width sampler, is the correct rhythm. A uniform grid reads as generic dashboard chrome —
+the rejection is of the monotonous *pattern*, not of showing many metrics; an honest
+many-metric surface is fine when the task needs it (`VISUAL_IDENTITY.md §4`).
 
 **Rule G2 — Pair dense with open.** The strongest band places a packed chrome cell beside
 an open drafting-plate cell (e.g. control rail + data-flow schematic). The contrast is the
@@ -243,9 +245,11 @@ to the sticky strip; do not drop it for a plain form.
 
 ## 10. Instrument interaction — the essence, not a template
 
-The operational form of constitution principle **P6 (instrument over app)**. This section
-describes *how to think* about turning an interaction into an instrument. It is **not** a
-fixed recipe to stamp onto every product. The detailed pattern set further down is **one
+The operational form of constitution principles **P6 (instrument over app)** and **P10 (the
+system reacts; the user leads)**. This section describes *how to think* about turning an
+interaction into an instrument — a surface that reacts to a user-initiated action and hands
+back an honest reading to interpret, rather than one that anticipates or drives them. It is
+**not** a fixed recipe to stamp onto every product. The detailed pattern set further down is **one
 worked example** (Mirror's interview); other products express the same essence very
 differently, and some need almost none of it.
 
@@ -279,6 +283,13 @@ How the system shows it is working depends on whether the work blocks the user:
   away from): do **not** take the screen. Show a quiet ambient indicator (a breathing LED,
   a header status, a small console line) and let the user keep operating the rest of the
   instrument. Notify on completion.
+- **Honestly-estimated work** (the duration is partly known): an estimate *may* be shown —
+  a remaining-time or percentage the system genuinely derives — **provided it is marked as an
+  estimate** (`~`, `EST`, "about") and never rendered as a measured certainty. The forbidden
+  "fake meter" is a fabricated or decorative value; an honest estimate, labelled as such, is
+  not. The principle is simply *don't lie about what you know*. *(The exact presentational
+  convention that distinguishes a marked estimate from a measured reading is still to be
+  finalised — open item `U3`.)*
 
 **Rule I1.** Never block the user with an acquisition takeover for work that could run in
 the background. Acquisition theatre is for attention the user has already committed — not a
@@ -308,10 +319,36 @@ The same essence lands differently elsewhere — and sometimes barely registers:
   behaviour may amount to nothing more than honest live status and well-shaped controls.
 - A **multi-step configuration with truly finite, known steps** → keep a real step model;
   do *not* fake "saturation" where an honest "step 3 of 5" is the truth.
+- An **intrinsically conversational, spatial, or many-metric product** (a chat tool, a
+  map/navigation app, a live ops console) → **keep the form the task genuinely needs** and
+  integrate it into the grammar (chassis, seams, document annotation, honest state). Do *not*
+  contort it into a probe/readout metaphor it does not fit. What you remove is the
+  attention-farming and the dishonesty, **not the form**. This mirrors `VISUAL_IDENTITY.md §4`:
+  reject the *pattern*, not the *shape*. When a familiar UI is the honest choice, use it.
 
 **Rule I2.** Apply the essence; derive the patterns from the *product's own task*. Do not
 port Mirror's probe / acquisition / saturation / log set onto a product whose interaction
-is not a sustained foreground inquiry.
+is not a sustained foreground inquiry — and do not strip a product of a form its task
+genuinely needs in the name of looking like an instrument.
+
+### Dynamic surfaces — overlays, modals, status-driven recomposition
+
+The instrument is a live device, not a static panel (constitution **P2**). These are
+legitimate and on-brand:
+
+- **State on controls** — buttons and cells disable, lock, or relabel as the app's state
+  requires. A disabled control is honest instrument state, not a defect.
+- **Overlays and modals** — a genuine interrupt (a confirm, an error, a blocking choice) may
+  open *over* the chassis. It is still framed in the grammar: seams and recession, a cell
+  header with spec-detail, and **no drop-shadow floating card** (Rules S1/S2 still hold). It is
+  the chassis reconfiguring, not a Material dialog.
+- **Status-driven recomposition** — bands and cells may be swapped, added, or removed as the
+  product changes mode (idle → acquiring → result). The seam grammar is preserved across the
+  change; what must never appear is chassis-less content adrift on the field.
+
+Motion across these changes follows §11 (functional, honest, `prefers-reduced-motion`). This
+layer is deliberately under-specified and expected to grow with real products — treat it as
+open, not settled.
 
 ---
 
@@ -362,7 +399,7 @@ Mirror of `VISUAL_IDENTITY.md §4`, in checklist form. If any is true, the scree
 - [ ] Every cell is dense, or every cell is open → **pair dense chrome with open drafting plates.**
 - [ ] A diagram is packed edge-to-edge on a raised panel → **move it to a recessed plate and let it breathe.**
 - [ ] A cell header has no spec-detail, or a marketing title → **function title left, `// detail` right.**
-- [ ] Sustained input rendered as a chat / `>_` terminal / multi-page counter form → **probe + readout + saturation.**
+- [ ] A sustained *foreground inquiry* mis-cast as a chat / `>_` terminal / multi-page counter form → **probe + readout + saturation.** (This targets an inquiry wrongly dressed as chat — not a genuinely conversational product, which keeps its form per §10.)
 - [ ] A spinner where the system is actually working → **acquisition readout.**
 - [ ] The accent is used as decoration, or a second decorative hue appears → **one signal, ≤10%, linework neutral.**
 - [ ] Uniform N-column grid across all bands → **vary the bands.**

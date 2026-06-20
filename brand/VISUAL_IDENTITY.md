@@ -78,6 +78,15 @@ Content does not float freely on a browser canvas. It sits inside a chassis with
 textured field. The texture is subtle — it tells the eye "this is a material surface,"
 nothing more. An NC-750 screen without a chassis is a regression.
 
+Containment does **not** mean stasis. The chassis is a live device, not a fixed poster:
+cells may enable and disable, bands may be swapped as the app changes state, and genuine
+interrupts may open an overlay or modal *over* the chassis. "The chassis is never broken"
+forbids *floating, chassis-less content adrift on the canvas* — it does not forbid motion,
+modals, or status-driven recomposition. A modal is still framed in the grammar (seams,
+recession, no drop-shadow card, per **P3**); it is the chassis reconfiguring, not
+dissolving. This dynamic layer is deliberately under-specified for now and will grow with
+real products — treat it as open, not settled.
+
 ### P3 — Seams, not shadows
 Surfaces are separated by **crisp 1px seams and tonal shifts**, never by drop-shadows,
 ambient shadows, or glow-as-elevation. Depth is conveyed by *recession and brightness*
@@ -99,12 +108,26 @@ zero-state. Decoration that means nothing is forbidden — it is the opposite of
 machine-documentation stance and it dilutes the marks that *do* mean something. `0x00`
 is load-bearing vocabulary (null / zero / none), not a corner sticker.
 
+The honesty this principle demands is **presentational**: the grammar proves the
+*product's own* behaviour — what it does, where data goes — not the truth of whatever a
+user feeds it. A readout shows the real value the system computed from its input; it is
+not expected to certify that the input itself is true (that is an application-domain
+concern — see `ETHOS.md §7`). And "document over decoration" is in service of *utility*,
+not exposure for its own sake: it exists to help the operator get work done and trust what
+they see — internals may be hidden when hiding them serves the task, not flaunted as proof
+of depth.
+
 ### P6 — Instrument over app
-The interface is *operated*, not *used*. Favour readouts, probes, signal language,
-acquisition states, and one-directional input over chat bubbles, infinite feeds, and
-generic form fields. Explicitly reject the terminal/console aesthetic — it is the
-overused cliché of privacy and AI tooling, and it is not what an instrument looks like.
-An instrument reveals truth; a terminal just accepts commands.
+The interface is *operated*, not *used* — and "operated" means the **operator leads**: the
+instrument responds to a deliberate action, presents an honest reading, and waits. It does
+not drive the session. Favour readouts, probes, signal language, acquisition states, and
+one-directional input over chat bubbles, infinite feeds, and generic form fields. That
+measurement vocabulary is the *characteristic expression* of the instrument stance, but it
+is downstream of the deeper rule that the system reacts to the user (**P10**): reach for a
+reading because it hands interpretation back to the operator, not because every screen must
+look like a gauge. Explicitly reject the terminal/console aesthetic — it is the overused
+cliché of privacy and AI tooling, and it is not what an instrument looks like. An instrument
+reveals truth; a terminal just accepts commands.
 
 ### P7 — Ownership through customization
 The user's chosen theme seed is the unit's fingerprint. Surfacing it (a stamped seed
@@ -127,21 +150,44 @@ prominence is **acquisition** — when the instrument is genuinely working (e.g.
 request in flight), it *shows the signal being read* rather than a generic spinner. No
 page-load choreography, no scroll-reveals, no bounce. Respect `prefers-reduced-motion`.
 
+### P10 — The system reacts; the user leads
+The instrument responds to the operator; it never predicts, steers, nudges, or harvests to
+decide *for* them. The human initiates the action and remains the **sole interpreter** of
+what the reading means — the software's job is to present honest state and stop, not to
+anticipate the next move or manufacture engagement. This is the root of "instrument over
+app" (**P6**): the readout vocabulary exists to hand interpretation back to the user, and
+the rejection of feeds, anticipatory nudges, and attention-farming follows from it. The
+exception is honest and narrow — software whose *purpose* is prediction or analysis (a
+scientific tool, a route planner) may of course predict, **provided the user initiates it**
+and owns the result. What is rejected is the *ambient* anticipation that quietly runs the
+session on the user's behalf. This is the brand's governing stance, not only a visual rule;
+it is stated here because the visual grammar must express it, but it binds every layer.
+
 ---
 
 ## 4. What it must never feel like
 
-If a screen reads as any of these, it has failed regardless of token correctness:
+These are **patterns to reject, not shapes to ban.** What fails a screen is the *behaviour*
+each of these stands for — attention-farming, anticipation, decoration-as-substance,
+dishonesty — not the literal layout. If a screen adopts the *mechanics* below, it has failed
+regardless of token correctness:
 
-- a **SaaS dashboard** (hero metric + sparkline cards, icon-above-heading grids);
+- a **SaaS dashboard** *as engagement theatre* (hero-metric + sparkline cards that exist to
+  look busy rather than to be read);
 - a **hacker terminal** (CRT, scanlines-as-theme, `>_` prompt, matrix rain);
 - a **crypto/web3 network graph** (node-and-edge topology as decoration);
 - a **marketing landing page** (gradient washes, floating glass cards, stock illustration);
-- a **chat client** (bubble transcript as the main object);
+- a **chat client** *whose hero is the bubble transcript* and whose loop is built to keep you
+  talking;
 - **Material / Bootstrap** (elevation shadows, ripples, FABs).
 
-The corrective in every case is the same: return to the three grammars — frame it in a
-chassis, document it instead of decorating it, and make it behave like an instrument.
+**The form itself may be unavoidable — and that is fine.** Some tasks genuinely *are* a
+conversation, a map, or many live metrics at once; a product whose job needs that form keeps
+it. The work is then to **integrate the form into the grammar** — frame it in a chassis,
+document it, and strip the attention-seeking and dishonest mechanics — rather than contort
+the task into a metaphor it does not fit. When a familiar UI is the honest choice, use it;
+just without the dark patterns. The corrective in every case is the same: return to the three
+grammars and to **P10** — make the surface *react to* the user instead of farming them.
 
 ---
 

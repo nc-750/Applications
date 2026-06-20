@@ -1,7 +1,7 @@
 // Barrel for the Interview feature's service layer.
 //
 // Each concern is one file:
-//   Helpers         — pure functions (transcriptOf, mergeCoverage, canConclude, coerceProbe)
+//   Helpers         — pure functions (transcriptOf, mergeCoverage, canConclude, coerceProbe, countQuestionsAsked)
 //   Digestion       — needsDigestion check
 //   InterviewFlow   — turn-by-turn orchestration (beginInterview, submitAnswer, probeMore, finishEarly, abort)
 //   SynthesisBridge — boundary (SynthesisResult) → domain (Persona) transform

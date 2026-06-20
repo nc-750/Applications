@@ -130,6 +130,22 @@ absolute line — **user data is never sold.**
   user-facing copy.
 - **C7.3** The product SHOULD over-disclose: publish what is sent, where, and why.
   Transparency is a brand asset, not a liability.
+- **C7.4 (Honesty is presentational, not substantive — scope boundary).** The
+  "claims literally true" discipline governs what a product asserts about **its own behaviour
+  and data flow** — what it does, where data goes, what it stores. It does **not** make the
+  product a validator of the *truth of user-supplied data*: a product MUST honestly present
+  the real values it computed from its input, but is **not** required to certify that the
+  input itself is true, and MUST NOT imply that it does. (A user who enters false data will
+  honestly see that false data, or an analysis of it, reflected back.) This is the single
+  canonical statement of the boundary; other documents (e.g. `VISUAL_IDENTITY.md` P5) point
+  here rather than restating it. **Exception:** a product whose *stated purpose* is
+  verification or fact-checking takes substantive truth back into scope and MUST meet it for
+  the claims it makes about that function.
+- **C7.5 (Selective ecosystem — informational).** NC-750 MAY decline to build a product
+  whose nature is contrary to this ethos (e.g. one that cannot exist without ambient
+  anticipation or attention-harvesting). The decision criteria are **not yet defined** and
+  MUST NOT be treated as settled policy; this clause only records that refusal is a
+  legitimate option, not an obligation to ship anything technically possible.
 
 ## 8. Visual & Naming Surface
 
@@ -153,5 +169,5 @@ absolute line — **user data is never sold.**
 - [ ] Usable with no in-app account; secrets in OS keystore (C4)
 - [ ] No dark patterns; features gated, core not crippled; claims literally true (C5)
 - [ ] Org buyers see seats, never content (C6)
-- [ ] No misused crypto terms; docs match reality (C7)
+- [ ] No misused crypto terms; docs match reality; honesty scoped to own behaviour, not user-data trueness (C7)
 - [ ] Serialization, Lab system, `0x00`, WCAG AA (C8)

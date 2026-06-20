@@ -9,6 +9,9 @@ defineProps<{
   busy?: boolean;
   /** Transient synthesis phase label, if any. */
   phase?: string | null;
+  /** The question cap — not full coverage — triggered this offer. Tell the truth:
+   *  coverage may be incomplete, so don't claim the signal is locked. */
+  capped?: boolean;
 }>();
 
 const emit = defineEmits<{ generate: []; continue: [] }>();
@@ -16,13 +19,24 @@ const emit = defineEmits<{ generate: []; continue: [] }>();
 
 <template>
   <div class="flex flex-col gap-3">
-    <Facet>● SIGNAL SUFFICIENT · COVERAGE LOCKED</Facet>
+    <Facet v-if="capped">● QUESTION LIMIT REACHED · COVERAGE PARTIAL</Facet>
+    <Facet v-else>● SIGNAL SUFFICIENT · COVERAGE LOCKED</Facet>
 
-    <h2 class="nc-heading-3 concl-q">The reading has converged.</h2>
-    <p class="nc-text-sm concl-note">
-      Coverage is sufficient across all facets. You can generate your profile now, or keep feeding
-      the instrument — the reading will keep refining. There is no fixed number of probes.
-    </p>
+    <template v-if="capped">
+      <h2 class="nc-heading-3 concl-q">The question limit is reached.</h2>
+      <p class="nc-text-sm concl-note">
+        The interview hit its question limit before every facet was fully saturated, so coverage may
+        be incomplete. You can generate your profile from what's gathered now, or keep feeding the
+        instrument — the reading will keep refining.
+      </p>
+    </template>
+    <template v-else>
+      <h2 class="nc-heading-3 concl-q">The reading has converged.</h2>
+      <p class="nc-text-sm concl-note">
+        Coverage is sufficient across all facets. You can generate your profile now, or keep feeding
+        the instrument — the reading will keep refining. There is no fixed number of probes.
+      </p>
+    </template>
 
     <div class="flex flex-wrap gap-3 mt-3">
       <button class="nc-btn nc-btn--accent" :disabled="busy" @click="emit('generate')">

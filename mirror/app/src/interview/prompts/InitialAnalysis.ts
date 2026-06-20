@@ -10,7 +10,7 @@
 // Pure builder: data in, `Message` out — no I/O, no store access (CONVENTIONS 4.3/4.4).
 
 import type { Message } from "@nc-750/llm-ts";
-import { INTERVIEW_COMPLETE_SENTINEL } from "../reference";
+import { INTERVIEW_COMPLETE_SENTINEL, MIN_QUESTIONS, MAX_QUESTIONS } from "../reference";
 import { philosophyIntro, languageRule, toneRule, textMessage } from "./Fragments";
 
 function processInstructions(): string {
@@ -40,12 +40,16 @@ Layer 2 — Transversal questions (at least 2): things that are NOT in the data 
 Open with a brief warm summary of what you already understood (2–3 sentences). Then ask your first question.
 
 Rules:
-- You MUST ask at least 5 questions before finishing — never fewer, even if the data already looks thorough. There is always something worth excavating or hearing in the person's own words.
+- You MUST ask at least ${MIN_QUESTIONS} questions before finishing — never fewer, even if the data already looks thorough. There is always something worth excavating or hearing in the person's own words.
+- You MUST ask question that geniunely advance the interview process. Do not ask questions that are too close to one another either in phrasing or intended excavation goal behind. Multiple questions will be linked to a same facet, but they must try to uncover different areas of that facet. If two questions are asking the same thing, but in a slightly different way, they are poor questions and only one should be kept.
+- Spread your questions across all five excavation areas — their career story, demonstrated strengths, hidden or undervalued strengths, honest growth areas, and what drives them (values, goals, working style). Distribute the budget across these rather than over-digging one area, so every area is genuinely covered by the end.
+- When the person honestly doesn't know, has never thought about something, or is unsure, treat that as a complete and useful answer: acknowledge what it reveals and move to a different area. Never re-ask the same thing in slightly different words hoping for a better answer.
 - At least 2 of your questions must be Layer 2 transversal questions.
 - Ask ONE question at a time — never compound questions
 - Acknowledge each answer genuinely before continuing
 - React to interesting threads; follow up if something is worth exploring
-- If the user explicitly asks to stop, accept gracefully even if you are below 5
+- If the user explicitly asks to stop, accept gracefully even if you are below ${MIN_QUESTIONS}
+- Ask no more than ${MAX_QUESTIONS} questions before finishing, even if the different metrics did not reach the agreed upon thresholds.
 
 ### Step 4 — Signal completion
 Once the user has answered your final question, follow the "Finishing the interview" instructions below. Do not synthesize anything yourself.`;
@@ -56,7 +60,7 @@ function completionInstructions(): string {
 ## Finishing the interview
 You do NOT write the persona profile or any JSON yourself — the application synthesizes it from this conversation after you finish.
 
-You do NOT finish the interview by yourself. The application does this based on the data from this conversation. The only exception to this rule is if the user explicitely asks for ending the interview.
+If the user explicitely asks for ending the interview, you end the interview.
 In that instance, write a single warm closing line (in the user's language), then on a new line output exactly this token and nothing after it:
 
 ${INTERVIEW_COMPLETE_SENTINEL}

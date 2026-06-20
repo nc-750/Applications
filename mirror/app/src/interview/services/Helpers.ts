@@ -20,6 +20,11 @@ export function transcriptOf(messages: TranscriptMessage[]): string {
         .join("\n\n");
 }
 
+/** How many probe questions have been asked so far (non-error assistant turns). */
+export function countQuestionsAsked(messages: TranscriptMessage[]): number {
+    return messages.filter((m) => m.role === "assistant" && !m.isError).length;
+}
+
 /**
  * Monotonic coverage merge — for each facet, takes the maximum of prior and
  * incoming so the reading can only rise. A merge never decreases a facet.

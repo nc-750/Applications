@@ -137,7 +137,7 @@ The system is driven by a **seed architecture**: six CSS custom properties (`--n
 
 The personality is surgical, industrial, and tactile. Typography runs at extreme contrast: ClashDisplay set huge and tight for display numerals and headings, Chillax for body, and a system monospace stack for the tiny wide-tracked uppercase labels that carry the technical voice. Material simulation — brushed metal gradients, edge bevels that flip on press, fractal noise textures — sells the physicality without decoration.
 
-This system explicitly rejects: floating cards, box-shadow elevation, gradients as decoration, glassmorphism, hero-metric SaaS templates, and anything that reads as a Bootstrap or Material Design app. The interface should feel like it was milled from a billet of aluminium and assembled on a workbench, not arranged in a design tool.
+This system explicitly rejects the *patterns* of: floating cards, box-shadow elevation, gradients as decoration, glassmorphism, hero-metric dashboard chrome, and anything that reads as a Bootstrap or Material Design app. It is the attention-seeking, decoration-as-substance *mechanics* that are rejected — not the underlying shapes: a product whose task genuinely needs, say, many live metrics keeps that form and integrates it into the grammar (see `../brand/VISUAL_IDENTITY.md §4`). The interface should feel like a precision instrument — machined and toleranced, built to be operated and owned — not a layout arranged in a design tool.
 
 **Key Characteristics:**
 - Seed-driven: every color derives from 6 channel variables; the theme is programmable
@@ -395,7 +395,7 @@ In the dark theme (`data-theme="dark"`), the surface ramp inverts: the field dro
 
 ### Instrument
 
-**Character:** Surfaces for products *operated as instruments* rather than browsed as apps. These are not chat or form components. See `DESIGN_USE.md` §10 for the interaction model and the rules on when it applies (foreground vs background work).
+**Character:** Surfaces for products *operated as instruments* rather than browsed as apps — the operator leads and the surface reacts (constitution P6/P10). These are the instrument-case components, not chat or form components; they are **not** a mandate to avoid those forms where a task genuinely needs them (a conversational or spatial product keeps its form and integrates it — see `DESIGN_USE.md` §10 "Other product shapes"). See `DESIGN_USE.md` §10 for the interaction model and the rules on when it applies (foreground vs background work).
 
 The *Readout* (as defined by the constitution glossary — "the live measurement surface that accumulates as the user feeds the instrument") is not a CSS class. It is an application composition of existing primitives assembled inside an `.nc-monitor` cavity: `.nc-facet` labels, `.nc-coverage` meters, `.nc-lcd` typography, `.nc-led` indicators, and app-owned flex layout. See `DESIGN_USE.md` §6 for an illustrative example.
 
@@ -406,7 +406,7 @@ The *Readout* (as defined by the constitution glossary — "the live measurement
 
 **Named Rule**
 
-**The Honest-Reading Rule.** An instrument reading (coverage, confidence, lock) must reflect a value the system genuinely computes. No fake progress, no decorative meter (see `../brand/ETHOS.md`: claims literally true).
+**The Honest-Reading Rule.** An instrument reading (coverage, confidence, lock) must reflect a value the system genuinely computes. No fake progress, no decorative meter (see `../brand/ETHOS.md`: claims literally true). This honesty is *presentational*: the reading faithfully shows what the system computed from its input — it is not a guarantee that the input itself is true (`../brand/ETHOS.md` C7.4). An honestly-derived *estimate*, marked as an estimate, is permitted; only a fabricated or decorative value is forbidden.
 
 ### Misc
 
@@ -453,7 +453,7 @@ Every component adapts to the dark theme automatically through the token system.
 - **Don't** use the accent color as decoration. It marks primary actions, current selection, focus, and the active signal. Nothing else earns it.
 - **Don't** add a fifth surface finish. The four-finish ramp (raw field, bare aluminium, brushed panel, polished white) plus recessed well and LCD cavity are the complete vocabulary. If you need more hierarchy, use spacing, typography, or a seam.
 - **Don't** use Material Design patterns: no floating action buttons, no ripple effects, no elevation-based shadow hierarchy. If it looks like a Google app, it's wrong.
-- **Don't** use generic SaaS template patterns: no hero-metric dashboards (big number + small label + sparkline), no icon-above-heading card grids, no purple-to-blue gradients. If it looks like every startup landing page, it's wrong.
+- **Don't** adopt generic SaaS template *patterns*: hero-metric dashboards built to look busy (big number + small label + sparkline as decoration), icon-above-heading card grids, purple-to-blue gradients. If it looks like every startup landing page, it's wrong. (This rejects the busy-decoration *pattern* — an honest many-metric surface a task genuinely needs is fine, integrated into the grammar; see `../brand/VISUAL_IDENTITY.md §4`.)
 - **Don't** be deliberately raw or brutalist. Industrial means precision-machined, not crude. The system is considered and surgical, not confrontational.
 - **Don't** use border-left or border-right greater than 1px as a colored accent stripe on cards, list items, or callouts. The alert component's 3px left border is the sole exception — it's a functional severity indicator, not decoration.
 - **Don't** render an instrument's reading (coverage, confidence, lock) as fake progress. The value must be one the system actually computes.

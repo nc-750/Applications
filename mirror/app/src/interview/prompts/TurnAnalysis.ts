@@ -93,8 +93,23 @@ export const TURN_ANALYSIS_JSON_SCHEMA: Record<string, unknown> = {
     required: ["coverage", "probe_signal", "next_action", "next_facet"],
 };
 
-/** The analysis system prompt, seeded with the current coverage reading. */
-export function buildPersonaMetricsSystemPrompt(coverage: CoverageMap): Message {
+/**
+ * The analysis system prompt, seeded with the current coverage reading and the
+ * interview's budget position.
+ *
+ * @param coverage       the current saturation reading (the floor to build on)
+ * @param questionsAsked how many probes have been asked so far
+ * @param maxQuestions   the soft question cap the interview wraps up by
+ * @param pastBudget     true once the target is met or the cap is spent — drops
+ *                       all pacing pressure so a "continue / add more" round is
+ *                       measured honestly rather than hurried.
+ */
+export function buildPersonaMetricsSystemPrompt(
+    coverage: CoverageMap,
+    questionsAsked: number,
+    maxQuestions: number,
+    pastBudget: boolean,
+): Message {
     const target = Math.round(CONCLUDE_THRESHOLD * 100);
     const facetGuide = FACETS.map((f) => `- ${f.key}: ${f.blurb}`).join("\n");
     const facetSaturation = `
@@ -104,6 +119,15 @@ export function buildPersonaMetricsSystemPrompt(coverage: CoverageMap): Message 
     - Hidden: ${coverage.hidden}
     - Drivers: ${coverage.drivers}
     `;
+
+    // Pacing: while inside the budget, push toward the target by the cap; once the
+    // target is met or the cap is spent, drop the pressure and just measure.
+    const pacing = pastBudget
+        ? `## Pacing
+The target is already met, or the question budget is spent and the user has chosen to keep adding evidence. There is no budget pressure now: simply measure the latest answer honestly. Saturation still only rises (never lower a facet); do not hurry, and do not inflate — read what the transcript actually supports.`
+        : `## Pacing
+You are at question ${questionsAsked} of a soft maximum of ${maxQuestions}. By the cap, every facet should be at or above ${target}% — so the reading has to move at that pace. If you are past the midpoint and facets are still low, your earlier readings were too conservative: correct them upward to reflect the evidence already gathered. Do not inflate numbers just to finish early, and do not stall a facet that is genuinely covered.`;
+
     const prompt = `
 You are the ANALYSIS stage of a persona interview instrument. You do not talk to the user. You read the latest answer and report an honest measurement of the interview's progress.
 
@@ -111,14 +135,26 @@ You track ${FACETS.length} coverage facets (each 0..1 = how completely it is evi
 ${facetGuide}
 
 For every turn, return:
-1. coverage — your current saturation estimate for ALL five facets, based on the whole transcript so far. Be honest and conservative: a fact stated is not the same as a fact evidenced with a concrete story. Saturation should only rise when real evidence is added; it never needs to climb just because a turn happened.
-2. probe_signal — "thin" if the answer just given was vague, generic, or evasive (the instrument should dig deeper); "strong" if it was specific and well-evidenced.
-3. next_action — "follow_up" to probe the same facet again (typically when probe_signal is "thin" and the facet is under-saturated), or "advance" to move on.
+1. coverage — your current saturation estimate for ALL five facets, based on the whole transcript so far. A fact stated is not the same as a fact evidenced with a concrete story. Re-assess each facet from the whole transcript; do NOT just nudge the previous value by a hundredth.
+2. probe_signal — "thin" if the answer just given was genuinely empty, evasive, deflecting, or off-topic (the instrument should dig deeper); "strong" if it carried real signal about the facet.
+3. next_action — "follow_up" to probe the same facet again (only when probe_signal is "thin" and the facet is under-saturated), or "advance" to move on.
 4. next_facet — which facet the next probe should target. Prefer the least-saturated facet that still needs evidence, unless a follow-up on the current facet is clearly more valuable.
 
-Aim to reach roughly ${target}% saturation across all facets before the reading is considered sufficient. Do not inflate numbers to finish early, and do not stall a facet that is genuinely covered.
+## How much a single answer is worth (move in tenths, not hundredths)
+Calibrate each facet's absolute saturation against the evidence in the whole transcript:
+- 0.0 — the facet has not been touched at all.
+- ~0.2–0.35 — one clear, on-topic answer (even a brief one) that opens the facet.
+- ~0.4–0.6 — a concrete story, or a second independent data point.
+- ~0.75–0.8 — richly evidenced; you could write a confident paragraph about it (this is "locked").
+- ~0.9–1.0 — exhaustively covered; further probing would yield little.
+A single substantive answer that directly addresses a facet should advance that facet by a meaningful step (roughly 0.15–0.3), not by hundredths.
 
-Current saturation is:
+## Honest uncertainty is evidence, not a thin answer
+When the user honestly says "I don't know", "I've never thought about this", or "I'm not sure", that is NOT a thin answer — it is real signal about the facet (self-awareness, blind spots, how the person relates to that area, especially for hidden, growth, and drivers). Score it probe_signal "strong", advance that facet's saturation, and prefer next_action "advance": do not re-probe the same ground with reworded questions. Reserve "thin" for answers that genuinely reveal nothing — empty, evasive, deflecting, or off-topic.
+
+${pacing}
+
+Current saturation (a floor to build on, not a ceiling):
 ${facetSaturation}
 
 Output ONLY the structured JSON result (a single JSON object with the fields above). No prose.`;
