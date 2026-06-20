@@ -47,7 +47,8 @@ onMounted(() => {
         </Cell>
     </Band>
     <RouterView />
-    <footer class="nc-chassis-footer">
+    <footer class="nc-chassis-footer flex justify-between">
         <a href="mailto:support@nc-750.com" class="nc-lcd-sub">NC-750 // MIRROR // SUPPORT</a>
+        <span class="nc-label">v1.1.1</span>
     </footer>
 </template>
