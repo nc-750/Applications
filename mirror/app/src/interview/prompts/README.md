@@ -8,7 +8,7 @@ how the instrument talks to the model for a given step, edit that one file.
 | # | Flow | File | Builders | Boundary contract |
 |---|------|------|----------|-------------------|
 | 1 | **Initial-data analysis** — the streaming chat system prompt that opens the interview, seeded with the user's pasted text / CV / files. | `InitialAnalysis.ts` | `buildInterviewSystemPrompt(initialData)` | — (free-form chat) |
-| 2 | **Per-turn analysis (Call B)** — after each answer, an honest coverage/saturation measurement that drives the readout. | `TurnAnalysis.ts` | `buildPersonaMetricsSystemPrompt(coverage)`, `buildPersonaMetricsUserPrompt(question, answer, transcript)` | `TurnAnalysisSchema` → `TurnAnalysis`; `TURN_ANALYSIS_JSON_SCHEMA` / `TURN_ANALYSIS_SCHEMA_NAME` |
+| 2 | **Per-turn analysis (Call B)** — after each answer, an honest coverage/saturation measurement that drives the readout. | `TurnAnalysis.ts` | `buildPersonaMetricsSystemPrompt(coverage, questionsAsked, maxQuestions, pastBudget)`, `buildPersonaMetricsUserPrompt(question, answer, transcript)` | `TurnAnalysisSchema` → `TurnAnalysis`; `TURN_ANALYSIS_JSON_SCHEMA` / `TURN_ANALYSIS_SCHEMA_NAME` |
 | 3 | **Probe (Call A)** — the single next facet-scoped question, in probe voice. | `Probe.ts` | `buildNextQuestionSystemPrompt(turnAnalysis)` | `ProbeSchema` → `Probe`; `PROBE_JSON_SCHEMA` / `PROBE_SCHEMA_NAME` |
 | 4 | **Synthesis (Call C)** — extract → analyze → polish → merge into one persona, then a one-shot "How I Work Best". | `Synthesis.ts` | `buildExtract*`, `buildAnalyze*`, `buildPolish*`, `mergeSynthesisFragments`, `buildHowIWorkBestPrompt` | `ExtractSchema`/`AnalyzeSchema`/`PolishSchema` (+ JSON schemas) → `SynthesisResult`; `HowIWorkBestSchema` |
 

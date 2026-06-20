@@ -18,12 +18,26 @@ function textOf(msg: Message): string {
 describe("buildPersonaMetricsSystemPrompt", () => {
     it("is a system message that renders the current saturation", () => {
         const coverage = { ...emptyCoverage(), story: 0.4, strengths: 0.2 };
-        const msg = buildPersonaMetricsSystemPrompt(coverage);
+        const msg = buildPersonaMetricsSystemPrompt(coverage, 8, 15, false);
         expect(msg.role).toBe("system");
         const prompt = textOf(msg);
         expect(prompt).toContain("ANALYSIS stage");
         expect(prompt).toContain("Story: 0.4");
         expect(prompt).toContain("Strength: 0.2");
+    });
+
+    it("renders the budget position while inside the budget", () => {
+        const coverage = emptyCoverage();
+        const prompt = textOf(buildPersonaMetricsSystemPrompt(coverage, 8, 15, false));
+        expect(prompt).toContain("question 8");
+        expect(prompt).toContain("soft maximum of 15");
+    });
+
+    it("drops the budget line once past the budget", () => {
+        const coverage = emptyCoverage();
+        const prompt = textOf(buildPersonaMetricsSystemPrompt(coverage, 18, 15, true));
+        expect(prompt).not.toContain("soft maximum of");
+        expect(prompt).not.toContain("question 18");
     });
 });
 
