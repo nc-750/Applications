@@ -1,0 +1,23 @@
+[
+  {"query": "the settings feature is a mess and predates our conventions. i want to bring the whole thing into conformance but it's huge — break it into ordered phases for me so i know what to build first", "should_trigger": true},
+  {"query": "we're adding a brand-new 'goals tracker' feature to Mirror, model through to the Vue view. lay out the phases and what depends on what before i start coding any of it", "should_trigger": true},
+  {"query": "map out the work to migrate the insight view off the old renderer/export setup to a native Vue view", "should_trigger": true},
+  {"query": "I need a master plan for rebuilding the interview module to match CONVENTIONS.md — one phase per layer, bottom up", "should_trigger": true},
+  {"query": "this refactor touches the model, the indexeddb mappers, the store, and three views. what order do i do these in and which can run in parallel?", "should_trigger": true},
+  {"query": "decompose the BYOK relay integration into buildable phases, earliest first", "should_trigger": true},
+  {"query": "where do i even start with the persona-app theme generator rework? i want it staged so each step is independently shippable", "should_trigger": true},
+  {"query": "split this whole offline-export initiative into phases with a dependency graph", "should_trigger": true},
+  {"query": "give me the phased plan for the entire settings refactor before we touch any code", "should_trigger": true},
+  {"query": "i've got a giant feature to build across like 5 layers, help me sequence it into stages so nothing reaches up into a layer that isn't built yet", "should_trigger": true},
+
+  {"query": "i already know phase 3 is the store layer for the insight refactor — write me the detailed brief for just that one phase: in scope, out of scope, tests", "should_trigger": false},
+  {"query": "expand this stub into something buildable: 'Phase 2 — db + mappers for goals tracker'. i need the technical how, no code", "should_trigger": false},
+  {"query": "poke holes in this master plan before i commit to it — is the decomposition sound, are the parallel-safe claims actually honest?", "should_trigger": false},
+  {"query": "review this diff against the approved phase brief and tell me if it overreached into a later phase", "should_trigger": false},
+  {"query": "does the new cross-device sync feature violate our data-ownership rules? run an ethos check on the described data flow", "should_trigger": false},
+  {"query": "implement phase 4 — i've got the approved brief, just write the code and make the tests pass", "should_trigger": false},
+  {"query": "what's the actual dependency order vite uses to bundle these modules at build time? trying to debug a circular import", "should_trigger": false},
+  {"query": "rename the useSettingsStore action `reset` to `clear` across the settings feature and update the callers", "should_trigger": false},
+  {"query": "i need the in-scope / out-of-scope lines and the test descriptions for just the prompts/contracts phase", "should_trigger": false},
+  {"query": "is this plan ready to build? find the blind spots and any weak out-of-scope walls before i start", "should_trigger": false}
+]
