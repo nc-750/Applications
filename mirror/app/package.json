@@ -1,16 +1,14 @@
 {
   "name": "mirror-app",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "build:pages": "bun run build && bun run scripts/pages-postbuild.mjs",
-    "deploy": "bun run build:pages && gh-pages -d dist -r git@github_nc-750:nc-750/mirror-app.git -b main --dotfiles",
+    "build": "vue-tsc --noEmit && vite build && bun run scripts/pages-postbuild.mjs",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "vitest",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage"
   },

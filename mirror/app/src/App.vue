@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
 
 import { 
   Band,
@@ -10,6 +10,7 @@ import {
 
 import { useSettingsStore } from "./settings/stores";
 
+const appVersion = __APP_VERSION__;
 const settingsStore = useSettingsStore();
 
 const route = useRoute()
@@ -49,6 +50,6 @@ onMounted(() => {
     <RouterView />
     <footer class="nc-chassis-footer flex justify-between">
         <a href="mailto:support@nc-750.com" class="nc-lcd-sub">NC-750 // MIRROR // SUPPORT</a>
-        <span class="nc-label">v1.1.1</span>
+        <span class="nc-label">v{{ appVersion }}</span>
     </footer>
 </template>

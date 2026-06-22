@@ -37,7 +37,7 @@ export { default as Field } from "./components/Field.vue";
 export { default as ButtonGroup } from "./components/ButtonGroup.vue";
 export { default as Segmented } from "./components/Segmented.vue";
 export { default as ExpandButton } from "./components/ExpandButton.vue";
-export type { ExpandAction } from "./components/ExpandButton.vue";
+// export type { ExpandAction } from "./components/ExpandButton.vue";
 export { default as CellHead } from "./components/CellHead.vue";
 
 // Diagram
