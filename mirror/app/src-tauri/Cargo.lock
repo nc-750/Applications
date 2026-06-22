@@ -2106,7 +2106,7 @@ dependencies = [
 
 [[package]]
 name = "mirror-app"
-version = "1.0.8"
+version = "1.0.10"
 dependencies = [
  "keyring",
  "reqwest 0.12.28",
