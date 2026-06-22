@@ -61,7 +61,7 @@
       cd dist
       git add -A
       git commit -m "$message"
-      git tag -a "$version" -m
+      git tag -a "$version" -m "$message"
       git push --follow-tags
     '';
   };
