@@ -56,11 +56,12 @@
 
     deploy.exec = ''
       version=$(git describe --abbrev=0 | cut -d '-' -f 2)
+      message="Mirror release: $version"
 
       cd dist
       git add -A
-      git commit -m "Mirror release: $version"
-      git tag -a "$version"
+      git commit -m "$message"
+      git tag -a "$version" -m
       git push --follow-tags
     '';
   };
