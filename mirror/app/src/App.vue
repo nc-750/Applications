@@ -19,7 +19,7 @@ const isWelcomePage = computed(() => route.name === "welcome");
 const isSettingsPage = computed(() => route.name === "settings");
 
 const cellLayout = computed(() => {
-    let layout = "flex";
+    let layout = "flex gap-4";
 
     if (isSettingsPage.value) {
         return layout + " justify-start";
@@ -44,6 +44,7 @@ onMounted(() => {
         <div :class="cellLayout">
             <router-link v-if="!isWelcomePage" to="/">Home</router-link>
             <router-link v-if="!isSettingsPage" to="/settings">Settings</router-link>
+            <a href="mailto:support@nc-750.com" class="nc-tooltip" data-tooltip="Send bug report or any kind of feedback">Feedback</a>
         </div>
         </Cell>
     </Band>
