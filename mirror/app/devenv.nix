@@ -14,9 +14,9 @@
     '';
         
     release.exec = ''
-      version=$1
+      version="$1"
       
-      if [ "$version" -eq "" ]; then
+      if [ "$version" -z ]; then
         echo "A version is needed for releasing"
         exit 1;
       fi
@@ -45,24 +45,22 @@
         exit $retval
       fi
 
-      git commit -m "Mirror release: v$version"
-      git tag "Mirror-v$version"
+      newtag="Mirror-v$version"
+      message="Mirror release: v$version"
+
+      git add package.json src-tauri
+      git commit -m "$message"
+      git tag -a $newtag -m "$message"
       git push --follow-tags
     '';
 
     deploy.exec = ''
-      version=$1
-
-      if [ "$version" -eq "" ]; then
-        echo "A version is needed for deploying"
-        exit 1;
-      fi
-
-      release "$version" "$message"
+      version=$(git describe --abbrev=0 | cut -d '-' -f 2)
 
       cd dist
-      git commit -m "Mirror release: v$version"
-      git tag "v$version"
+      git add -A
+      git commit -m "Mirror release: $version"
+      git tag -a "$version"
       git push --follow-tags
     '';
   };
