@@ -78,11 +78,21 @@ const SENT_ITEMS = [
             </div>
           </dl>
         </section>
+        <section>
+          <div class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
+            <span class="nc-label nc-label--accent">02.</span>
+            <h4 class="nc-heading-4 flex-auto">How is your email handled</h4>
+          </div>
+          <p class="nc-text-sm nc-text-muted mb-6">
+            We do not use your email for any marketing or other purpose than to receive feedback from you when using the <a href="mailto:support@nc-750.com" class="nc-text nc-text--accent">Feedback</a> link.<br/>
+            <br/>If we ever do, it will only be after you explicitly opt-in to receive emails from us.
+          </p>
+        </section>
     </Cell>
     <Cell title="AI PROVIDER" spec="PRV // 0x02">
       <section>
         <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
-          <span class="nc-label nc-label--accent">02.</span>
+          <span class="nc-label nc-label--accent">03.</span>
           <h4 class="nc-heading-4 flex-auto">What is sent to your AI provider</h4>
         </header>
         <p class="nc-text-sm nc-text-secondary mb-6">
@@ -107,7 +117,7 @@ const SENT_ITEMS = [
     <Cell title="PROVIDER POLICY" spec="PRV // 0x03">
       <section>
         <header class="flex items-baseline gap-3 mb-3 border-b-[1.5px]">
-          <span class="nc-label nc-label--accent">03.</span>
+          <span class="nc-label nc-label--accent">04.</span>
           <h4 class="nc-heading-4 flex-auto">Provider data policies</h4>
         </header>
           
