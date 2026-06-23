@@ -109,7 +109,7 @@ async function structuredMessage(
   structured: { name: string; schema: Record<string, unknown> },
   opts: { maxTokens: number; temperature?: number; signal?: AbortSignal },
 ): Promise<Result<unknown, LLMError>> {
-  const client = new Anthropic({ apiKey, baseURL: baseUrl });
+  const client = new Anthropic({ apiKey, baseURL: baseUrl, dangerouslyAllowBrowser: true });
   const { system, messages: anthropicMessages } = extractSystem(messages);
 
   try {
@@ -217,7 +217,7 @@ export function createAnthropicClient(
     async models(): Promise<Result<string[], LLMError>> {
       try {
         const apiKey = await keyProvider();
-        const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl });
+        const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl, dangerouslyAllowBrowser: true });
         const ids: string[] = [];
         for await (const m of client.models.list()) ids.push(m.id);
         return Ok(ids);
@@ -236,7 +236,7 @@ export function createAnthropicClient(
       const { system, messages: anthropicMessages } = extractSystem(messages);
 
       const apiKey = await keyProvider();
-      const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl });
+      const client = new Anthropic({ apiKey, baseURL: resolvedBaseUrl, dangerouslyAllowBrowser: true });
 
       let stream: ReturnType<typeof client.messages.stream>;
       try {
