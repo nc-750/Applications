@@ -731,7 +731,7 @@ fieldset {
     font-size: var(--nc-text-sm);
     font-weight: var(--nc-font-medium);
     line-height: 1;
-    color: var(--nc-ctl-text);
+    color: var(--nc-btn-label);
     background: var(--nc-ctl-metal);
     border: var(--nc-border-width) solid var(--nc-ctl-border);
     border-radius: var(--nc-radius-md);
@@ -1020,6 +1020,9 @@ fieldset {
     --nc-ctl-inset-border: var(--nc-console-line);
     --nc-ctl-metal: var(--nc-ctl-bg);
     --nc-ctl-metal-press: var(--nc-ctl-bg-active);
+}
+.nc-monitor--line {
+    background-color: var(--nc-console-line);
 }
 .nc-lcd {
     font-family: var(--nc-font-mono);
