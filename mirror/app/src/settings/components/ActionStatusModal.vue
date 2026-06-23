@@ -140,7 +140,7 @@ function onDismissClick(): void {
     <div
         v-if="isVisible"
         ref="panelRef"
-        class="nc-monitor nc-monitor--line asm-panel"
+        class="nc-monitor asm-panel"
         role="alert"
         aria-live="assertive"
         tabindex="-1"
@@ -197,6 +197,10 @@ function onDismissClick(): void {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    /* Panel background kept self-contained (the modal lives in the settings
+       feature, not the Lab): reuse the existing --nc-console-line token rather
+       than adding a new .nc-monitor--line class to lab.css (Out-of-scope wall). */
+    background-color: var(--nc-console-line);
     /* Focus outline so keyboard users can see the panel is focused (C8.3) */
     outline: none;
 }
