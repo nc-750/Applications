@@ -79,7 +79,12 @@ neither (see the verb table above).
    have no `Edit`/`Bash`-write and run in plan mode.
 2. **Confirm the target up front.** For verbs that read or write a plan/report file (`map`, `plan`,
    and a `challenge` aimed at a plan/brief), confirm the **exact plan-file path**; if the user named a
-   plan file that is not found, **ask** — do not broaden the search or guess a path. For verbs whose
+   plan file that is not found, **ask** — do not broaden the search or guess a path. For a `map` of a
+   new goal, derive the path from the binding convention in
+   [`references/master-plan-format.md`](references/master-plan-format.md) → *File location & naming*
+   (the **target project's** `docs/plans/YYYYMMDD-<plan-slug>/`, `00_…-master-plan.md` +
+   `XX_…-phase-XX.md`, `created_at` frontmatter — **not** the repo root) and confirm it with the user.
+   For verbs whose
    target is *not* a file — `ethos`, and a `challenge`/`review` aimed at a product, data flow, diff, or
    copy — confirm **what the target is** instead (do not demand a plan path that was never meant to
    exist). The role agents write any plan/report file (they hold the scoped `Write`); the orchestrator
