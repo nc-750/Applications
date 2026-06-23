@@ -4,9 +4,9 @@ The concrete web implementation of the instrument philosophy in `SKILL.md`. This
 contract for an NC-750 Vue / web surface. It encodes **CONVENTIONS §7.2–7.7**, the `.nc-*` class
 vocabulary, the `@nc-750/lab-vue` component surface, and the styling-placement rule.
 
-> **Scope split with `vue-feature-architecture`.** §7.1 (*one job → one component*) and §7.8–7.19
+> **Scope split with `nc-750-web-frontend-architecture`.** §7.1 (*one job → one component*) and §7.8–7.19
 > (duplication, extraction, dead code, `console.log`, error handling per layer) are the
-> *code-structure* doctrine and are owned by **`vue-feature-architecture`** — apply them from there.
+> *code-structure* doctrine and are owned by **`nc-750-web-frontend-architecture`** — apply them from there.
 > This module owns the **visual contract**: the Chassis/Band/Cell hierarchy, not restyling structure,
 > the Tailwind-in-Cell rule, `.nc-*` for visuals, the MonitorCell meaning, and naming a component
 > after its Lab root. The only structural rule restated here is §7.1's *visual* consequence (two
@@ -69,7 +69,7 @@ their own `*Band` rather than wiring the pieces inline at the page level.
 ### 7.1 (visual consequence only) — one screen, one implementation
 If a screen has two implementations, two visual languages are in the tree. Promote the better one and
 delete the other in the same change. (The general one-job-per-component / dead-code doctrine is
-`vue-feature-architecture`'s — this note is only its visual stake.)
+`nc-750-web-frontend-architecture`'s — this note is only its visual stake.)
 
 ### Style mechanic
 Indentation is **4 spaces**, every file type (CONVENTIONS §7.15).
@@ -200,5 +200,6 @@ left-stripe, a *functional* severity indicator) · `nc-tabs` · `nc-breadcrumbs`
 - Every instrument reading (`Coverage`, `nc-progress`, confidence, lock) is a value the system truly
   computes; every diagram depicts real behaviour (honest-reading rule).
 - 4-space indentation in touched files (§7.15).
-- `bunx tsc --noEmit` is clean. (This stack uses **bun** — `bun run <script>`, `bunx <bin>`; never
+- `bunx vue-tsc --noEmit` is clean — this is a `.vue` surface, and bare `tsc` silently skips SFCs
+  (CONVENTIONS §8.2). (This stack uses **bun** — `bun run <script>`, `bunx <bin>`; never
   `npm` / `npx` / `node`.)

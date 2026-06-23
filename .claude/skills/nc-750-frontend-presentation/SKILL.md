@@ -1,5 +1,5 @@
 ---
-name: instrument-design-system
+name: nc-750-frontend-presentation
 description: >-
   Binding presentation doctrine for the NC-750 "Lab" design language: how a feature is presented as
   a precision instrument rather than a generic app. A platform-agnostic philosophy core — the
@@ -20,7 +20,7 @@ description: >-
   or "this view looks like a generic app" situation on an NC-750 surface. Do NOT trigger for the
   code-structure axis (layering view→service→store→db, stores, services, mappers, data models,
   error-handling strategy, function/file/boolean naming, dead-code/duplication policy) — that is the
-  vue-feature-architecture skill; nor for seed/token color math, theme generation, WCAG contrast
+  nc-750-web-frontend-architecture skill; nor for seed/token color math, theme generation, WCAG contrast
   computation, brand copywriting, registering/importing the Lab plugin or stylesheet (tooling setup),
   responsive-CSS breakpoint debugging, or generic Vue/CSS syntax questions.
 ---
@@ -32,7 +32,7 @@ instrument, documented like a technical manual** — not as a generic app, dashb
 terminal. It answers one question precisely: **given a screen or piece of UI, how must it look, what
 surface does it sit on, and which design-system element owns it?**
 
-> **This skill is the visual / presentation axis.** Its companion, **`vue-feature-architecture`**, owns
+> **This skill is the visual / presentation axis.** Its companion, **`nc-750-web-frontend-architecture`**, owns
 > the *code-structure* axis — layering (`view → service → store → db`), stores, services, mappers,
 > data models, error strategy, naming, and the dead-code / duplication / one-job-per-component
 > doctrine. When a question is about *where logic lives or how code is shaped*, that is the other
@@ -229,4 +229,4 @@ If any is true, the screen is wrong:
   utility vocabulary; visuals use `.nc-*`; any escape to custom CSS carries a one-line *why*).
 - Every instrument reading shown is one the system genuinely computes (honest-reading rule).
 - This is a **presentation** review only — code-structure conformance (layering, stores, services,
-  errors, naming, dead code) is verified under **`vue-feature-architecture`**, not here.
+  errors, naming, dead code) is verified under **`nc-750-web-frontend-architecture`**, not here.
