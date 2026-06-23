@@ -10,8 +10,9 @@ terminate. The orchestrator owns this; role skills only emit their artifact and 
    execution friction.)
 2. **Confirm the exact plan-file path** up front. If a named plan file is not found, **ask** — do
    not broaden the search.
-3. Route the verb to its role agent, spawning it in the role's fixed CC mode + model
-   (see `skill-agent-wiring.md`).
+3. Route the verb to its role agent. The agent's own frontmatter pins its model and enforces its fixed
+   CC mode (via the tool allowlist) — the orchestrator selects *which* agent runs, it does not set the
+   model or mode itself (see `skill-agent-wiring.md`).
 
 ## Gates (● = the orchestrator pauses and asks the user)
 
@@ -27,14 +28,16 @@ for each phase (lowest incomplete first):
              loop: revise ⇄ challenge  until verdict=pass  OR  user override
         ● APPROVE THE FINALIZED BRIEF               ← before implementation
 
-(deferred, Phase 6+) /nc-750 build <domain> <phase>
+/nc-750 build <phase>
+   └─ routes to nc-750-build-mirror-frontend (auto mode)
    └─ adjust tests-as-described first
         └─ nc-750-challenge (build mode) on the TEST change → report
              if issues → RETURN TO PLANNING with the new data
-             if clean → ● APPROVE + commit
+             if clean → ● APPROVE + commit the test change
    └─ code against the tests
         └─ nc-750-challenge (build mode) on the diff → report
-             loop: fix ⇄ review  until verdict=pass
+             loop: fix ⇄ review  until verdict=pass  (bounded to 3 rounds)
+             build-mode blocker findings cannot be overridden
         ● APPROVE + scoped commit(s)
 ```
 
@@ -44,8 +47,8 @@ for each phase (lowest incomplete first):
   overrides a remaining finding (recorded in the brief as an accepted-risk note).
 - **build ⇄ review** ends when `nc-750-challenge` returns `pass`. Build-mode findings of severity
   `blocker` cannot be overridden — they gate.
-- **Bound the loop.** If a plan↔challenge loop does not converge in **3 rounds**, stop and surface
-  the disagreement to the user as a `DECISION NEEDED` checkpoint rather than looping further.
+- **Bound the loop.** If a plan↔challenge or build↔review loop does not converge in **3 rounds**, stop
+  and surface the disagreement to the user as a `DECISION NEEDED` checkpoint rather than looping further.
 
 ## Design-fork checkpoints
 

@@ -29,7 +29,7 @@ nc750/.claude/
     nc-750-plan.md
     nc-750-challenge.md
     nc-750-ethos-gate.md
-    (nc-750-build.md         Phase 6, deferred)
+    nc-750-build-mirror-frontend.md   Phase 6c — the build-half implementer
 ```
 
 The orchestrator owns `references/` because it is the composition root. Role skills **cite** these
@@ -56,7 +56,7 @@ the schemas.
 | `nc-750-plan` | Opus | extended | detailed technical design; gets it right once |
 | `nc-750-challenge` | Opus | extended | adversarial reasoning; must find blind spots |
 | `nc-750-ethos-gate` | Opus | standard | checklist audit; correctness over depth |
-| `nc-750-build*` (deferred) | Sonnet | standard | high-volume execution; Haiku for trivial mechanical edits |
+| `nc-750-build-mirror-frontend` | Sonnet | standard | high-volume execution of an approved, challenged brief |
 | `nc-750` (orchestrator) | inherits session | — | composition + gates only |
 
 ## Mode map (Claude Code permission mode per role)
@@ -69,7 +69,7 @@ Fixed per role — mechanical enforcement of analysis-vs-execution, not a behavi
 | `nc-750-plan` | **plan** | `Skill`, `Read`, `Grep`, `Glob`, `Write` (plan file only) |
 | `nc-750-challenge` | **plan** | `Skill`, `Read`, `Grep`, `Glob`, `Bash` (read-only inspection e.g. `git diff`), `Write` (report file only) |
 | `nc-750-ethos-gate` | **plan** | `Skill`, `Read`, `Grep`, `Glob`, `Write` (report file only) |
-| `nc-750-build*` (deferred) | **auto** | `Skill`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `Bash` |
+| `nc-750-build-mirror-frontend` | **auto** | `Skill`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `Bash` |
 | `nc-750` (orchestrator) | default/interactive | `Skill`, `Task`, `Read`, `AskUserQuestion` |
 
 Plan-mode roles **produce or update a plan/report, never mutate the codebase**. `review` is
