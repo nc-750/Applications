@@ -3,6 +3,9 @@
 Where foundational/cross-cutting code lives and what it may depend on: logging, generic helpers, and
 app-lifecycle/bootstrap operations. The theme: foundational code depends **downward only**.
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §5`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 Foundational, cross-cutting code tends to reach *upward* into the app. A logger — used at boot before

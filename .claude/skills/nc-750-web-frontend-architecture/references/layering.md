@@ -4,6 +4,9 @@ What each layer (view / service / store / db) may do, which layer may depend on 
 mutates vs. persists state. Pairs with [data-models.md](data-models.md) (the shapes that cross these
 boundaries).
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §2`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 Without an enforced layer contract, app logic and infrastructure construction end up in views; views

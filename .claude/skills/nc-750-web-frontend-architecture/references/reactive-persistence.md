@@ -5,6 +5,9 @@ wholesale, and hands it to the db module safely. Builds on [stores.md](stores.md
 that holds state + thin commit actions) and [data-models.md](data-models.md) (the model shapes this
 state). Read this whenever a store's source of truth is a single domain object that is also persisted.
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §3` (the store reactive-shape rules). This file
+> distills those rules with rationale and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 Two failure modes recur when a store wraps one domain object. First, people reach for either a single

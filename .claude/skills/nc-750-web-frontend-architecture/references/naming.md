@@ -3,6 +3,9 @@
 Honesty of names (no hidden behavior), boolean naming and polarity, event-handler names, file/folder
 names, and the rule that a type/identifier must truthfully describe what it is.
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §6`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 Names lie about behavior, polarity, or content, and a reader (human or LLM) who trusts a name is

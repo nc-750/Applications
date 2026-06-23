@@ -4,6 +4,9 @@ Where app logic and orchestration live, the shape a service takes, where a share
 lives, and how services surface failures. Builds on [layering.md](layering.md) (services receive
 stores by injection; persistence goes through the store).
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §4`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 App logic gets written directly inside views, and cross-cutting construction (building a client from

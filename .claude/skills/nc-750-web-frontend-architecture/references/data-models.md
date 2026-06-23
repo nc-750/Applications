@@ -4,6 +4,9 @@ How data is modeled and how it crosses layer boundaries — for every feature, n
 Covers where models live, what they may contain, the domain/DTO/view-model split, transform
 functions, Zod's role, and honest model/field names.
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §1`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 Without a rule, models accrete responsibilities and shapes multiply: one concept ends up with two

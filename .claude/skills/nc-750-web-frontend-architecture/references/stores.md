@@ -4,6 +4,9 @@ How Pinia stores are defined, what a store may contain and expose, whether an ap
 exist, and how code reaches a store. Builds on [layering.md](layering.md) (stores are leaf;
 cross-store work happens in an injected service).
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §3`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 ## Why this exists
 
 The failure mode is a **god-store**: a single real Pinia store that calls each feature's store factory

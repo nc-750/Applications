@@ -4,9 +4,12 @@ The **structural** half of component work — one job per component, the feature
 boundary, the extraction threshold, dead/unfinished-code policy, indentation, and one error strategy
 per layer.
 
+> **Binding source:** `mirror/app/CONVENTIONS.md §7`. This file distills those rules with rationale
+> and examples; when they disagree, `CONVENTIONS.md` wins.
+
 > **Scope note.** The *visual* contract — how a screen is composed from design-system primitives
 > (Chassis / Band / Cell or your stack's equivalent), which styling vocabulary (`.nc-*` / Tailwind)
-> goes where — lives in a separate **design-system skill**, not here. This file covers structure and
+> goes where — lives in the **`nc-750-frontend-presentation`** skill, not here. This file covers structure and
 > errors only.
 
 ## Why this exists
