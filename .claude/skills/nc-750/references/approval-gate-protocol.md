@@ -9,7 +9,9 @@ terminate. The orchestrator owns this; role skills only emit their artifact and 
    knows nothing will be mutated until a build verb is reached. (Directly fixes the premature-
    execution friction.)
 2. **Confirm the exact plan-file path** up front. If a named plan file is not found, **ask** — do
-   not broaden the search.
+   not broaden the search. For a new `map`, derive the path from `master-plan-format.md` →
+   *File location & naming* (the target project's `docs/plans/YYYYMMDD-<plan-slug>/`, not the repo
+   root) and confirm it.
 3. Route the verb to its role agent. The agent's own frontmatter pins its model and enforces its fixed
    CC mode (via the tool allowlist) — the orchestrator selects *which* agent runs, it does not set the
    model or mode itself (see `skill-agent-wiring.md`).

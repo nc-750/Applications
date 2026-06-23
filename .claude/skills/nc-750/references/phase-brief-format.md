@@ -4,6 +4,13 @@ The canonical artifact `nc-750-plan` emits. It is consumed by `nc-750-challenge`
 once approved, by an `nc-750-build*` implementer. **One brief per phase.** A brief specifies *how* a
 phase is done in technical detail **without writing the code** — code is the implementer's job.
 
+## File location & naming
+
+A phase brief is **not** a standalone file — it lives in the same dated initiative folder as its
+master plan, named `XX_<plan-slug>-phase-XX.md` (zero-padded phase number) with `created_at`
+frontmatter. The full convention (target-project `docs/plans/`, `YYYYMMDD-<plan-slug>/` folder) is
+single-sourced in [`master-plan-format.md`](master-plan-format.md) → *File location & naming*.
+
 ## The seven lines (the spine)
 
 ```markdown

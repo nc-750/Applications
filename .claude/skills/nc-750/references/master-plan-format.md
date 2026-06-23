@@ -4,6 +4,28 @@ The artifact `nc-750-map` emits. It decomposes a goal into **phase stubs** + a d
 Each stub is the input to `nc-750-plan`. A master plan does **not** contain technical detail — it is
 the overview; detail is added per phase by `nc-750-plan`.
 
+## File location & naming (binding — applies to the master plan AND every phase brief)
+
+Plan files live **with the project they target**, grouped per initiative in a dated folder. They do
+**not** live at the repo root (`/<repo>/docs/plans/` is too broad — a monorepo holds several
+projects).
+
+- **Location** — the **target project's** own `docs/plans/` directory, e.g.
+  `mirror/app/docs/plans/`. The target project is the one whose code the goal changes; for a goal
+  spanning several, use the project that owns the bulk/root of the work.
+- **One folder per initiative**, date-prefixed for chronological ordering:
+  `docs/plans/YYYYMMDD-<plan-slug>/` where `YYYYMMDD` is the creation date (the temporal prefix makes
+  plans sort and answers "which came when").
+- **Files inside, ordered by sequence:**
+  - `00_<plan-slug>-master-plan.md` — the master plan (this artifact). Always `00_`.
+  - `XX_<plan-slug>-phase-XX.md` — one per phase brief, `XX` = the zero-padded phase number
+    (`01_…-phase-1.md`, `02_…-phase-2.md`, …). The numeric prefix orders the briefs under the plan.
+- **Frontmatter** — every plan file carries YAML frontmatter with at least
+  `created_at: YYYYMMDD`.
+
+The orchestrator derives and confirms this path in its run preamble before spawning `nc-750-map` /
+`nc-750-plan`; the role agents write to the path it passes them.
+
 ## Structure
 
 ```markdown
