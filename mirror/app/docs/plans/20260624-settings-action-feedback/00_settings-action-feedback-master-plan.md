@@ -73,6 +73,13 @@ Phase 1  →  Phase 2
 - **Changing the services or stores** (`PersonaTransfer`, `PersonaLifecycle`, `SettingsStore`,
   `PersonaStore`). They already run the actions and surface errors honestly; this goal only surfaces
   *state* at the view. Reworking their error contracts is out of scope.
+- **FOLLOW-UP (surfaced in Phase 2 build-review, 2026-06-24):** `SettingsStore.persist()` sets
+  `error` on failure but never clears it to `null` on a successful save (unlike `loadSettings` /
+  `clearSettings`). Phase 2's `onSave` works around this with a before/after snapshot compare, which
+  leaves one narrow residual: two *consecutive* saves that fail with the **exact same** error message
+  render SUCCESS on the second. The honest fix — have `persist()` clear `error` on success (or expose
+  a per-attempt error token) — touches the walled store and belongs to a later phase that revisits the
+  store error contract. Recorded here so it is not silently lost.
 - **The shared ERROR banner at the bottom of `SettingsPage.vue`.** Per-action error feedback is in
   scope; whether the global banner is then redundant and should be removed is an adjacent UX call,
   not part of adding the per-action signal. Left as-is.
