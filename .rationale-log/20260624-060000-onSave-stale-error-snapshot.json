@@ -1,0 +1,14 @@
+{
+  "id": "20260624-060000-onSave-stale-error-snapshot",
+  "timestamp": "2026-06-24T06:00:00Z",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/settings/pages/SettingsPage.vue",
+    "mirror/app/src/__tests__/settings/SettingsPage.test.ts"
+  ],
+  "decision": "Fixed onSave in SettingsPage.vue to snapshot settingsStore.error before the await and treat the save as a NEW failure only when errorAfter is non-null AND differs from the pre-await snapshot, so a stale error from a prior failed save is not misread as a failure on the next successful save.",
+  "alternative_not_taken": "Touch SettingsStore.persist() to reset error.value to null on success — this would have been cleaner but the store is Out of scope (Phase 2 brief §Out of scope: 'The services and stores … No new store field, no error-contract change'). The brief's prescribed fix confined the correction to onSave.",
+  "rationale": "SettingsStore.persist() only sets error.value on failure and never resets it on success (unlike loadSettings/clearSettings which do). The snapshot approach lets the view distinguish a NEW failure (errorAfter changed) from a stale one (errorAfter === errorBefore) without touching the store. This is the honest minimum within the view layer.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

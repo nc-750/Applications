@@ -1,0 +1,12 @@
+{
+  "id": "YYYYMMDD-HHMMSS-<short-slug>",
+  "timestamp": "<ISO 8601 timestamp>",
+  "derived_from": [],
+  "files_touched": ["path/one", "path/two"],
+  "decision": "The plans need to live in the docs/plans folder of the project they are targeting, not the root repo which is too broad. The naming convention should change as well and each plan must be in their own folders: YYYYMMDD-<plan-name> and inside it, organize the plan by order with the following naming: `00_<plan-name>-master-plan.md`, `XX_<plan-name>-<phase-XX>.md`. Also add a frontmatter with the `created_at` variable in each of the plan files.",
+  "alternative_not_taken": "",
+  "rationale": "Being in a monorepo, I do not want the plans of all the projects to be mixed together. The temporal element of the folder will help with organizing and finding the plan and knowing which came when. The frontmatter in the actual plan files is to avoid repeating the date in the filename which looks more like noise at that point.",
+  "rationale_source": "human_stated",
+  "human_rationale": null
+}
+

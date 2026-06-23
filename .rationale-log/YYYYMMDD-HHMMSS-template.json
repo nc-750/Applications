@@ -1,0 +1,11 @@
+{
+  "id": "YYYYMMDD-HHMMSS-<short-slug>",
+  "timestamp": "<ISO 8601 timestamp>",
+  "derived_from": [],
+  "files_touched": ["path/one", "path/two"],
+  "decision": "<what was chosen / what changed, 1-2 sentences>",
+  "alternative_not_taken": "<the path chosen against and why; or 'none — forced/obvious choice'>",
+  "rationale": "<why the chosen path, honestly; terse is fine>",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

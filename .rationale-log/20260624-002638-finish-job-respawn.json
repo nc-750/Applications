@@ -1,0 +1,13 @@
+{
+  "id": "20260624-002638-finish-job-respawn",
+  "timestamp": "2026-06-24T00:26:38+08:00",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/__tests__/settings/ActionStatus.test.ts"
+  ],
+  "decision": "After the builder agent terminated mid-stream (implementation written, tests + verify missing), re-spawned the same builder role to finish the job — write the five tests and run verify — explicitly instructing it to leave the existing implementation as-is.",
+  "alternative_not_taken": "Writing the tests and running verify myself in the orchestrator context, or re-spawning the builder to rebuild from scratch.",
+  "rationale": "Writing the tests myself would break the role boundary the orchestrator must hold (it composes roles, never does their work). A from-scratch rebuild would discard a sound, already-inspected implementation. Finishing via the builder keeps the work inside the build role and is the least wasteful path.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

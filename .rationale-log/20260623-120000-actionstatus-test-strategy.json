@@ -1,0 +1,13 @@
+{
+  "id": "20260623-120000-actionstatus-test-strategy",
+  "timestamp": "2026-06-23T12:00:00.000Z",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/__tests__/settings/ActionStatus.test.ts"
+  ],
+  "decision": "Added a sixth test (for `idleActionStatus` factory directly) alongside the brief's five `useActionStatus` tests, grouping them in two `describe` blocks.",
+  "alternative_not_taken": "Only write the brief's five tests under a single `useActionStatus` describe — the factory test is exercised indirectly by the initial-idle test.",
+  "rationale": "The `idleActionStatus` factory is separately exported and its contract (returns exactly `{kind:'idle'}`) is distinct from the holder's constructor. A direct factory test is cheap and makes the contract explicit without duplication. The brief does not prohibit additional coverage as long as the five described tests are present.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

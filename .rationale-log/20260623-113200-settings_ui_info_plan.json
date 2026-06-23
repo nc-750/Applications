@@ -1,0 +1,11 @@
+{
+  "id": "20260623-113200-settings_ui_info_plan",
+  "timestamp": "<ISO 8601 timestamp>",
+  "derived_from": [],
+  "files_touched": ["plan"],
+  "decision": "To reuse the MonitorCell of the Settings page to display the last action result: persona import success, settings saved, test connection, etc",
+  "alternative_not_taken": "In place notification next to the action; Adding a new MonitorCell for event logs",
+  "rationale": "The existing MonitorCell already kind of is used for this kind of information display and I'd like to find an alternative to using modals if possible. It seemed more practical to reuse this component",
+  "rationale_source": "human_stated",
+  "human_rationale": null
+}

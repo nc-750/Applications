@@ -1,0 +1,16 @@
+{
+  "id": "20260624-002639-convention-single-source",
+  "timestamp": "2026-06-24T00:26:39+08:00",
+  "derived_from": [],
+  "files_touched": [
+    ".claude/skills/nc-750/references/master-plan-format.md",
+    ".claude/skills/nc-750/references/phase-brief-format.md",
+    ".claude/skills/nc-750/SKILL.md",
+    ".claude/skills/nc-750/references/approval-gate-protocol.md"
+  ],
+  "decision": "Wrote the new plan-file location/naming convention canonically in master-plan-format.md and had phase-brief-format.md, the orchestrator SKILL run preamble, and approval-gate-protocol.md cite it, rather than restating the rule in each file.",
+  "alternative_not_taken": "Duplicating the full convention text in both the master-plan and phase-brief format files (and inline in the orchestrator).",
+  "rationale": "Master plan and phase briefs share one initiative folder, so the convention is one rule, not two. Single-sourcing it matches the constellation's own cite-don't-restate doctrine and prevents the two copies drifting apart later.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

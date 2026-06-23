@@ -1,0 +1,11 @@
+{
+  "id": "20260623-114700-skills-update",
+  "timestamp": "<ISO 8601 timestamp>",
+  "derived_from": ["20260623-113200-settings_ui_info_plan"],
+  "files_touched": ["plan"],
+  "decision": "Update the files used by the skills as citation to fix over generalization of the content of folders regarding the index.ts barrels files.",
+  "alternative_not_taken": "",
+  "rationale": "The citations used by the different NC-750 skills had over generalization which confused the agents a little bit and keeping them would make the agent second guess and potentially waste tokens",
+  "rationale_source": ["human_stated", "agent_triggered"],
+  "human_rationale": null
+}

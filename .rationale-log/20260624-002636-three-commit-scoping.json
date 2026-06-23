@@ -1,0 +1,18 @@
+{
+  "id": "20260624-002636-three-commit-scoping",
+  "timestamp": "2026-06-24T00:26:36+08:00",
+  "derived_from": [],
+  "files_touched": [
+    ".claude/skills/nc-750/references/master-plan-format.md",
+    ".claude/skills/nc-750/references/phase-brief-format.md",
+    ".claude/skills/nc-750/SKILL.md",
+    ".claude/skills/nc-750/references/approval-gate-protocol.md",
+    "mirror/app/docs/plans/20260624-settings-action-feedback/00_settings-action-feedback-master-plan.md",
+    "mirror/app/docs/plans/20260624-settings-action-feedback/01_settings-action-feedback-phase1.md"
+  ],
+  "decision": "Made three scoped commits instead of the user's literal 'two (plan, code)': isolated the plan-file-convention fold-back to the shared nc-750 contracts as its own commit, ahead of the plan-docs commit and the code commit.",
+  "alternative_not_taken": "Folding the contract/doctrine edits into the 'plan' commit to honor the user's two-commit phrasing literally.",
+  "rationale": "The convention change mutates the constellation's shared contracts (doctrine for all future runs); the plan-docs commit is one initiative's artifacts. Bundling them couples a doctrine change to one feature's plan and makes either commit non-self-contained. The user's intent (separate plan from code) is preserved; the third unit is an honest extra scope.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

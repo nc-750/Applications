@@ -1,0 +1,11 @@
+{
+  "id": "20260623-113800-settings_ui_action_result_display",
+  "timestamp": "<ISO 8601 timestamp>",
+  "derived_from": ["20260623-113200-settings_ui_info_plan"],
+  "files_touched": ["plan"],
+  "decision": "Let's introduce a modal with the status.",
+  "alternative_not_taken": "Initial plan of reusing the existing MonitorCell",
+  "rationale": "We have to be conscious of Mobile layouts and the NC-750 Lab's visual language make it that everything collapse into a single column on small screen, so adding too many bands/cells can be detrimental to the UX of the app. It is okay to have the MonitorCell be for the entire settings page status. It can have sub-sections inside of it. The issue is that on small screen that monitor cell might not be visible and so the issue would be the same as today even though we now display the info.",
+  "rationale_source": "human_stated",
+  "human_rationale": null
+}

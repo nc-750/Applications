@@ -1,0 +1,14 @@
+{
+  "id": "20260624-055306-accept-save-error-residual",
+  "timestamp": "2026-06-24T05:53:06+08:00",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/settings/pages/SettingsPage.vue",
+    "mirror/app/docs/plans/20260624-settings-action-feedback/00_settings-action-feedback-master-plan.md"
+  ],
+  "decision": "Accepted the snapshot-compare workaround in onSave for the sticky settingsStore.error (treat save as failed only when the post-await error is non-null AND differs from the pre-await snapshot), accepting the narrow residual that two consecutive identical-message save failures render SUCCESS on the second; recorded the real fix as a deferred store-contract follow-up rather than fixing it now.",
+  "alternative_not_taken": "Fixing it correctly at the source by having SettingsStore.persist() clear error to null on a successful save (or expose a per-attempt error token).",
+  "rationale": "The correct fix mutates SettingsStore, which the approved Phase 2 brief explicitly walls off (no store error-contract change). The residual is the opposite direction and far rarer than the original always-false-FAILED bug it replaces, and the view cannot honestly distinguish a freshly re-set identical error from a stale one without a store signal it is forbidden to add. Staying inside the wall and deferring the store change is the honest scoped choice.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

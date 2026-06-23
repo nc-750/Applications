@@ -1,0 +1,14 @@
+{
+  "id": "20260624-061427-wall-breach-direct-fix",
+  "timestamp": "2026-06-24T06:14:27+08:00",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/settings/components/ActionStatusModal.vue",
+    "lab/css/lab.css"
+  ],
+  "decision": "CORRECTED RECORD: an uncommitted `M lab/css/lab.css` (a `.nc-monitor--line` panel-background class + a `.nc-btn` label-colour swap to --nc-btn-label) was the AUTHOR's own intentional fix for the status modal's visuals, made outside this session and not reported back. I initially misread it as a builder out-of-scope wall breach and reverted it (committed af18d1e); the author corrected me, and I restored their change exactly (committed aaad365), putting the modal back on `.nc-monitor--line`.",
+  "alternative_not_taken": "Leaving it reverted / continuing to treat the change as a builder breach to be fixed — wrong, because the change was the author's deliberate work and they own the Lab design system.",
+  "rationale": "An out-of-session working-tree change is not evidence of an error; it may be the user's unreported intent. The honest move on discovering one is to ASK whether they made it, not to assume a breach and revert. Recorded the guardrail in memory ([[ask-before-reverting-unexplained-changes]]). Verified the restored state: vue-tsc exit 0, 247/247 tests green, lab.css diff byte-identical to the author's edits.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

@@ -1,0 +1,13 @@
+{
+  "id": "20260624-123000-phase2-test-mock-strategy",
+  "timestamp": "2026-06-24T12:30:00Z",
+  "derived_from": [],
+  "files_touched": [
+    "mirror/app/src/__tests__/settings/SettingsPage.test.ts"
+  ],
+  "decision": "Added vi.mock('../../settings/db') at the file level to control writeSettings rejection for the save-failure test, rather than mocking saveSettings directly on the store.",
+  "alternative_not_taken": "Could have spied on useSettingsStore().saveSettings directly or used setError() manually after the call — but those bypass the real flow that onSave reads (settingsStore.error after saveSettings). Mocking the db layer at the right depth lets the real store.saveSettings run and catch into store.error exactly as the page reads it.",
+  "rationale": "The test needs to prove onSave reads settingsStore.error (not just that the modal appears). Injecting the failure at the db layer (writeSettings rejects) exercises the full real path: store catches, sets error, page reads it, modal shows it. Direct store.setError() would bypass the catch path and only assert the view-layer read, not the wiring.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}
