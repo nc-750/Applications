@@ -5,7 +5,8 @@
 export enum LLMProvider {
     OpenAI,
     Anthropic,
-    CompatibleOpenAI,
+    CustomRemoteOpenAI,
+    CustomLocalOpenAI
 }
 
 export interface LLMConfig {

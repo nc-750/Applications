@@ -54,9 +54,11 @@ const canSubmit = computed(
 );
 
 const canFetchModels = computed(() => {
-    if (draft.provider === "" || draft.apiKey === "") return false;
-    if (draft.provider === LLMProvider.CompatibleOpenAI && draft.endpoint === "") return false;
-    return true;
+    return (
+        draft.provider === "" ||
+        draft.apiKey === "" ||
+        draft.endpoint === ""
+    );
 });
 
 function assembled(): LLMConfig {
@@ -103,16 +105,18 @@ function onRefreshModels() {
 <template>
     <Cell title="LLM CONFIG" spec="CFG // 0x01" :grow="2">
         <Form class="flex flex-col gap-4" @submit.prevent="onSave">
-            <FormField label="AI Provider">
+            <FormField label="AI Provider" class="flex flex-col gap-2">
                 <select class="nc-select" v-model="draft.provider" @change="onProviderChange">
                     <option value="" disabled>Select a provider…</option>
                     <option v-for="opt in PROVIDER_OPTIONS" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
                     </option>
                 </select>
+                <p v-if="draft.provider === LLMProvider.CustomLocalOpenAI" class="nc-alert nc-alert--warning">Local models yields poor results or are straight up broken. We are working to fixing those issues.</p>
             </FormField>
-            <FormField label="API Key">
+            <FormField label="API Key" class="flex flex-col gap-2">
                 <TextField type="password" placeholder="sk-XXXX-XXXX-XXXX" v-model="draft.apiKey" />
+                <p v-if="draft.provider === LLMProvider.CustomLocalOpenAI" class="nc-alert nc-alert--info">Use the value "dummy" if your local provider does not require an API key.</p>
             </FormField>
             <FormField label="Endpoint">
                 <input

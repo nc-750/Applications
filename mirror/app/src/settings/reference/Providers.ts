@@ -24,8 +24,13 @@ export const PROVIDER_OPTIONS: readonly ProviderOption[] = [
         endpoint: "https://api.anthropic.com"
     },
     {
-        value: LLMProvider.CompatibleOpenAI,
-        label: "OpenAI-Compatible (DeepSeek, Mistral, Ollama, LM Studio...)",
-        endpoint: "https://localhost:12345"
+        value: LLMProvider.CustomRemoteOpenAI,
+        label: "Remote OpenAI-Compatible (DeepSeek, Mistral, ...)",
+        endpoint: "https://api.provider.com"
+    },
+    {
+        value: LLMProvider.CustomLocalOpenAI,
+        label: "Local OpenAI-Compatible (LM Studio, Ollama, ...)",
+        endpoint: "https://localhost:port/v1"
     },
 ] as const;

@@ -24,7 +24,8 @@ export class LLMClientError extends Error {
 const PROVIDER_KIND: Record<LLMProvider, ProviderKind> = {
     [LLMProvider.OpenAI]: "openai",
     [LLMProvider.Anthropic]: "anthropic",
-    [LLMProvider.CompatibleOpenAI]: "openai-compatible",
+    [LLMProvider.CustomLocalOpenAI]: "openai-compatible",
+    [LLMProvider.CustomRemoteOpenAI]: "openai-compatible",
 };
 
 /**
