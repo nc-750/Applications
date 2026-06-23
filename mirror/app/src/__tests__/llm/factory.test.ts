@@ -42,7 +42,8 @@ describe("createClientFromConfig", () => {
     it.each([
         [LLMProvider.OpenAI, "openai"],
         [LLMProvider.Anthropic, "anthropic"],
-        [LLMProvider.CompatibleOpenAI, "openai-compatible"],
+        [LLMProvider.CustomRemoteOpenAI, "openai-compatible"],
+        [LLMProvider.CustomLocalOpenAI, "openai-compatible"],
     ])("maps provider %s to ProviderKind %s", (provider, kind) => {
         createClientFromConfig(makeConfig({ provider, endpoint: "https://x" }));
 

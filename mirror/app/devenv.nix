@@ -21,19 +21,19 @@
         exit 1;
       fi
 
-      bump-version $version
-      retval=$?
-
-      if [ $retval -ne 0 ]; then
-        echo "Bump version failed"
-        exit $retval
-      fi
-
       run-test
       retval=$?
 
       if [ $retval -ne 0 ]; then
         echo "Tests failed"
+        exit $retval
+      fi
+
+      bump-version $version
+      retval=$?
+
+      if [ $retval -ne 0 ]; then
+        echo "Bump version failed"
         exit $retval
       fi
 

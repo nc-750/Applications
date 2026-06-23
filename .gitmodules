@@ -1,0 +1,3 @@
+[submodule "mirror/deployed-app"]
+	path = mirror/deployed-app
+	url = git@github_nc-750:nc-750/mirror-app.git
