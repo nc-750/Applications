@@ -1,18 +1,18 @@
 # Challenge-report format
 
-The artifact `nc-750-challenge` emits, in both modes:
+The artifact `nc-750-review` emits, in both modes:
 
-- **plan mode** (`/nc-750 challenge`): the target is a plan/brief. Challenge phases, assumptions,
-  blind spots, test descriptions, and ethos fit.
-- **build mode** (`/nc-750 review`): the target is a diff. Challenge the implementation against the
-  approved brief + ethos + engineering soundness.
+- **plan mode** (`/nc-750 review <master plan | phase plan>`): the target is a master plan or phase
+  plan. Critique phases, assumptions, blind spots, test descriptions, and ethos fit.
+- **build mode** (`/nc-750 review <diff | implementation>`): the target is a diff. Critique the
+  implementation against the approved phase plan + ethos + engineering soundness.
 
 The report drives the loop, so its **verdict** is machine-clear and its findings are **actionable**.
 
 ## Structure
 
 ```markdown
-# Challenge report — <target> (<plan|build> mode)
+# Review report — <target> (<plan|build> mode)
 
 **Verdict:** pass | revise
 
@@ -35,7 +35,7 @@ Optional non-blocking observations (kept out of Findings so they don't gate the 
 
 ## Verdict rules
 
-- **`pass`** — no `blocker` and no `major` findings. `minor`/Notes may remain; they do not gate.
+- **`pass`** — no `blocker` and no `major` findings. `minor` notes may remain; they do not gate.
 - **`revise`** — at least one `blocker` or `major`. The report lists exactly what to address; the
   loop returns to the author (`nc-750-plan` or the implementer).
 
@@ -50,10 +50,11 @@ Optional non-blocking observations (kept out of Findings so they don't gate the 
 ## What plan mode interrogates (non-exhaustive)
 
 - **Phases & assumptions** — is each phase necessary, correctly ordered, and bounded? Is any
-  assumption unstated or unsupported? What is the plan blind to?
+  assumption unstated or unsupported? What is the plan blind to? Can it be simplified?
 - **Tests-as-descriptions** — is the test **too broad** (spanning many functions/one big surface)?
   Is it there **only to drive coverage** with no real-world value if absent? Is the expected result
-  actually the right behavior? Is a needed test missing?
+  actually the right behavior? Is a needed test missing? What are the consequences of removing the
+  test — will it create a blocker issue?
 - **Ethos fit** — does the plan, as described, satisfy the relevant ETHOS constraints? Cite the
   exact clause for any gap.
 - **Engineering soundness** — over-engineering (speculative generality, YAGNI violations) AND
@@ -61,11 +62,11 @@ Optional non-blocking observations (kept out of Findings so they don't gate the 
 
 ## What build mode interrogates (non-exhaustive)
 
-- **Brief conformance** — does the diff stay within **In scope** and honor **Out of scope**? Did it
-  reach into a later phase?
+- **Phase plan conformance** — does the diff stay within **In scope** and honor **Out of scope**?
+  Did it reach into a later phase?
 - **Ethos in the implementation** — does the actual code/data flow match the claimed stance (e.g.
   nothing leaves the device on the local path; secrets in the OS keystore)?
-- **Verify gate** — were the brief's tests + the global gate (`env-and-verify.md`) actually run and
-  green, with exact counts reported?
+- **Verify gate** — were the phase plan's tests + the global gate (`env-and-verify.md`) actually run
+  and green, with exact counts reported?
 - **Soundness & honesty** — dead code, silent stubs, leaky boundaries, dependency-direction breaks,
   invented lore/claims not literally true.

@@ -1,10 +1,10 @@
 # Master-plan format
 
-The artifact `nc-750-master-plan` emits. It decomposes a goal into **phase stubs** + a dependency graph.
-Each stub is the input to `nc-750-plan`. A master plan does **not** contain technical detail — it is
-the overview; detail is added per phase by `nc-750-plan`.
+The artifact `nc-750-master-plan` emits. It decomposes a goal into **phase stubs** + a dependency
+graph. Each stub is the input to `nc-750-plan`. A master plan does **not** contain technical detail
+— it is the overview; detail is added per phase by `nc-750-plan`.
 
-## File location & naming (binding — applies to the master plan AND every phase brief)
+## File location & naming (binding — applies to the master plan AND every phase plan)
 
 Plan files live **with the project they target**, grouped per initiative in a dated folder. They do
 **not** live at the repo root (`/<repo>/docs/plans/` is too broad — a monorepo holds several
@@ -14,14 +14,16 @@ projects).
   `mirror/app/docs/plans/`. The target project is the one whose code the goal changes; for a goal
   spanning several, use the project that owns the bulk/root of the work.
 - **One folder per initiative**, date-prefixed for chronological ordering:
-  `docs/plans/YYYYMMDD-<plan-slug>/` where `YYYYMMDD` is the creation date (the temporal prefix makes
-  plans sort and answers "which came when").
+  `docs/plans/YYYYMMDD-<plan-slug>/` where `YYYYMMDD` is the creation date (the temporal prefix
+  makes plans sort and answers "which came when").
 - **Files inside, ordered by sequence:**
   - `00_<plan-slug>-master-plan.md` — the master plan (this artifact). Always `00_`.
-  - `XX_<plan-slug>-phase-XX.md` — one per phase brief, `XX` = the zero-padded phase number
-    (`01_…-phase-1.md`, `02_…-phase-2.md`, …). The numeric prefix orders the briefs under the plan.
-- **Frontmatter** — every plan file carries YAML frontmatter with at least
-  `created_at: YYYYMMDD`.
+  - `XX_<plan-slug>-phase-XX.md` — one per phase plan, `XX` = the zero-padded phase number
+    (`01_…-phase-1.md`, `02_…-phase-2.md`, …). The numeric prefix orders the plans under the master.
+- **Frontmatter** — every plan file carries YAML frontmatter with at least `created_at: YYYYMMDD`.
+
+The orchestrator derives and confirms this path in its run preamble before spawning
+`nc-750-master-plan` / `nc-750-plan`; the role agents write to the path it passes them.
 
 ## Structure
 
@@ -52,7 +54,7 @@ A stub is deliberately thin — it is a promise of a phase, not the phase itself
 - **Goal** — the one outcome, one sentence.
 - **Depends on** — phase ids that must finish first (or `—` for none).
 - **Parallel-safe with** — phase ids it may run alongside (or `—`).
-- **Domain** — which implementer will execute it (`frontend` / `backend` /
+- **Domain** — which implementer will execute it (`frontend` / `backend` / `content` / `comms` /
   `none` for plan-only phases). Drives which `nc-750-build-*` runs in the build gate later.
 - **Doctrine likely cited** — the brand/ethos docs this phase will lean on (a hint for `nc-750-plan`).
 
@@ -60,18 +62,18 @@ A stub is deliberately thin — it is a promise of a phase, not the phase itself
 
 - **Bottom-up / dependency order.** A phase appears only after every phase it depends on. The graph
   must be acyclic.
-- **Stubs, not plans.** No file lists, no test descriptions, no code — those belong to
-  `nc-750-plan`. If a stub starts specifying *how*, it has overreached.
+- **Stubs, not plans.** No file lists, no test descriptions, no code — those belong to `nc-750-plan`.
+  If a stub starts specifying *how*, it has overreached.
 - **Mark parallelism honestly.** Two phases are parallel-safe only if neither reads the other's
   output and they touch disjoint areas.
 - **Sequential|parallel is a recommendation to the orchestrator**, which still gates each phase's
-  finalized brief with the user before implementation.
-- **Each stub must be expandable by `nc-750-plan` with no reshaping** — if `plan` has to redesign the
-  stub's scope to make it buildable, the decomposition was wrong; fix the master plan.
+  finalized phase plan with the user before implementation.
+- **Each stub must be expandable by `nc-750-plan` with no reshaping** — if `plan` has to redesign
+  the stub's scope to make it buildable, the decomposition was wrong; fix the master plan.
 
 ## Round-trip contract
 
-`nc-750-master-plan` output → (user approves decomposition) → for each stub, `nc-750-plan` consumes the stub
-→ emits a phase brief (see `phase-plan-format.md`). The stub's **Goal**, **Domain**, and
-**Doctrine likely cited** map directly onto the brief's **Goal**, implementer selection, and
-**Doctrine cited** lines.
+`nc-750-master-plan` output → (user approves decomposition) → for each stub, `nc-750-plan`
+consumes the stub → emits a phase plan (see `phase-plan-format.md`). The stub's **Goal**,
+**Domain**, and **Doctrine likely cited** map directly onto the phase plan's **Goal**, implementer
+selection, and **Doctrine cited** lines.

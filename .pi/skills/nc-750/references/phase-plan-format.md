@@ -1,12 +1,13 @@
-# Phase-brief format
+# Phase-plan format
 
 The canonical artifact `nc-750-plan` emits. It is consumed by `nc-750-review` (plan mode) and,
-once approved, by an `nc-750-build-*` implementer. **One brief per phase.** A brief specifies *how* a
-phase is done in technical detail **without writing the code** — code is the implementer's job.
+once approved, by an `nc-750-build-*` implementer. **One phase plan per phase.** A phase plan
+specifies *how* a phase is done in technical detail **without writing the code** — code is the
+implementer's job.
 
 ## File location & naming
 
-A phase brief is **not** a standalone file — it lives in the same dated initiative folder as its
+A phase plan is **not** a standalone file — it lives in the same dated initiative folder as its
 master plan, named `XX_<plan-slug>-phase-XX.md` (zero-padded phase number) with `created_at`
 frontmatter. The full convention (target-project `docs/plans/`, `YYYYMMDD-<plan-slug>/` folder) is
 single-sourced in [`master-plan-format.md`](master-plan-format.md) → *File location & naming*.
@@ -32,25 +33,25 @@ single-sourced in [`master-plan-format.md`](master-plan-format.md) → *File loc
   works, plus the global gate from `env-and-verify.md`.
 ```
 
-## Rules for `nc-750-plan` when emitting a brief
+## Rules for `nc-750-plan` when emitting a phase plan
 
 - **No code.** Function/file names and signatures-as-prose are fine; implementations are not. If a
   reader could copy a block straight into a source file, it is too detailed.
-- **Tests are descriptions, and they must survive the critic.** Each test description should be able
-  to answer, before it is written: *Is it narrow (one behavior, not a sweep of many functions)? Is
-  it real-world-meaningful if absent, or only there to lift a coverage number?* (See
-  `challenge-report-format.md` for how `nc-750-review interrogates these.)
+- **Tests are descriptions, and they must survive the reviewer.** Each test description should be
+  able to answer, before it is written: *Is it narrow (one behavior, not a sweep of many
+  functions)? Is it real-world-meaningful if absent, or only there to lift a coverage number?* (See
+  `challenge-report-format.md` for how `nc-750-review` interrogates these.)
 - **Out of scope is mandatory** and must name the most tempting overreach for this phase.
 - **Surface design forks as a checkpoint**, not a silent choice. If the phase has a genuine fork
-  that no doctrine prescribes (a shape, a boundary, a pattern), the brief lists the options + a
-  recommendation and marks it `DECISION NEEDED` so the orchestrator can gate it with the user before
-  implementation (discovery → decision → convention).
+  that no doctrine prescribes (a shape, a boundary, a pattern), the phase plan lists the options +
+  a recommendation and marks it `DECISION NEEDED` so the orchestrator can gate it with the user
+  before implementation (discovery → decision → convention).
 - **Pragmatic, not dogmatic.** Plan the simplest design that fully meets the goal; do not pre-build
   for hypothetical futures (YAGNI applied pragmatically), but do not strip complexity the goal
   genuinely needs. The test: a single human can understand both *what* the code will do and *why*.
 
 ## Round-trip contract
 
-`nc-750-plan` emits the brief → `nc-750-review` (plan mode) returns a challenge report → loop
-until `pass` (or user override) → user approves the finalized brief → `nc-750-build-*` implements
-strictly within **In scope**, honoring **Out of scope** as a wall, satisfying **Verify**.
+`nc-750-plan` emits the phase plan → `nc-750-review` (plan mode) returns a review report → loop
+until `pass` (or user override) → user approves the finalized phase plan → `nc-750-build-*`
+implements strictly within **In scope**, honoring **Out of scope** as a wall, satisfying **Verify**.

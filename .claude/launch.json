@@ -2,10 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "persona-vite",
-      "runtimeExecutable": "npm",
+      "name": "mirror-app",
+      "runtimeExecutable": "bun",
       "runtimeArgs": ["--prefix", "mirror/app", "run", "dev"],
-      "port": 1421
     }
   ]
 }
