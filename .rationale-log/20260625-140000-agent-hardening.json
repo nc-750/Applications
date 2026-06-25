@@ -1,0 +1,17 @@
+{
+  "id": "20260625-140000-agent-hardening",
+  "timestamp": "2026-06-25T14:00:00Z",
+  "derived_from": [],
+  "files_touched": [
+    ".claude/agents/nc-750-master-plan.md",
+    ".claude/agents/nc-750-review.md",
+    ".claude/agents/nc-750-plan.md",
+    ".claude/agents/nc-750-ethos-gate.md",
+    ".claude/agents/nc-750-build-mirror-frontend.md"
+  ],
+  "decision": "Renamed nc-750-map.md → nc-750-master-plan.md and nc-750-challenge.md → nc-750-review.md; updated all stale terminology (brief→phase plan, nc-750-challenge→nc-750-review, nc-750-map→nc-750-master-plan, already-challenged→already-reviewed) across all five .claude agent files.",
+  "alternative_not_taken": "Leaving agent file names as-is while only fixing body text — rejected because the file name is the agent's identity in Claude Code; a file named nc-750-map.md would spawn an agent named nc-750-map regardless of body content.",
+  "rationale": "Agent files are the other half of the skill↔agent pair; canonical naming must be consistent throughout or the orchestrator's tool invocations and the skill-loading instructions diverge.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

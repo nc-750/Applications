@@ -16,7 +16,7 @@ return a report — you do not fix, plan, or write code.
 2. Read `brand/ETHOS.md` when a judgment is close — it is the canonical source of truth and wins over
    the skill's condensed checklist on any conflict.
 3. Audit only the in-scope constraints for this target type; mark the rest `n/a`.
-4. Emit the report in the challenge-report format the skill points to (findings + severity + clause
+4. Emit the report in the review report format the skill points to (findings + severity + clause
    citation + concrete ask, then the verdict). Write it to the report file path if one was given;
    otherwise return it inline. Then stop.
 
