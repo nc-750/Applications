@@ -9,102 +9,17 @@ AI coding agent instructions for **nc750**
 
 ## Organization
 
-**Main Folder Structure:**
-- `brand` - NC-750 brand manifesto, philosophy, naming, visual language and ethos
-- `lab` - Implementation of the NC-750 visual design language called Lab
-- `llm` - LLM library to be integrated in the different NC-750 projects
-- `mirror` - Project that interviews the user, finds patterns you missed, and produces a private insight document and a polished public profile
-- `shared` - Devenv root files to be shared by each projects relying on it for its dev environment management
-
-**AI Agent focused folders:**
-- `.pi` - Skills for the pi.dev ai agent harness
-- `.claude` - Skills and agents for Claude Code
-- `AGENTS.md` - This file
-- `CLAUDE.md` - Equivalent of this file, but for Claude Code
-
-- `lab/showcase/public/` - Public assets
-- `lab/showcase/src/` - Source code
-- `lab/vue/src/` - Source code
-- `llm/ts/src/` - Source code
-- `mirror/app/` - Application code
-- `mirror/app/.claude/` - Project files
-- `mirror/app/.vscode/` - Project files
-- `mirror/app/assets/` - Static assets
-- `mirror/app/docs/` - Documentation
-- `mirror/app/issues/` - Project files
-- `mirror/app/public/` - Public assets
-- `mirror/app/scripts/` - Project files
-- `mirror/app/src/` - Source code
-- `mirror/app/src-tauri/` - Project files
-- `mirror/deployed-app/assets/` - Static assets
-- `mirror/website/public/` - Public assets
-- `mirror/website/src/` - Source code
-- `lab/showcase/public/fonts/` - Project files
-- `lab/showcase/src-tauri/src/` - Source code
-- `lab/showcase/src/assets/` - Static assets
-
-## Key Files
-
-**Configuration:**
-- `lab/css/package.json` - Node.js dependencies and scripts
-- `lab/showcase/package.json` - Node.js dependencies and scripts
-- `lab/showcase/src-tauri/Cargo.toml` - Rust package configuration
-- `lab/vue/package.json` - Node.js dependencies and scripts
-- `llm/ts/package.json` - Node.js dependencies and scripts
-
-**Documentation:**
-- `.claude/agents/nc-750-build-mirror-frontend.md`
-- `.claude/agents/nc-750-challenge.md`
-- `.claude/agents/nc-750-ethos-gate.md`
-
-## Code Style Guidelines
-
-- Use camelCase for variables and functions
-- Use PascalCase for classes and components
-- Prefer const/let over var
-- Use async/await over callbacks when possible
-
-## Testing
-
-**Test Files:**
-- `.rationale-log/20260623-120000-actionstatus-test-strategy.json`
-- `.rationale-log/20260624-123000-phase2-test-mock-strategy.json`
-- `lab/showcase/src/components/InspectView.vue`
-- `llm/ts/src/__tests__/anthropic.test.ts`
-- `llm/ts/src/__tests__/client.test.ts`
-
-## Existing Project Guidelines
-
-*The following guidelines were found in existing AI configuration files:*
-
-### AI Agent Guidelines
-**From CLAUDE.md:**
-## Mono-repo structure
-| Directory | Purpose | Own CLAUDE.md |
-|-----------|---------|---------------|
-| `brand/` | NC-750 brand manifesto, philosophy, naming, visual language | — |
-| `lab/` | Lab design system (CSS, Vue 3 library, theme generator) | `lab/CLAUDE.md` |
-| `mirror/` | Mirror (NODE-0M) — BYOK career reflection app | `mirror/persona-app/CLAUDE.md` |
-
-Each directory is an independent package with its own `package.json`, `tsconfig.json`, and build tooling. There is no monorepo-level orchestrator (no workspaces, no Turborepo).
+```
+nc-750/
+├── brand           # Brand manifesto, philosophy, naming, visual language and ethos
+├── lab             # Implementation of the NC-750 visual design language called Lab
+├── llm             # LLM library to be integrated in the different NC-750 projects
+├── mirror          # Project that interviews the user, finds patterns you missed, and produces a private insight document and a polished public profile
+├── shared          # Devenv root files to be shared by each projects relying on it for its dev environment management
+├── AGENTS.md       # This file
+└── CLAUDE.md       # Equivalent of this file, but for Claude Code
+```
 
 ## Cross-cutting conventions
+
 - **NC-750 brand philosophy**: total data ownership (local-first; user content never hits an NC-750 server, is never sold, never trains anything), "you are never the product" (no person is tracked; any product metrics are opt-in, anonymous, aggregate, self-hosted), BYOK or a no-log relay for AI integrations, themeable industrial design. Read `brand/BRAND.md` for the dossier and **`brand/ETHOS.md` for the binding product constraints** every NODE/UNIT/CORE must satisfy.
-- **No Tailwind in Lab design-system CSS**. The design system is pure custom properties + hand-written component rules. Tailwind v4 is used only in the generator-app and persona-app for app-level layout utilities.
-- **TypeScript strict mode** throughout with `noUnusedLocals` and `noUnusedParameters`.
-- **Tauri v2** is used by both `lab/generator-app` (port 1420) and `mirror/persona-app` (port 1421).
-
-
-## AI Coding Assistance Notes
-
-**Important Considerations:**
-- Check package.json for available scripts before running commands
-- Be aware of Node.js version requirements
-- Consider impact on bundle size when adding dependencies
-- Project has 564 files across 155 directories
-- Large codebase: Focus on specific areas when making changes
-- Check build configuration files before making structural changes
-
----
-
-*This AGENTS.md file was generated by Nanocoder. Update it as your project evolves.*
