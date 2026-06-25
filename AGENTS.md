@@ -4,18 +4,29 @@ AI coding agent instructions for **nc750**
 
 ## Project Overview
 
-**Project Type:** Web Application
-**Primary Language:** TypeScript (49% of codebase)
-**Secondary Languages:** Vue (44%), JavaScript (5%)
+**Project Name:** NC-750
+**Project Description:** NC-750 is a brand which develops software solution with a heavy focus on user data respect and privacy with as minimum telemetry as possible. 
 
-## Architecture
+## Organization
 
-**Project Structure:**
-- `mirror/app/` - Application code
+**Main Folder Structure:**
+- `brand` - NC-750 brand manifesto, philosophy, naming, visual language and ethos
+- `lab` - Implementation of the NC-750 visual design language called Lab
+- `llm` - LLM library to be integrated in the different NC-750 projects
+- `mirror` - Project that interviews the user, finds patterns you missed, and produces a private insight document and a polished public profile
+- `shared` - Devenv root files to be shared by each projects relying on it for its dev environment management
+
+**AI Agent focused folders:**
+- `.pi` - Skills for the pi.dev ai agent harness
+- `.claude` - Skills and agents for Claude Code
+- `AGENTS.md` - This file
+- `CLAUDE.md` - Equivalent of this file, but for Claude Code
+
 - `lab/showcase/public/` - Public assets
 - `lab/showcase/src/` - Source code
 - `lab/vue/src/` - Source code
 - `llm/ts/src/` - Source code
+- `mirror/app/` - Application code
 - `mirror/app/.claude/` - Project files
 - `mirror/app/.vscode/` - Project files
 - `mirror/app/assets/` - Static assets
