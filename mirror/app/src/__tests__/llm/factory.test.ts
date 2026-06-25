@@ -64,7 +64,7 @@ describe("createClientFromConfig", () => {
 
     it("forwards a non-empty endpoint as baseUrl", () => {
         createClientFromConfig(
-            makeConfig({ provider: LLMProvider.CompatibleOpenAI, endpoint: "http://localhost:11434" }),
+            makeConfig({ provider: LLMProvider.CustomLocalOpenAI, endpoint: "http://localhost:11434" }),
         );
         expect(mockCreateLLMClient.mock.calls[0][0].baseUrl).toBe("http://localhost:11434");
     });

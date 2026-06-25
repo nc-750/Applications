@@ -1,37 +1,18 @@
 ---
 name: nc-750-ethos-gate
-description: >-
-  The NC-750 compliance gate and shared ethos doctrine. Audits any artifact — a product or feature,
-  a plan/brief, a diff, marketing copy, a privacy disclosure, or a described data flow — against the
-  binding constraints in brand/ETHOS.md (C1 data ownership, C2 telemetry, C3 AI/third-party, C4
-  identity, C5 monetization honesty, C6 org/channel, C7 claims, C8 visual/naming) and the brand
-  pillars in brand/BRAND.md, then emits a pass/revise report citing the exact clauses. It is BOTH the
-  runnable gate (invoked as /nc-750 ethos [target]) AND the doctrine the other nc-750 skills cite for
-  anything ethos-related. Use this skill WHENEVER you need to judge whether something satisfies the
-  NC-750 ethos: "is this on-brand for privacy/data", "does this violate our data rules", "ethos
-  check", "compliance check", "can this carry the NC-750 mark / the 0x00 mark", "is this claim
-  literally true", "does this collect data about a person", "is BYOK/local-path honored", "is this a
-  dark pattern", before shipping or branding a product, or whenever another nc-750 skill needs the
-  ethos rules. Trigger even when the user never says "ethos": any "is this allowed under our
-  privacy/data/monetization stance" question, or any pre-ship/pre-brand gate on an NC-750 artifact.
-  Do NOT trigger for visual layout/styling questions (that is the design system), for general coding
-  with no compliance angle, or for verifying the trueness of user-supplied data (out of scope per
-  C7.4 unless the product's purpose IS verification).
+description: Audits any artifact (master-plan, plan, implementation) against the NC-750 brand's ethos.
 ---
 
-# nc-750-ethos-gate
+# NC-750-Ethos-Gate
 
-The compliance gate for the NC-750 universe, and the shared doctrine every other `nc-750-*` skill
-cites for ethos questions. It answers one question about any artifact: **may this carry the NC-750
-name, and where exactly does it fall short?**
+You are provided artifacts to judge whether they addher to the ethos described in the file `brand/ETHOS.md`. You answer questions about any artifact presented to you.
 
 > **Source of truth: `brand/ETHOS.md`.** This skill is the *working checklist + audit procedure*,
 > not a fork of the charter. It cites live clause ids (`C1.3`, `C5.5`, …). **If this checklist and
 > `ETHOS.md` ever disagree, `ETHOS.md` wins** — read it when a judgment is close. The *why* behind
-> the rules lives in `brand/BRAND.md`; the pragmatic intent corrections live in the
-> `brand-intent-clarifications` memory.
+> the rules lives in `brand/BRAND.md`.
 
-## The governing stance (read before judging)
+## The governing stance
 
 NC-750's promise is **integrity, not absolutism** (`BRAND.md` §1). Apply the rules in that spirit:
 
@@ -137,6 +118,6 @@ cited by another skill (e.g. `nc-750-challenge`), these findings fold into that 
 
 ## How other skills use this
 
-`nc-750-challenge`, `nc-750-plan`, and `nc-750-map` **cite this skill** for any ethos judgment rather
+`nc-750-review`, `nc-750-plan`, and `nc-750-master-plan` **cite this skill** for any ethos judgment rather
 than re-deriving the rules — load it, run the relevant section of the checklist, fold the findings in.
 This is the single source for "is it compliant"; those skills own "is it *sound* / *well-planned*."
