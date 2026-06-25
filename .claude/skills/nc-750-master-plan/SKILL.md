@@ -1,54 +1,57 @@
 ---
-name: nc-750-map
+name: nc-750-master-plan
 description: >-
   The NC-750 master planner. Takes one whole goal — a feature, refactor, or initiative too big for a
   single phase — and decomposes it into a MASTER PLAN: an ordered set of thin phase STUBS plus an
   explicit, acyclic dependency graph, with a Context, any locked Decisions, and a Deferred / out-of-
   scope section. It decides WHICH phases exist and in WHAT order; it does NOT write the technical
-  "how" of any phase (that is nc-750-plan), critique the decomposition (nc-750-challenge), or write
+  "how" of any phase (that is nc-750-plan), critique the decomposition (nc-750-review), or write
   code (an nc-750-build implementer). Each stub is deliberately thin — Goal, Depends on, Parallel-safe
-  with, Domain, Doctrine likely cited — and must be expandable by nc-750-plan into a buildable brief
-  with no reshaping. It grounds the decomposition in the real codebase (reads the layers and seams
-  before drawing phase boundaries), orders bottom-up so no phase reaches up into an unbuilt layer,
-  marks parallelism only when truly disjoint, and raises any genuine decomposition fork as a DECISION
-  NEEDED checkpoint instead of choosing silently. Use this skill WHENEVER you need to break a whole
-  goal into ordered, buildable phases before any one of them is planned in detail: "map this out",
-  "break this goal into phases", "decompose this feature/refactor", "what phases does this need and in
-  what order", "lay out the master plan", "where do I start and what depends on what", "sequence this
-  multi-layer work", "turn this initiative into a phased plan". Trigger even when the user never says
-  "map" or "master plan": any "split this big goal into stages / what order do I build the layers in /
-  give me the phased plan for this whole feature" request aimed at a multi-phase goal. Do NOT trigger
-  for specifying a single already-identified phase in technical detail (that is nc-750-plan), for
-  critiquing, stress-testing, or hunting blind spots / weak out-of-scope walls in a plan or its
-  decomposition — even when the request name-drops a "master plan", "decomposition", or "parallel-
-  safe" (that is nc-750-challenge), for implementing an approved brief (that is an nc-750-build
-  implementer), or for a standalone ethos audit (that is nc-750-ethos-gate).
+  with, Domain, Doctrine likely cited — and must be expandable by nc-750-plan into a buildable phase
+  plan with no reshaping. It grounds the decomposition in the real codebase (reads the layers and
+  seams before drawing phase boundaries), orders bottom-up so no phase reaches up into an unbuilt
+  layer, marks parallelism only when truly disjoint, and raises any genuine decomposition fork as a
+  DECISION NEEDED checkpoint instead of choosing silently. Use this skill WHENEVER you need to break
+  a whole goal into ordered, buildable phases before any one of them is planned in detail: "write a
+  master plan", "plan this out", "break this goal into phases", "decompose this feature/refactor",
+  "what phases does this need and in what order", "lay out the master plan", "where do I start and
+  what depends on what", "sequence this multi-layer work", "turn this initiative into a phased plan".
+  Trigger even when the user never says "master plan": any "split this big goal into stages / what
+  order do I build the layers in / give me the phased plan for this whole feature" request aimed at a
+  multi-phase goal. Do NOT trigger for specifying a single already-identified phase in technical
+  detail (that is nc-750-plan), for critiquing, stress-testing, or hunting blind spots / weak out-of-
+  scope walls in a plan or its decomposition — even when the request name-drops a "master plan",
+  "decomposition", or "parallel-safe" (that is nc-750-review), for implementing an approved phase
+  plan (that is an nc-750-build implementer), or for a standalone ethos audit (that is
+  nc-750-ethos-gate).
 ---
 
-# nc-750-map
+# nc-750-master-plan
 
 The master planner. Its one job: **take a whole goal and decompose it into an ordered set of thin
 phase stubs plus a dependency graph — the master plan.** It decides *which* phases exist and in
 *what* order; it never specifies *how* a phase is built. It sits at the top of the constellation:
-its output is the input to `nc-750-plan`, which expands one stub at a time into a buildable brief.
+its output is the input to `nc-750-plan`, which expands one stub at a time into a buildable phase
+plan.
 
 It does not specify a phase's technical detail (that is `plan`), does not critique its own
-decomposition (that is `challenge`), and does not implement anything (that is a `build` role). It
+decomposition (that is `review`), and does not implement anything (that is a `build` role). It
 emits the master plan and stops.
 
 ## What it consumes, what it emits
 
 - **Input** — one **goal**: a feature, refactor, or initiative large enough to need more than one
-  phase, described by the user (or routed from `/nc-750 map <goal>`). Plus, optionally, forks the
-  user has already settled.
+  phase, described by the user (or routed from `/nc-750 master-plan <goal>`). Plus, optionally,
+  forks the user has already settled.
 - **Output** — one **master plan** in the exact shape of
   [`../nc-750/references/master-plan-format.md`](../nc-750/references/master-plan-format.md):
   `# <Goal> — Master Plan`, then `## Context`, optional `## Decisions locked`, `## Phases` (the
   stubs, earliest/lowest first), `## Dependency graph` (explicit edges), and `## Deferred / out of
   scope`. **One master plan per goal.** Each phase stub carries the five descriptive fields the
   format defines — `Goal`, `Depends on`, `Parallel-safe with`, `Domain`, `Doctrine likely cited` —
-  under its `Id` label, and nothing more. The round-trip contract is fixed: a stub's `Goal` → the brief's `Goal`, its
-  `Domain` → which implementer runs it, its `Doctrine likely cited` → the brief's `Doctrine cited`.
+  under its `Id` label, and nothing more. The round-trip contract is fixed: a stub's `Goal` → the
+  phase plan's `Goal`, its `Domain` → which implementer runs it, its `Doctrine likely cited` → the
+  phase plan's `Doctrine cited`.
 
 ## Stance (how to decompose a goal well)
 
@@ -59,13 +62,13 @@ emits the master plan and stops.
 - **Ground the decomposition in the real codebase.** Read the layers, modules, and seams this goal
   touches *before* you draw phase boundaries. Phases should fall on real boundaries (a layer, a
   module, a data contract), not on invented ones. A decomposition that assumes a structure the code
-  does not have will not expand into buildable briefs — it will force `plan` to redesign the scope,
-  which means the map was wrong. **For a greenfield goal** (the feature's own code does not exist
-  yet) there are no files to read for it — its seams come from the governing architecture/layer
-  doctrine (the one-way layer graph each phase will cite in `Doctrine likely cited`) applied to the
-  host app's real structure. Read the adjacent existing code *and* that doctrine; do not return
-  `needs-info` just because the feature's files are not there yet, and do not invent seams the
-  doctrine does not give you.
+  does not have will not expand into buildable phase plans — it will force `plan` to redesign the
+  scope, which means the master plan was wrong. **For a greenfield goal** (the feature's own code
+  does not exist yet) there are no files to read for it — its seams come from the governing
+  architecture/layer doctrine (the one-way layer graph each phase will cite in `Doctrine likely
+  cited`) applied to the host app's real structure. Read the adjacent existing code *and* that
+  doctrine; do not return `needs-info` just because the feature's files are not there yet, and do
+  not invent seams the doctrine does not give you.
 - **Bottom-up, dependency order, acyclic.** A phase appears only after every phase it depends on. No
   phase may reach *up* into a layer an earlier phase has not yet built. Order by runtime need: build
   what is depended upon before what depends on it (model → data → store → service → view, or the
@@ -124,16 +127,15 @@ emits the master plan and stops.
 7. **Surface forks** as `DECISION NEEDED` items — do not pick silently.
 8. **Emit and stop.** Write the master plan to the plan-file path if one was given; otherwise return
    it inline. The orchestrator gates the decomposition with the user, then runs `nc-750-plan` per
-   stub and `nc-750-challenge` on the result — you do not plan the phases, critique them, or build
-   them.
+   stub and `nc-750-review` on the result — you do not plan the phases, critique them, or build them.
 
 ## Decomposition smells (the part the critic hits hardest)
 
-Before you emit, make the decomposition survive the plan-mode soundness principles `nc-750-challenge`
+Before you emit, make the decomposition survive the plan-mode soundness principles `nc-750-review`
 will test it against — build them in, don't wait to be told. This list **mirrors** the critic's
 decomposition catalog;
 [`../nc-750/references/challenge-report-format.md`](../nc-750/references/challenge-report-format.md)
-(and the `nc-750-challenge` skill) is the canonical source if the two ever diverge:
+(and the `nc-750-review` skill) is the canonical source if the two ever diverge:
 
 - **`decomposition-wrong`** — every phase is necessary, correctly ordered against its deps, bounded,
   and falls on a real seam. No phase is missing; none is redundant; none secretly spans several
@@ -152,16 +154,16 @@ decomposition catalog;
 ## Ethos & doctrine awareness
 
 Decompose *toward* the ethos. Where a phase will have a data, claims, AI, or visual angle, name the
-governing clauses in its `Doctrine likely cited` so `plan` and `challenge` inherit the pointer —
+governing clauses in its `Doctrine likely cited` so `plan` and `nc-750-review` inherit the pointer —
 `brand/ETHOS.md` (C1–C8), `brand/BRAND.md` pillars, `brand/VISUAL_IDENTITY.md`, and
 `lab/DESIGN.md` / `lab/DESIGN_USE.md` / `lab/PRODUCT.md` for presentation. Cite by file + id; do not
 restate, and do not run the audit — the formal compliance gate is the critic's job
-(`nc-750-challenge` delegates it to `nc-750-ethos-gate`). Your job is to lay out phases that *can*
+(`nc-750-review` delegates it to `nc-750-ethos-gate`). Your job is to lay out phases that *can*
 pass it and to point each one at the clauses it must satisfy.
 
 ## Output
 
 One master plan in the Phase-0 format: `Context`, optional `Decisions locked`, `Phases` (thin stubs,
 earliest first), `Dependency graph`, `Deferred / out of scope`, plus any `DECISION NEEDED`
-checkpoints. No technical detail, no tests, no code. Then stop — planning each phase, challenging the
+checkpoints. No technical detail, no tests, no code. Then stop — planning each phase, reviewing the
 decomposition, and building are other roles.

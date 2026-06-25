@@ -1,11 +1,28 @@
 ---
 name: nc-750-ethos-gate
-description: Audits any artifact (master-plan, plan, implementation) against the NC-750 brand's ethos.
+description: >-
+  The NC-750 compliance gate and shared ethos doctrine. Audits any artifact — a product or feature,
+  a master plan / phase plan, a diff, marketing copy, a privacy disclosure, or a described data
+  flow — against the binding constraints in brand/ETHOS.md (C1 data ownership, C2 telemetry, C3
+  AI/third-party, C4 identity, C5 monetization honesty, C6 org/channel, C7 claims, C8
+  visual/naming) and the brand pillars in brand/BRAND.md, then emits a pass/revise report citing
+  the exact clauses. It is BOTH the runnable gate (invoked as /nc-750 ethos [target]) AND the
+  doctrine the other nc-750 skills cite for anything ethos-related. Use this skill WHENEVER you
+  need to judge whether something satisfies the NC-750 ethos: "is this on-brand for privacy/data",
+  "does this violate our data rules", "ethos check", "compliance check", "can this carry the NC-750
+  mark / the 0x00 mark", "is this claim literally true", "does this collect data about a person",
+  "is BYOK/local-path honored", "is this a dark pattern", before shipping or branding a product, or
+  whenever another nc-750 skill needs the ethos rules. Trigger even when the user never says
+  "ethos": any "is this allowed under our privacy/data/monetization stance" question, or any
+  pre-ship/pre-brand gate on an NC-750 artifact. Do NOT trigger for visual layout/styling questions
+  (that is the design system), for general coding with no compliance angle, or for verifying the
+  trueness of user-supplied data (out of scope per C7.4 unless the product's purpose IS
+  verification).
 ---
 
 # NC-750-Ethos-Gate
 
-You are provided artifacts to judge whether they addher to the ethos described in the file `brand/ETHOS.md`. You answer questions about any artifact presented to you.
+You are provided an artifact to judge against the ethos in `brand/ETHOS.md`. You judge; you do not fix.
 
 > **Source of truth: `brand/ETHOS.md`.** This skill is the *working checklist + audit procedure*,
 > not a fork of the charter. It cites live clause ids (`C1.3`, `C5.5`, …). **If this checklist and
@@ -29,8 +46,8 @@ NC-750's promise is **integrity, not absolutism** (`BRAND.md` §1). Apply the ru
 
 ## Audit procedure
 
-1. **Identify the target type** — product/feature, plan/brief, diff, copy, disclosure, or a
-   described data flow. This decides which sections are in scope (copy → C5.5/C7; a data flow →
+1. **Identify the target type** — product/feature, master plan / phase plan, diff, copy, disclosure,
+   or a described data flow. This decides which sections are in scope (copy → C5.5/C7; a data flow →
    C1–C3; a whole product → all of C1–C8 + the pre-ship checklist).
 2. **Select the in-scope constraints.** Don't audit clauses that cannot apply to the target; mark
    them `n/a`. Auditing everything against a copy snippet is noise.
@@ -114,7 +131,7 @@ Emit a report in the shape defined by
 [`../nc-750/references/challenge-report-format.md`](../nc-750/references/challenge-report-format.md)
 — findings with severity + **clause citation** (`ETHOS.md C#.#` or `BRAND.md` pillar) + a concrete
 ask, then the verdict. When invoked as `/nc-750 ethos [target]` the report is the deliverable; when
-cited by another skill (e.g. `nc-750-challenge`), these findings fold into that skill's report.
+cited by another skill (e.g. `nc-750-review`), these findings fold into that skill's report.
 
 ## How other skills use this
 

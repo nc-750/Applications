@@ -1,0 +1,24 @@
+{
+  "id": "20260625-120000-skill-hardening-parallel-agents",
+  "timestamp": "2026-06-25T12:00:00Z",
+  "derived_from": [],
+  "files_touched": [
+    ".pi/skills/nc-750-ethos-gate/SKILL.md",
+    ".claude/skills/nc-750-ethos-gate/SKILL.md",
+    ".pi/skills/nc-750-master-plan/SKILL.md",
+    ".claude/skills/nc-750-master-plan/SKILL.md",
+    ".claude/skills/nc-750-map/SKILL.md",
+    ".pi/skills/nc-750-plan/SKILL.md",
+    ".claude/skills/nc-750-plan/SKILL.md",
+    ".pi/skills/nc-750-review/SKILL.md",
+    ".claude/skills/nc-750-review/SKILL.md",
+    ".claude/skills/nc-750-challenge/SKILL.md",
+    ".pi/skills/premortem/SKILL.md",
+    ".claude/skills/premortem/SKILL.md"
+  ],
+  "decision": "Hardened all 5 remaining NC-750 constellation skills (ethos-gate, master-plan, plan, review, premortem) in both .pi and .claude directories: rewrote all descriptions to be imperative and trigger-focused per agentskills.io, updated all stale terminology (nc-750-map→nc-750-master-plan, nc-750-challenge→nc-750-review, brief→phase plan), and renamed the two stale .claude skill folders to canonical names.",
+  "alternative_not_taken": "Doing the skills sequentially one at a time — rejected because each skill is independent of the others and parallel execution halves wall-clock time with no coordination risk.",
+  "rationale": "Each skill touches disjoint files; the canonical terminology and description standards were already settled in the previous session on the orchestrator skill, so agents could work from a complete spec without coordination.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

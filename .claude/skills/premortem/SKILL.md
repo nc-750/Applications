@@ -1,6 +1,17 @@
 ---
 name: premortem
-description: Identify failure modes before they occur using structured risk analysis
+description: >-
+  Use this skill to identify failure modes before they occur using structured risk analysis (Gary
+  Klein's pre-mortem technique). Trigger for: `/premortem`, `/premortem quick`, `/premortem deep`,
+  `/premortem <file>`, "run a premortem", "what could go wrong with this", "stress-test this plan",
+  "find the risks before we build", "what might fail", "failure modes for this feature", "pre-mortem
+  on this PR", "identify risks before implementing". Auto-detects context: quick mode for plans and
+  PRs (localized scope), deep mode before implementation (global scope). Uses Tiger/Paper Tiger/
+  Elephant framework — verifies every potential tiger before flagging (never pattern-matches alone).
+  Blocks on findings: presents risks via AskUserQuestion and requires the user to accept, add
+  mitigations, or discuss before proceeding. Do NOT trigger for post-mortems (after-the-fact
+  analysis), for code review without a risk angle, or when the user wants a general critique of a
+  plan's correctness (use nc-750-review for that).
 allowed-tools: [Read, Grep, Glob, Task, AskUserQuestion, TodoWrite]
 ---
 
@@ -268,41 +279,16 @@ print("Risks acknowledged. Proceeding with implementation.")
 
 #### If "Research mitigation options"
 ```python
-# Spawn parallel research for each HIGH severity tiger
+# Research each HIGH severity tiger
 for tiger in high_severity_tigers:
-    # Internal: How has codebase handled this before?
-    Task(
-        subagent_type="scout",
-        prompt=f"""
-        Find how this codebase has previously handled: {tiger.category}
+    # Internal: search the codebase for existing patterns
+    # Use Grep/Glob/Read to find how similar risks have been handled:
+    # - grep for the risk's keywords in src/
+    # - read the relevant files for existing mitigation patterns
+    # - note file:line references to similar solutions and patterns used
 
-        Specifically looking for patterns related to: {tiger.risk}
-
-        Return:
-        - File:line references to similar solutions
-        - Patterns used
-        - Libraries/utilities available
-        """
-    )
-
-    # External: What are best practices?
-    Task(
-        subagent_type="oracle",
-        prompt=f"""
-        Research best practices for: {tiger.risk}
-
-        Context: {tiger.category} in a {tech_stack} codebase
-
-        Return:
-        - Recommended approaches (ranked)
-        - Library options
-        - Common pitfalls to avoid
-        """
-    )
-
-# Wait for research to complete
-# Synthesize options
-# Present via AskUserQuestion with 2-4 mitigation options
+    # Synthesize 2-4 options (codebase patterns, known best practices)
+    # Present via AskUserQuestion with ranked options
 ```
 
 #### If "Discuss specific risks"
@@ -412,7 +398,7 @@ User: Research mitigation options
 
 Claude: Researching mitigations...
 
-[Spawns scout + oracle in parallel]
+[Searches codebase with Grep/Glob/Read for existing patterns]
 
 Found 3 options for circuit breaker:
 

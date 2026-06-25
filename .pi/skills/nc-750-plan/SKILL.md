@@ -1,11 +1,29 @@
 ---
 name: nc-750-plan
-description: Take one phase (a stub) from the given master plan or from the user directly and turn it into an actionable buildable plan.
+description: >-
+  The NC-750 phase planner. Takes one phase — a stub from a master plan, or a phase the user
+  describes directly — and turns it into a single buildable PHASE PLAN: the technical "how" of the
+  phase in implementable detail WITHOUT writing the code. It fills the seven-line spine (Goal, In
+  scope, Out of scope, Doctrine cited, Tests-as-descriptions, Deliverable, Verify), grounds every
+  claim in the real codebase it reads, designs the simplest thing that fully meets the goal, writes
+  test descriptions that survive the critic, names the most tempting overreach in Out of scope, and
+  surfaces any genuine design fork as a DECISION NEEDED checkpoint instead of choosing silently. It
+  owns the "how is this one phase built" question; it does NOT decompose the goal (that is
+  nc-750-master-plan), critique the phase plan (nc-750-review), or write the code (an nc-750-build
+  implementer). Use this skill WHENEVER you need to plan or specify a single phase of NC-750 work
+  before building it: "plan this phase", "write the phase plan", "expand this stub into a phase
+  plan", "design phase N", "turn this stub into something buildable", "what exactly should we build
+  for this phase and how do we verify it", "spec out the in-scope / out-of-scope / tests for this
+  step". Trigger even when the user never says "plan": any "spec this one phase / make this stub
+  buildable / what's the detailed how for this step" request aimed at a single phase. Do NOT trigger
+  for decomposing a whole goal into phases (that is nc-750-master-plan), for critiquing or
+  stress-testing a phase plan (that is nc-750-review), for implementing an approved phase plan (that
+  is an nc-750-build implementer), or for a standalone ethos audit (that is nc-750-ethos-gate).
 ---
 
 # NC-750-Plan
 
-You take a sigle phase from a master plan or from the user directly, and produce an actionable buildable plan. This plan is the technical *how*, in implementable detail **WITHOUT CODE**. Your work sits between the `nc-750-master-plan` and `nc-750-build-*` implementer. Your output plan is what allows the builder to work in a strict scope without having to decide anything.
+You take a single phase from a master plan or from the user directly, and produce an actionable buildable plan. This plan is the technical *how*, in implementable detail **WITHOUT CODE**. Your work sits between the `nc-750-master-plan` and `nc-750-build-*` implementer. Your output plan is what allows the builder to work in a strict scope without having to decide anything.
 
 You DO NOT critique your own output (that is `nc-750-review` or the user's role) and DO NOT implement anything (that is `nc-750-build-*` or the user's role). You emit the plan and stop.
 
@@ -23,7 +41,7 @@ You DO NOT critique your own output (that is `nc-750-review` or the user's role)
   written the implementation and stolen the builder's job. The plan says *what and why*; the builder
   decides the exact *how* within it.
 - **Ground every claim in the real codebase.** Read the files this phase touches before you scope
-  it. A brief that names a file that does not exist *as already-present*, calls live code "dead", or
+  it. A phase plan that names a file that does not exist *as already-present*, calls live code "dead", or
   misjudges the layer boundary will fail the critic and mislead the builder. Scope is discovered, not
   assumed. **For a greenfield phase** (the files it creates do not exist yet) there is nothing to
   read for them — describe the new artifacts as *to be created* and take their shape and layer
@@ -31,9 +49,9 @@ You DO NOT critique your own output (that is `nc-750-review` or the user's role)
   that aren't there. Always distinguish what exists now from what this phase will add.
 - **Simplest design that fully meets the goal.** Apply YAGNI pragmatically: do not pre-build for
   hypothetical futures, and do not strip complexity the goal genuinely needs. The test a finished
-  brief must pass: a single human can understand both *what* the code will do and *why*.
+  phase plan must pass: a single human can understand both *what* the code will do and *why*.
 - **Out of scope is a wall, and it must name the most tempting overreach.** The hardest part of a
-  brief is what it forbids. State the adjacent phase or cross-cutting cleanup a diligent builder
+  phase plan is what it forbids. State the adjacent phase or cross-cutting cleanup a diligent builder
   would *want* to fold in, and forbid it explicitly; work noticed there is a follow-up, not done.
 - **Tests are descriptions that survive the critic** (see below). Each one is a behavior + expected
   result, no code.
@@ -43,7 +61,7 @@ You DO NOT critique your own output (that is `nc-750-review` or the user's role)
 - **Cite doctrine; do not restate it.** Point at the governing brand/ethos/design section by file +
   id. You are not the source of those rules.
 
-  ## Procedure
+## Procedure
 
 1. **Locate the input.** Identify the phase: pull the stub from the named master plan, or take the
    user's direct phase description. If a named plan file is not found, **stop and return a
@@ -58,22 +76,22 @@ You DO NOT critique your own output (that is `nc-750-review` or the user's role)
    the new artifacts from that — describing them as to-be-created, never as already-present. Identify
    by *reading* which test/source areas are *likely* stale or red — but do **not** run `tsc`/`vitest`
    (you have no Bash and must never invent error/test counts); the implementer establishes the actual
-   **red baseline** at build time (see step 7). This is what separates a buildable brief from a
+   **red baseline** at build time (see step 7). This is what separates a buildable phase plan from a
    plausible-sounding one.
 3. **Design the simplest sufficient solution.** Decide the concrete artifacts — files/functions/
    modules to create, change, or delete — and the shape of each, as prose and signatures. Keep the
    dependency direction one-way (no new upward edge); if the goal forces an exception, say so and why.
-4. **Fill the seven-line spine** per the phase-brief-format. Map the stub fields across; make
+4. **Fill the seven-line spine** per the phase-plan-format. Map the stub fields across; make
    **In scope** specific enough to implement and **Out of scope** a real wall.
 5. **Write the tests-as-descriptions** (next section) so they pre-empt the critic.
-6. **Surface forks** as `DECISION NEEDED` items. Do not pick silently to keep the brief tidy.
+6. **Surface forks** as `DECISION NEEDED` items. Do not pick silently to keep the phase plan tidy.
 7. **Write the Verify line.** State this phase's own gate (the type-check + targeted tests that prove
    the layer works) *plus* the global gate from
    [`../nc-750/references/env-and-verify.md`](../nc-750/references/env-and-verify.md): `bun` only;
    `vue-tsc` (not bare `tsc`) for any `.vue`; no NEW errors judged per touched file against the red
    baseline; tests green with exact counts; no new `console.log`/dead code/silent stub; dependency
    direction holds; out-of-scope boundary respected; claims literally true.
-8. **Emit and stop.** Write the brief to the plan-file path if one was given; otherwise return it
+8. **Emit and stop.** Write the phase plan to the plan-file path if one was given; otherwise return it
    inline. The orchestrator runs `nc-750-review` on it — you do not critique or implement it.
 
 ## Tests-as-descriptions (the part the critic hits hardest)
@@ -107,6 +125,6 @@ must satisfy — not to run the audit yourself.
 
 ## Output
 
-One phase brief in the Phase-0 format: the seven lines (Goal · In scope · Out of scope · Doctrine
+One phase plan in the Phase-0 format: the seven lines (Goal · In scope · Out of scope · Doctrine
 cited · Tests-as-descriptions · Deliverable · Verify), plus any `DECISION NEEDED` checkpoints. No
-code. Then stop — challenge and build are other roles.
+code. Then stop — review and build are other roles.
