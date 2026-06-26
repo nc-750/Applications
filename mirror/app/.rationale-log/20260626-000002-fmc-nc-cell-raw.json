@@ -1,0 +1,13 @@
+{
+  "id": "20260626-000002-fmc-nc-cell-raw",
+  "timestamp": "2026-06-26T00:00:02Z",
+  "derived_from": [],
+  "files_touched": [
+    "src/feedback/components/FeedbackModalCell.vue"
+  ],
+  "decision": "The panel uses raw nc-cell / nc-cell-head / nc-cell-content classes directly rather than the Lab Cell component, because the panel is positioned inside a fixed-backdrop div and Cell's grow prop system assumes it lives in a Band layout.",
+  "alternative_not_taken": "Use the Lab Cell component — rejected because Cell wraps layout concerns (grow, surface) that conflict with the fmc-panel's fixed + centered positioning inside a backdrop.",
+  "rationale": "The plan requires a Cell-contract surface (light, raised, input-hosting). Using the nc-cell class directly delivers the correct visual contract while giving the panel full control over its positioning within the backdrop.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

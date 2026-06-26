@@ -1,0 +1,13 @@
+{
+  "id": "20260626-000001-fmc-category-bridge",
+  "timestamp": "2026-06-26T00:00:01Z",
+  "derived_from": [],
+  "files_touched": [
+    "src/feedback/components/FeedbackModalCell.vue"
+  ],
+  "decision": "Used a WritableComputedRef bridge (categoryBridge) to map FeedbackCategory | undefined ↔ FeedbackCategory | '' at the DOM-select boundary, keeping draft.category strictly FeedbackCategory | undefined.",
+  "alternative_not_taken": "Coerce draft.category to a '' sentinel (as LLMConfigCell does for provider) — rejected because the validation rule tests category !== undefined; '' would pass that check and let an unchosen category through.",
+  "rationale": "Decision B in the phase plan explicitly requires this pattern. The '' sentinel defeats the !== undefined guard.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}
