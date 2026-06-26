@@ -1,7 +1,20 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import FeedbackModalCell from "../../feedback/components/FeedbackModalCell.vue";
 import { CATEGORY_OPTIONS } from "../../feedback/reference";
+import { FeedbackError } from "../../feedback/services";
+
+// Mock the services module so the component picks up the stub at import time.
+vi.mock("../../feedback/services", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("../../feedback/services")>();
+    return {
+        ...actual,
+        submitFeedback: vi.fn(),
+    };
+});
+
+// Import the mock *after* vi.mock so we reference the same spy instance.
+import * as FeedbackService from "../../feedback/services";
 
 // Mirror the SettingsPage.test.ts mount / findComponent / trigger idiom.
 // No store, no router, no services — the modal owns local draft state only.
@@ -82,26 +95,9 @@ describe("FeedbackModalCell", () => {
         expect(submitBtn.attributes("disabled")).toBeDefined();
     });
 
-    // 5 — Inert submit dispatches nothing
-    it("activating submit does not emit any transport event and does not call window.open / location", async () => {
-        const wrapper = mountOpen();
-        // Fill to valid state
-        await wrapper.find("select").setValue(CATEGORY_OPTIONS[0].value);
-        await wrapper.find('input[type="email"]').setValue("user@example.com");
-        await wrapper.find('input[type="text"]').setValue("My subject");
-        await wrapper.find("textarea").setValue("Some content here");
-        await wrapper.vm.$nextTick();
-
-        // Click submit
-        await wrapper.find('button[type="submit"]').trigger("click");
-        await wrapper.vm.$nextTick();
-
-        // No emitted events that could route to transport (only 'close' is defined)
-        const emitted = wrapper.emitted();
-        expect(emitted["send"]).toBeUndefined();
-        expect(emitted["submit"]).toBeUndefined();
-        expect(emitted["close"]).toBeUndefined(); // submit does not close
-    });
+    // (Test 5 removed — it pinned the Phase-2 inert submit behavior, which Phase 3 replaces.
+    //  CONVENTIONS 8.3: replace the pre-convention test, don't appease it.
+    //  Tests 7-9 below cover the Phase-3 wired submit behavior.)
 
     // 6 — Escape closes the open dialog (emits 'close')
     it("Escape keydown on the panel emits exactly one close event", async () => {
@@ -143,7 +139,75 @@ describe("FeedbackModalCell", () => {
         expect(wrapper.find("[role='dialog']").exists()).toBe(false);
     });
 
-    // 9 — Structural focus management and ARIA contract (C8.3 — honest to jsdom)
+    // ── Phase-3 wired submit tests ────────────────────────────────────────────
+
+    afterEach(() => {
+        vi.mocked(FeedbackService.submitFeedback).mockReset();
+    });
+
+    async function fillValid(wrapper: ReturnType<typeof mountOpen>) {
+        await wrapper.find("select").setValue(CATEGORY_OPTIONS[0].value);
+        await wrapper.find('input[type="email"]').setValue("user@example.com");
+        await wrapper.find('input[type="text"]').setValue("My subject");
+        await wrapper.find("textarea").setValue("Some content here");
+        await wrapper.vm.$nextTick();
+    }
+
+    async function submitForm(wrapper: ReturnType<typeof mountOpen>) {
+        // Trigger the form's submit event directly — clicking a submit button in jsdom
+        // does not fire the native form submit event, so @submit.prevent never runs.
+        await wrapper.find("form").trigger("submit");
+        await wrapper.vm.$nextTick();
+    }
+
+    // 7 — Valid submit invokes the delivery path
+    it("valid submit invokes submitFeedback with the expected recipient and prefixed subject", async () => {
+        vi.mocked(FeedbackService.submitFeedback).mockImplementation(() => {});
+        const wrapper = mountOpen();
+        await fillValid(wrapper);
+
+        await submitForm(wrapper);
+
+        expect(FeedbackService.submitFeedback).toHaveBeenCalledTimes(1);
+        const arg = vi.mocked(FeedbackService.submitFeedback).mock.calls[0][0];
+        expect(arg.category).toBe(CATEGORY_OPTIONS[0].value);
+        expect(arg.email).toBe("user@example.com");
+        expect(arg.subject).toBe("My subject");
+    });
+
+    // 8 — Failed handoff surfaces error in modal and does not close
+    it("when submitFeedback throws FeedbackError, modal shows the error message and does not close", async () => {
+        vi.mocked(FeedbackService.submitFeedback).mockImplementation(() => {
+            throw new FeedbackError("Handoff failed.");
+        });
+        const wrapper = mountOpen();
+        await fillValid(wrapper);
+
+        await submitForm(wrapper);
+
+        expect(wrapper.text()).toContain("Handoff failed.");
+        expect(wrapper.emitted("close")).toBeUndefined();
+    });
+
+    // 9 — Successful handoff shows honest acknowledgment (not "sent") and does not close
+    it("successful handoff shows acknowledgment text (not 'sent') and does not emit close", async () => {
+        vi.mocked(FeedbackService.submitFeedback).mockImplementation(() => {});
+        const wrapper = mountOpen();
+        await fillValid(wrapper);
+
+        await submitForm(wrapper);
+
+        const text = wrapper.text();
+        // Honest acknowledgment: "Handed off to your mail client."
+        expect(text).toContain("Handed off to your mail client");
+        // Must NOT claim "sent" (ETHOS C7 — OS gives no delivery callback)
+        expect(text.toLowerCase()).not.toContain("message sent");
+        expect(text.toLowerCase()).not.toContain("email sent");
+        // No close emitted
+        expect(wrapper.emitted("close")).toBeUndefined();
+    });
+
+    // 10 — Structural focus management and ARIA contract (C8.3 — honest to jsdom)
     it("when open, panel carries role=dialog + aria-modal + an accessible name (C8.3 structural)", () => {
         const wrapper = mountOpen();
         const panel = wrapper.find("[role='dialog']");

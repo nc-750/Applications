@@ -11,7 +11,8 @@ export type LogCategory =
   | "import"
   | "export"
   | "wipe"
-  | "system";
+  | "system"
+  | "feedback";
 
 export interface LogEntry {
   id: string;

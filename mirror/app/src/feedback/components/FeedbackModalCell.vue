@@ -26,12 +26,13 @@
 // ETHOS C1.1: draft is local — never transmitted or persisted in this phase.
 // ETHOS C2: no telemetry — nothing counts opens, submits, or category selections.
 
-import { reactive, computed, watch, ref } from "vue";
+import { reactive, computed, watch, ref, toRaw } from "vue";
 import { Form, FormField, TextField, Textarea, Button } from "@nc-750/lab-vue";
 import type { FeedbackCategory } from "../reference";
 import { CATEGORY_OPTIONS } from "../reference";
 import { createEmptyFeedbackSubmission } from "../models";
 import type { FeedbackSubmission } from "../models";
+import { submitFeedback, FeedbackError } from "../services";
 
 // ── Props / emits ─────────────────────────────────────────────────────────────
 
@@ -156,16 +157,31 @@ function onPanelClick(e: MouseEvent): void {
     e.stopPropagation();
 }
 
-// ── Inert submit (TODO Phase 3) ───────────────────────────────────────────────
+// ── Submit state ──────────────────────────────────────────────────────────────
+
+/** Error message from the last failed handoff; null when no error. */
+const submitError = ref<string | null>(null);
+
+/** True after a successful handoff — shown as an acknowledgment, never "sent". */
+const handoffAck = ref(false);
+
+// ── Submit handler (Phase 3 — mailto: handoff) ────────────────────────────────
 
 function onSubmit(): void {
-    // TODO Phase 3 — mailto: composition and handoff.
-    // This handler is intentionally a no-op placeholder. It does not compose a
-    // mailto: URI, does not call window.location or window.open, does not emit a
-    // send/submit event, and does not mutate anything beyond the local draft.
-    // Phase 3 will replace this body with the MailtoService call.
     if (!canSubmit.value) return;
-    // no-op by design — inert until Phase 3
+    submitError.value = null;
+    handoffAck.value = false;
+    try {
+        submitFeedback(toRaw(draft));
+        handoffAck.value = true;
+    } catch (err) {
+        if (err instanceof FeedbackError) {
+            // View catches into reactive error state; does not re-log (CONVENTIONS 7.17/7.18).
+            submitError.value = err.message;
+        } else {
+            submitError.value = "An unexpected error occurred. Please try again.";
+        }
+    }
 }
 </script>
 
@@ -256,6 +272,18 @@ function onSubmit(): void {
                         <Textarea v-model="draft.content" />
                     </FormField>
 
+                    <!-- Handoff acknowledgment — shown after a successful submit.
+                         Honest wording: "handed off to your mail client", never "sent"
+                         (the OS gives no delivery callback — ETHOS C7). -->
+                    <p v-if="handoffAck" class="fmc-ack" role="status">
+                        Handed off to your mail client.
+                    </p>
+
+                    <!-- Error state — shown when submitFeedback throws. Never colour-only (C8.3). -->
+                    <p v-if="submitError" class="fmc-error" role="alert">
+                        {{ submitError }}
+                    </p>
+
                     <div class="flex gap-4 justify-end">
                         <!-- Cancel / close control: keyboard-operable <button> (C8.3).
                              Emits close without destroying the draft content. -->
@@ -263,8 +291,7 @@ function onSubmit(): void {
                             Cancel
                         </Button>
 
-                        <!-- Submit: inert until Phase 3. Disabled when canSubmit is false.
-                             TODO Phase 3: replace onSubmit body with MailtoService call. -->
+                        <!-- Submit: disabled when canSubmit is false. -->
                         <Button
                             variant="accent"
                             submit
@@ -310,6 +337,16 @@ function onSubmit(): void {
 .fmc-panel:focus-visible {
     outline: 2px solid var(--nc-accent);
     outline-offset: 2px;
+}
+
+.fmc-ack {
+    color: var(--nc-success, var(--nc-accent));
+    font-size: 0.875rem;
+}
+
+.fmc-error {
+    color: var(--nc-error, #c0392b);
+    font-size: 0.875rem;
 }
 
 /* Reduced-motion-gated entrance — gated by prefers-reduced-motion per ETHOS C8.3.
