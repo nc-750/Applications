@@ -1,3 +1,0 @@
-/* Tailwind utilities only — enclosure.css handles the reset/base layer.
-   Import this AFTER enclosure.css so enclosure tokens win specificity ties. */
-@import "tailwindcss/utilities";
