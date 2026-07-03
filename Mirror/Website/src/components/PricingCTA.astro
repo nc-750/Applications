@@ -1,0 +1,33 @@
+---
+import { PRICING } from "../config.ts";
+import Button from "./Button.astro";
+---
+
+<section class="border-t border-(--nc-line)">
+  <div class="nc-shell py-20 pb-28">
+    <div class="max-w-2xl">
+      <h2 class="nc-heading-2 mb-6">Job Seeker</h2>
+
+      <!-- Price -->
+      <div class="mb-4">
+        <span class="nc-readout">{PRICING.jobSeeker.price}</span>
+        <p class="nc-text-base nc-text-secondary mt-2">{PRICING.jobSeeker.label}</p>
+      </div>
+
+      <!-- Subtext -->
+      <p class="nc-text-sm nc-text-muted mb-8 max-w-prose">
+        Job Seeker unlocks the full AI interview plus tools for the hunt — mock interview practice and a profile theme editor. Free stays free forever, not a trial that expires. Bring your own AI key on any plan, or run a fully local model.
+      </p>
+
+      <!-- CTA -->
+      <div class="flex items-start gap-3 max-sm:flex-col">
+        <Button variant="primary" size="md" href={PRICING.jobSeeker.checkoutUrl} external>
+          Start Job Seeker
+        </Button>
+        <a href="/#compare" class="nc-text-sm nc-text-muted underline underline-offset-2 hover:text-[--nc-ink-2]">
+          Compare plans &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

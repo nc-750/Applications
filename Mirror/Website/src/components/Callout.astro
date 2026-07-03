@@ -1,0 +1,19 @@
+---
+export interface Props {
+  variant?: "info" | "warning" | "note";
+}
+
+const { variant = "info" } = Astro.props;
+
+const alertClass: Record<string, string> = {
+  info: "nc-alert nc-alert--info",
+  warning: "nc-alert nc-alert--warning",
+  note: "nc-alert",
+};
+---
+
+<div class={alertClass[variant]}>
+  <div>
+    <slot />
+  </div>
+</div>

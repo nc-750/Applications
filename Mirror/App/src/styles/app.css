@@ -1,0 +1,40 @@
+/* app.css — Mirror's own stylesheet.
+ *
+ * The Lab design system (lab.css) is imported separately in main.ts and owns
+ * all .nc-* tokens, components, fonts, and the element reset. This file holds
+ * ONLY app-owned concerns:
+ *   - Tailwind LAYOUT utilities (no preflight — lab.reset owns element styling)
+ *   - root sizing + scrollbar chrome
+ *   - inner layouts of app-specific components (the meter rows inside the
+ *     readout, the probe footer, etc.)
+ *
+ * It may REFERENCE Lab tokens (var(--nc-*)) but must never redefine Lab base
+ * vars or components. Layout of chassis/band/cell uses Lab classes, never here.
+ */
+
+/* Tailwind v4 — layout utilities only. Preflight is intentionally NOT imported;
+   lab.css (unlayered) wins over these layers, exactly as before. */
+@import "@nc-750/lab-css" layer(lab);
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--nc-line);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--nc-ink-3);
+}

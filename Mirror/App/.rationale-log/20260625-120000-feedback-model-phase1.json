@@ -1,0 +1,17 @@
+{
+  "id": "20260625-120000-feedback-model-phase1",
+  "timestamp": "2026-06-25T12:00:00Z",
+  "derived_from": [],
+  "files_touched": [
+    "src/feedback/reference/Categories.ts",
+    "src/feedback/reference/index.ts",
+    "src/feedback/models/FeedbackSubmission.ts",
+    "src/feedback/models/index.ts",
+    "src/__tests__/feedback/Feedback.test.ts"
+  ],
+  "decision": "FeedbackCategory declared as a string-literal union in the reference module (not inline in the model, not a TS enum), with CATEGORY_OPTIONS carrying subjectPrefix per row.",
+  "alternative_not_taken": "Declaring the union inline in FeedbackSubmission.ts — rejected because it would split the category set across two files (model owns the discriminator, reference owns labels/prefixes), creating two sources of truth for which categories exist.",
+  "rationale": "Reference module is the single source of the category set (values + labels + prefixes), matching the PROVIDER_OPTIONS precedent and CONVENTIONS 1.2/6.10. The model imports the type from reference; reference imports nothing — dependency direction preserved.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}

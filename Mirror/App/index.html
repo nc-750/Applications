@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/icons/favicon.ico" sizes="48x48" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0f172a" />
+        <meta
+            name="description"
+            content="Mirror interviews you with AI, finds patterns you missed, and produces a private insight document and a polished public profile. Nothing leaves your device."
+        />
+        <!--
+      CSP mirrors src-tauri/tauri.conf.json for the PWA build.
+
+      The trailing https: in connect-src permits any user-configured endpoint
+      for the openai-compatible provider. This is an accepted limitation
+      (ETHOS C3.5): no build-time CSP can enumerate arbitrary user-supplied
+      endpoints. For a Tauri desktop build the three known provider domains
+      are listed explicitly, and the broad https: serves only the PWA case.
+
+      Long-term: generate this CSP meta tag at runtime after settings load,
+      pinning connect-src to the single configured endpoint + known providers.
+    -->
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src 'self' data:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.mistral.ai https: http:;"
+        />
+        <title>Mirror</title>
+    </head>
+    <body class="nc-lab">
+        <a href="#root" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-[var(--nc-panel)] focus:p-3 focus:rounded focus:text-[var(--nc-accent-ink)] focus:outline-2 focus:outline-[var(--nc-accent)] focus:outline-offset-2">
+            Skip to content
+        </a>
+        <main class="nc-chassis" id="root"></main>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
+</html>

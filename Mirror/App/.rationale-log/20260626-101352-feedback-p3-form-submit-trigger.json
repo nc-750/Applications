@@ -1,0 +1,13 @@
+{
+  "id": "20260626-101352-feedback-p3-form-submit-trigger",
+  "timestamp": "2026-06-26T10:13:52Z",
+  "derived_from": [],
+  "files_touched": [
+    "src/__tests__/feedback/FeedbackModal.test.ts"
+  ],
+  "decision": "Modal tests 7-9 trigger the form's `submit` event directly (`wrapper.find('form').trigger('submit')`) rather than clicking the submit button.",
+  "alternative_not_taken": "Clicking the submit button (`button[type='submit'].trigger('click')`) — which is what the plan described and what existing tests use for disabled-state checks.",
+  "rationale": "In jsdom, clicking a submit button does not fire the native form `submit` event; the `@submit.prevent` handler never runs. The old inert Test 5 passed vacuously for this reason. Triggering `submit` on the form element directly is the honest boundary the test environment supports.",
+  "rationale_source": "agent_inferred",
+  "human_rationale": null
+}
