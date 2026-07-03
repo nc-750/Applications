@@ -2,20 +2,21 @@
 
 ## Project Overview
 
-**Project Name:** NC-750
-**Project Description:** NC-750 is a brand which develops software solution with a heavy focus on user data respect and privacy with as minimum telemetry as possible. 
+**Project Name:** NC-750  
+**Project Description:** NC-750 is a brand which develops software solution with a heavy focus on user data respect and privacy with as minimum telemetry as possible.   
+**Current Repository:** The applications being developed under the NC-750 branding and ethos.
 
 ## Organization
 
 ```
 nc-750/
-├── brand           # Brand manifesto, philosophy, naming, visual language and ethos
-├── lab             # Implementation of the NC-750 visual design language called Lab
-├── llm             # LLM library to be integrated in the different NC-750 projects
-├── mirror          # Project that interviews the user, finds patterns you missed, and produces a private insight document and a polished public profile
-├── shared          # Devenv root files to be shared by each projects relying on it for its dev environment management
-├── AGENTS.md       # This file
-└── CLAUDE.md       # Equivalent of this file, but for Claude Code
+├── Libs
+│   ├── Lab     # Implementation of the NC-750 visual design language called Lab
+│   └── LLM     # LLM library to be integrated in the different NC-750 projects
+├── Mirror      # Project that interviews the user, finds patterns you missed, and produces a private insight document and a polished public profile
+├── Devenv      # Devenv root files to be shared by each projects relying on it for its dev environment management
+├── AGENTS.md   # Equivalent of this file, but for Pi.dev
+└── CLAUDE.md   # This file
 ```
 
 ## Cross-cutting conventions
@@ -24,11 +25,10 @@ nc-750/
 
 ## Reference per project
 
-- [brand/docs/STRUCTURE.md](brand/docs/STRUCTURE.md) - Brand manifesto folder structure
-- [lab/docs/STRUCTURE.md](lab/docs/STRUCTURE.md) - Lab design system folder structure
-- [llm/docs/STRUCTURE.md](llm/docs/STRUCTURE.md) - LLM lib folder structure
-- [mirror/docs/STRUCTURE.md](mirror/docs/STRUCTURE.md) - Mirror project folder structure
-  - [mirror/app/docs/STRUCTURE.md](mirror/app/docs/STRUCTURE.md) - Mirror app's structure
+- [Libs/Lab/docs/STRUCTURE.md](Libs/Lab/docs/STRUCTURE.md) - Lab design system folder structure
+- [Libs/LLM/docs/STRUCTURE.md](Libs/LLM/docs/STRUCTURE.md) - LLM lib folder structure
+- [Mirror/Docs/STRUCTURE.md](Mirror/Docs/STRUCTURE.md) - Mirror project folder structure
+  - [Mirror/App/docs/STRUCTURE.md](Mirror/App/docs/STRUCTURE.md) - Mirror app's structure
 
 
 ## Rationale capture (active experiment — honesty over polish)
