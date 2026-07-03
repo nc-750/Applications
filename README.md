@@ -17,12 +17,16 @@ nc-750/
 
 ## Cross-cutting conventions
 
-- **NC-750 brand philosophy**: total data ownership (local-first; user content never hits an NC-750 server, is never sold, never trains anything), "you are never the product" (no person is tracked; any product metrics are opt-in, anonymous, aggregate, self-hosted), BYOK or a no-log relay for AI integrations, themeable industrial design. Read `brand/BRAND.md` for the dossier and **`brand/ETHOS.md` for the binding product constraints** every NODE/UNIT/CORE must satisfy.
+- **NC-750 brand philosophy**: 
+  - Data Sovereignity: You own your data. We do not sell it.
+  - Pragmatic Telemetry: Zero telemetry when possible, product metrics only, opt-in, anonymous. 
+  - User Always In Control: Bring Your Own Key, never locked to the ecosystem, leave it whenever you wish.
+
+You can read more about the philosophy behind the project in its [Manifesto](https://github.com/nc-750/Manifesto).
 
 ## Reference per project
 
-- [brand/docs/STRUCTURE.md](brand/docs/STRUCTURE.md) - Brand manifesto folder structure
-- [lab/docs/STRUCTURE.md](lab/docs/STRUCTURE.md) - Lab design system folder structure
-- [llm/docs/STRUCTURE.md](llm/docs/STRUCTURE.md) - LLM lib folder structure
-- [mirror/docs/STRUCTURE.md](mirror/docs/STRUCTURE.md) - Mirror project folder structure
-  - [mirror/app/docs/STRUCTURE.md](mirror/app/docs/STRUCTURE.md) - Mirror app's structure
+- [Libs/Lab/docs/STRUCTURE.md](Libs/Lab/docs/STRUCTURE.md) - Lab design system folder structure
+- [Libs/LLM/docs/STRUCTURE.md](Libs/LLM/docs/STRUCTURE.md) - LLM lib folder structure
+- [Mirror/Docs/STRUCTURE.md](Mirror/Docs/STRUCTURE.md) - Mirror project folder structure
+  - [Mirror/App/docs/STRUCTURE.md](Mirror/App/docs/STRUCTURE.md) - Mirror app's structure
