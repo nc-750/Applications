@@ -213,7 +213,7 @@ function onSubmit(): void {
             <!-- Panel header -->
             <header class="nc-cell-head">
                 <span class="nc-label">FEEDBACK</span>
-                <span class="nc-label">FBK // 0x02</span>
+                <span class="nc-label">FBK // 0x01</span>
             </header>
 
             <div class="nc-cell-content">
@@ -332,6 +332,7 @@ function onSubmit(): void {
     overflow-y: auto;
     /* Focus outline so keyboard users can see focus (C8.3) */
     outline: none;
+    border-radius: 10px;
 }
 
 .fmc-panel:focus-visible {
