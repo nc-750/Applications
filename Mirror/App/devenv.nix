@@ -57,11 +57,11 @@
     deploy.exec = ''
       set -euo pipefail
       
-      version=$(git describe --abbrev=0 | cut -d '-' -f 2)
+      version=$(current-version)
       message="Mirror release: $version"
 
-      cp -r dist/* ../deployed-app/
-      cd ../deployed-app
+      cp -r dist/* ../Mirror-dist/
+      cd ../Mirror-dist
 
       git add -A
       git commit -m "$message" || { echo "No changes to deploy"; exit 0; }
@@ -69,6 +69,10 @@
       
       git tag -a "$version" -m "$message" || echo "Tag $version already exists"
       git push origin "$version"
+    '';
+
+    current-version.exec = ''
+      echo $(git describe --abbrev=0 | cut -d '-' -f 2)
     '';
   };
 }
