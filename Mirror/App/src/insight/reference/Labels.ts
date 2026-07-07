@@ -16,7 +16,6 @@ import {
 export const METRICS_FACETS: Array<{ key: keyof PersonaMetrics; label: string }> = [
     { key: "story",     label: "STORY" },
     { key: "strengths", label: "STRENGTHS" },
-    { key: "hidden",    label: "HIDDEN" },
     { key: "growth",    label: "GROWTH" },
     { key: "drivers",   label: "DRIVERS" },
 ];

@@ -24,7 +24,6 @@ function personaWithInterview(): Persona {
         metrics: {
             story: 0.75,
             strengths: 0.6,
-            hidden: 0.4,
             growth: 0.8,
             drivers: 0.5,
         },
@@ -66,7 +65,6 @@ describe("personaToInterview", () => {
         expect(interview.coverage).toEqual({
             story: 0.75,
             strengths: 0.6,
-            hidden: 0.4,
             growth: 0.8,
             drivers: 0.5,
         });
@@ -96,7 +94,6 @@ describe("personaToInterview", () => {
         expect(interview.coverage).toEqual({
             story: 0,
             strengths: 0,
-            hidden: 0,
             growth: 0,
             drivers: 0,
         });
@@ -143,7 +140,6 @@ describe("syncInterviewAfterImport", () => {
         expect(saved.coverage).toEqual({
             story: 0.75,
             strengths: 0.6,
-            hidden: 0.4,
             growth: 0.8,
             drivers: 0.5,
         });

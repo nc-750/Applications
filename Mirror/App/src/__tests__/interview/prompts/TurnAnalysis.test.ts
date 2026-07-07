@@ -55,10 +55,31 @@ describe("buildPersonaMetricsUserPrompt", () => {
     });
 });
 
+describe("hidden-facet guard", () => {
+    // Guards against silently reintroducing the "hidden" facet the interview
+    // stopped probing (asking users about aspects they don't see about themselves
+    // produces empty answers; hidden-aspect inference now lives only in the
+    // Synthesis Analyze phase over the full transcript).
+    it("the analysis system prompt contains no 'hidden' token", () => {
+        const msg = buildPersonaMetricsSystemPrompt(emptyCoverage(), 1, 15, false);
+        expect(textOf(msg).toLowerCase()).not.toContain("hidden");
+    });
+
+    it("the JSON schema coverage properties are exactly {story, strengths, growth, drivers}", () => {
+        const coverage = (TURN_ANALYSIS_JSON_SCHEMA as any).properties.coverage;
+        expect(Object.keys(coverage.properties).sort()).toEqual([
+            "drivers", "growth", "story", "strengths",
+        ]);
+        expect([...coverage.required].sort()).toEqual([
+            "drivers", "growth", "story", "strengths",
+        ]);
+    });
+});
+
 describe("TurnAnalysisSchema", () => {
     it("parses a full, valid analysis result", () => {
         const res = TurnAnalysisSchema.safeParse({
-            coverage: { story: 0.4, strengths: 0.2, hidden: 0, growth: 0, drivers: 0.1 },
+            coverage: { story: 0.4, strengths: 0.2, growth: 0, drivers: 0.1 },
             probe_signal: "strong",
             next_action: "advance",
             next_facet: "strengths",

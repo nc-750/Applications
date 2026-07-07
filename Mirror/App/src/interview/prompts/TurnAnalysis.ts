@@ -30,25 +30,25 @@ const Saturation = z.number().min(0).max(1).catch(0);
  * omits a facet has it default to 0 rather than failing the whole turn.
  */
 export const TurnAnalysisSchema = z.object({
-    coverage: z
-        .object({
-            story: Saturation,
-            strengths: Saturation,
-            hidden: Saturation,
-            growth: Saturation,
-            drivers: Saturation,
-        })
-        .partial()
-        .transform((c): CoverageMap => ({
-            story: c.story ?? 0,
-            strengths: c.strengths ?? 0,
-            hidden: c.hidden ?? 0,
-            growth: c.growth ?? 0,
-            drivers: c.drivers ?? 0,
-        })),
-    probe_signal: z.enum(["thin", "strong"]),
-    next_action: z.enum(["follow_up", "advance"]),
-    next_facet: z.enum(FACET_KEY_VALUES),
+  coverage: z
+    .object({
+      story: Saturation,
+      strengths: Saturation,
+      growth: Saturation,
+      drivers: Saturation,
+    })
+    .partial()
+    .transform(
+      (c): CoverageMap => ({
+        story: c.story ?? 0,
+        strengths: c.strengths ?? 0,
+        growth: c.growth ?? 0,
+        drivers: c.drivers ?? 0,
+      }),
+    ),
+  probe_signal: z.enum(["thin", "strong"]),
+  next_action: z.enum(["follow_up", "advance"]),
+  next_facet: z.enum(FACET_KEY_VALUES),
 });
 
 /** The validated analysis result — derived from the schema so they cannot drift. */
@@ -58,39 +58,41 @@ export const TURN_ANALYSIS_SCHEMA_NAME = "turn_analysis";
 
 /** JSON Schema form for providers that enforce strict structured output. */
 export const TURN_ANALYSIS_JSON_SCHEMA: Record<string, unknown> = {
-    type: "object",
-    additionalProperties: false,
-    properties: {
-        coverage: {
-            type: "object",
-            additionalProperties: false,
-            description: "Saturation 0..1 per facet — how completely each is evidenced so far.",
-            properties: {
-                story: { type: "number" },
-                strengths: { type: "number" },
-                hidden: { type: "number" },
-                growth: { type: "number" },
-                drivers: { type: "number" },
-            },
-            required: ["story", "strengths", "hidden", "growth", "drivers"],
-        },
-        probe_signal: {
-            type: "string",
-            enum: ["thin", "strong"],
-            description: "Was the answer just given thin/vague (thin) or specific and evidenced (strong)?",
-        },
-        next_action: {
-            type: "string",
-            enum: ["follow_up", "advance"],
-            description: "follow_up to dig the same facet deeper; advance to move to next_facet.",
-        },
-        next_facet: {
-            type: "string",
-            enum: [...FACET_KEY_VALUES],
-            description: "The facet the next probe should target.",
-        },
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    coverage: {
+      type: "object",
+      additionalProperties: false,
+      description:
+        "Saturation 0..1 per facet — how completely each is evidenced so far.",
+      properties: {
+        story: { type: "number" },
+        strengths: { type: "number" },
+        growth: { type: "number" },
+        drivers: { type: "number" },
+      },
+      required: ["story", "strengths", "growth", "drivers"],
     },
-    required: ["coverage", "probe_signal", "next_action", "next_facet"],
+    probe_signal: {
+      type: "string",
+      enum: ["thin", "strong"],
+      description:
+        "Was the answer just given thin/vague (thin) or specific and evidenced (strong)?",
+    },
+    next_action: {
+      type: "string",
+      enum: ["follow_up", "advance"],
+      description:
+        "follow_up to dig the same facet deeper; advance to move to next_facet.",
+    },
+    next_facet: {
+      type: "string",
+      enum: [...FACET_KEY_VALUES],
+      description: "The facet the next probe should target.",
+    },
+  },
+  required: ["coverage", "probe_signal", "next_action", "next_facet"],
 };
 
 /**
@@ -105,30 +107,29 @@ export const TURN_ANALYSIS_JSON_SCHEMA: Record<string, unknown> = {
  *                       measured honestly rather than hurried.
  */
 export function buildPersonaMetricsSystemPrompt(
-    coverage: CoverageMap,
-    questionsAsked: number,
-    maxQuestions: number,
-    pastBudget: boolean,
+  coverage: CoverageMap,
+  questionsAsked: number,
+  maxQuestions: number,
+  pastBudget: boolean,
 ): Message {
-    const target = Math.round(CONCLUDE_THRESHOLD * 100);
-    const facetGuide = FACETS.map((f) => `- ${f.key}: ${f.blurb}`).join("\n");
-    const facetSaturation = `
+  const target = Math.round(CONCLUDE_THRESHOLD * 100);
+  const facetGuide = FACETS.map((f) => `- ${f.key}: ${f.blurb}`).join("\n");
+  const facetSaturation = `
     - Story: ${coverage.story}
     - Strength: ${coverage.strengths}
     - Growth: ${coverage.growth}
-    - Hidden: ${coverage.hidden}
     - Drivers: ${coverage.drivers}
     `;
 
-    // Pacing: while inside the budget, push toward the target by the cap; once the
-    // target is met or the cap is spent, drop the pressure and just measure.
-    const pacing = pastBudget
-        ? `## Pacing
+  // Pacing: while inside the budget, push toward the target by the cap; once the
+  // target is met or the cap is spent, drop the pressure and just measure.
+  const pacing = pastBudget
+    ? `## Pacing
 The target is already met, or the question budget is spent and the user has chosen to keep adding evidence. There is no budget pressure now: simply measure the latest answer honestly. Saturation still only rises (never lower a facet); do not hurry, and do not inflate — read what the transcript actually supports.`
-        : `## Pacing
+    : `## Pacing
 You are at question ${questionsAsked} of a soft maximum of ${maxQuestions}. By the cap, every facet should be at or above ${target}% — so the reading has to move at that pace. If you are past the midpoint and facets are still low, your earlier readings were too conservative: correct them upward to reflect the evidence already gathered. Do not inflate numbers just to finish early, and do not stall a facet that is genuinely covered.`;
 
-    const prompt = `
+  const prompt = `
 You are the ANALYSIS stage of a persona interview instrument. You do not talk to the user. You read the latest answer and report an honest measurement of the interview's progress.
 
 You track ${FACETS.length} coverage facets (each 0..1 = how completely it is evidenced so far):
@@ -150,7 +151,7 @@ Calibrate each facet's absolute saturation against the evidence in the whole tra
 A single substantive answer that directly addresses a facet should advance that facet by a meaningful step (roughly 0.15–0.3), not by hundredths.
 
 ## Honest uncertainty is evidence, not a thin answer
-When the user honestly says "I don't know", "I've never thought about this", or "I'm not sure", that is NOT a thin answer — it is real signal about the facet (self-awareness, blind spots, how the person relates to that area, especially for hidden, growth, and drivers). Score it probe_signal "strong", advance that facet's saturation, and prefer next_action "advance": do not re-probe the same ground with reworded questions. Reserve "thin" for answers that genuinely reveal nothing — empty, evasive, deflecting, or off-topic.
+When the user honestly says "I don't know", "I've never thought about this", or "I'm not sure", that is NOT a thin answer — it is real signal about the facet (self-awareness, blind spots, how the person relates to that area, especially for growth and drivers). Score it probe_signal "strong", advance that facet's saturation, and prefer next_action "advance": do not re-probe the same ground with reworded questions. Reserve "thin" for answers that genuinely reveal nothing — empty, evasive, deflecting, or off-topic.
 
 ${pacing}
 
@@ -159,7 +160,7 @@ ${facetSaturation}
 
 Output ONLY the structured JSON result (a single JSON object with the fields above). No prose.`;
 
-    return textMessage("system", prompt);
+  return textMessage("system", prompt);
 }
 
 /**
@@ -167,8 +168,12 @@ Output ONLY the structured JSON result (a single JSON object with the fields abo
  * the full transcript so far for context. The caller (service layer) renders the
  * transcript and extracts the answer text — this builder stays pure.
  */
-export function buildPersonaMetricsUserPrompt(question: string, answer: string, transcript: string): Message {
-    const prompt = `
+export function buildPersonaMetricsUserPrompt(
+  question: string,
+  answer: string,
+  transcript: string,
+): Message {
+  const prompt = `
 The probe just asked:
 <question>
 ${question}
@@ -187,5 +192,5 @@ ${transcript}
 Measure the reading now.
     `;
 
-    return textMessage("user", prompt);
+  return textMessage("user", prompt);
 }

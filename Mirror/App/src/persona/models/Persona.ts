@@ -26,7 +26,6 @@ export interface Persona {
 export interface PersonaMetrics {
     story: number
     strengths: number,
-    hidden: number,
     growth: number,
     drivers: number
 }
@@ -100,7 +99,6 @@ export function createEmptyPersona(): Persona {
             drivers: 0,
             story: 0,
             strengths: 0,
-            hidden: 0,
             growth: 0
         },
         strengths: [],

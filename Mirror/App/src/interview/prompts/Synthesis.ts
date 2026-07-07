@@ -188,7 +188,15 @@ export const ANALYZE_JSON_SCHEMA: Record<string, unknown> = obj({
 });
 
 export function buildAnalyzeSystemPrompt(): Message {
-    return textMessage("system", `You analyze a persona interview to surface patterns, hidden strengths, and growth areas. Go BEYOND explicit statements — identify connections, name skills the person didn't label, and surface what's unspoken but present.
+    return textMessage("system", `You analyze a persona interview to surface patterns, strengths, growth areas, and — crucially — hidden aspects the person does not claim for themselves.
+
+**Hidden-aspect inference is now this phase's job alone.** The live interview no longer probes for "hidden talents" (asking someone about what they don't see about themselves produces empty answers). Instead, YOU read the full transcript AFTER the fact and surface hidden aspects by inference. Specifically look for:
+- Skills the user *demonstrates* through concrete story details but never *labels* as skills.
+- Things the user treats as trivial or obvious ("anyone could do that", "it's just…") that a neutral observer would name as real capability.
+- Consistent patterns visible across two or more roles or stories that the user never names as a pattern.
+- Capabilities implied by the shape of what they built, chose, or endured, but never claimed in words.
+
+Go BEYOND explicit statements — identify connections, name skills the person didn't label, and surface what's unspoken but present. Do NOT invent facts; every hidden asset must be traceable to something concrete in the transcript.
 
 CRITICAL: Every strength and weakness MUST cite specific evidence from the transcript. Use the format: "When discussing [topic], [specific observation]."
 

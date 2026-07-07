@@ -14,16 +14,13 @@
     "noEmit": true,
     "jsx": "preserve",
     "types": ["vite/client"],
-    "paths": {
-      "@nc-750/lab-vue": ["../../lab/vue/dist/index.d.ts"]
-    },
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "include": ["src", "src/__tests__"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
 }

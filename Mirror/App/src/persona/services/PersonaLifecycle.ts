@@ -20,8 +20,8 @@ type InterviewStore = ReturnType<typeof useInterviewStore>;
  * Pure helper — takes plain domain data, returns plain domain data (4.3–4.4).
  *
  * The persona's `metrics` map 1:1 onto the interview's `CoverageMap`:
- *   PersonaMetrics { story, strengths, hidden, growth, drivers }
- *   CoverageMap   { story, strengths, hidden, growth, drivers }
+ *   PersonaMetrics { story, strengths, growth, drivers }
+ *   CoverageMap   { story, strengths, growth, drivers }
  *
  * The persona's `interview.messages` is the full transcript — it becomes the
  * interview's `messages` array.  `createdAt` is set to the import moment, not the

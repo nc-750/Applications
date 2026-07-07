@@ -30,8 +30,4 @@ window.addEventListener("unhandledrejection", (event) => {
 
 // Lab plugin runs the fail-loud guard (probes the --nc-lab:750 sentinel that
 // lab.css sets) after first paint.
-createApp(App)
-  .use(createPinia())
-  .use(Router)
-  .use(Lab)
-  .mount("#root");
+createApp(App).use(createPinia()).use(Router).use(Lab).mount("#root");

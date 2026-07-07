@@ -33,7 +33,6 @@ function populatedInterview(): Interview {
         coverage: {
             story: 0.5,
             strengths: 0.3,
-            hidden: 0.1,
             growth: 0,
             drivers: 0.8,
         },

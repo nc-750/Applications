@@ -23,7 +23,7 @@ function populatedPersona(): Persona {
             createdAt: 1700000000000,
             version: "1.0",
         },
-        metrics: { story: 0.5, strengths: 0.3, hidden: 0.1, growth: 0, drivers: 0.8 },
+        metrics: { story: 0.5, strengths: 0.3, growth: 0, drivers: 0.8 },
         strengths: [
             { title: "Systems thinking", description: "Sees the whole board" },
             { title: "Mentorship", description: "Grows the people around them" },

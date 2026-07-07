@@ -47,4 +47,12 @@ describe("buildInterviewSystemPrompt", () => {
         expect(prompt).toContain("warm");
         expect(prompt).toContain("curious");
     });
+
+    // Guards against silently reintroducing "hidden" as an interview probe target
+    // (asking users about aspects they don't see about themselves produces empty
+    // answers; hidden-aspect inference now lives only in the Synthesis Analyze
+    // phase over the full transcript).
+    it("does not instruct the interviewer to probe 'hidden' aspects", () => {
+        expect(prompt.toLowerCase()).not.toContain("hidden");
+    });
 });

@@ -78,7 +78,7 @@ function fixtureTranscript(): TranscriptMessage[] {
 }
 
 function fixtureCoverage(): CoverageMap {
-    return { story: 0.8, strengths: 0.7, hidden: 0.6, growth: 0.5, drivers: 0.9 };
+    return { story: 0.8, strengths: 0.7, growth: 0.5, drivers: 0.9 };
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────
@@ -97,7 +97,6 @@ describe("toPersona", () => {
         const persona = toPersona(fixtureResult(), fixtureTranscript(), fixtureCoverage());
         expect(persona.metrics.story).toBe(0.8);
         expect(persona.metrics.strengths).toBe(0.7); // both now plural
-        expect(persona.metrics.hidden).toBe(0.6);
         expect(persona.metrics.growth).toBe(0.5);
         expect(persona.metrics.drivers).toBe(0.9);
     });

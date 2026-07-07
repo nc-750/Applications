@@ -16,7 +16,7 @@ function textOf(msg: Message): string {
 
 function analysis(overrides: Partial<TurnAnalysis> = {}): TurnAnalysis {
     return {
-        coverage: { story: 0, strengths: 0, hidden: 0, growth: 0, drivers: 0 },
+        coverage: { story: 0, strengths: 0, growth: 0, drivers: 0 },
         probe_signal: "strong",
         next_action: "advance",
         next_facet: "strengths",

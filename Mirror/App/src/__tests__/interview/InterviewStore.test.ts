@@ -23,7 +23,7 @@ function populatedInterview(): Interview {
                 timestamp: "2026-01-15T10:00:00.000Z",
             }),
         ],
-        coverage: { story: 0.4, strengths: 0.2, hidden: 0, growth: 0, drivers: 0.6 },
+        coverage: { story: 0.4, strengths: 0.2, growth: 0, drivers: 0.6 },
         currentFacet: "drivers",
         probeSignal: "strong",
         initialData: "Candidate brief...",
@@ -91,7 +91,7 @@ describe("useInterviewStore", () => {
         // A lower value must NOT be clamped to the prior — the store is a thin
         // commit; monotonic-merge is a service concern, not a store one.
         const lower: CoverageMap = {
-            story: 0.1, strengths: 0.1, hidden: 0.1, growth: 0.1, drivers: 0.1,
+            story: 0.1, strengths: 0.1, growth: 0.1, drivers: 0.1,
         };
         await store.setCoverage(lower);
 

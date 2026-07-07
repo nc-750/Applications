@@ -142,7 +142,6 @@ export function toPersona(
     // Metrics (coverage)
     persona.metrics.story = coverage.story;
     persona.metrics.strengths = coverage.strengths;
-    persona.metrics.hidden = coverage.hidden;
     persona.metrics.growth = coverage.growth;
     persona.metrics.drivers = coverage.drivers;
 

@@ -3,21 +3,24 @@ import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 
 const host = process.env.TAURI_DEV_HOST;
-const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
+const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
 export default defineConfig(async () => ({
   define: {
-    __APP_VERSION__: JSON.stringify(pkg.version)
+    __APP_VERSION__: JSON.stringify(pkg.version),
   },
   plugins: [
     vue(),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/favicon.ico", "icons/apple-touch-icon-180x180.png"],
+      includeAssets: [
+        "icons/favicon.ico",
+        "icons/apple-touch-icon-180x180.png",
+      ],
       manifest: {
         name: "Mirror",
         short_name: "Mirror",
@@ -67,9 +70,6 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Point at live source so rebuilding lab/* is instantly picked up.
-      "@nc-750/lab-vue": path.resolve(__dirname, "../../lab/vue/dist/lab-vue.js"),
-      "@nc-750/lab-css": path.resolve(__dirname, "../../lab/css/lab.css"),
-    }
-  }
+    },
+  },
 }));

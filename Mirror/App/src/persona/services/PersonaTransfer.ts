@@ -61,7 +61,6 @@ const PersonaSchema = z.object({
     metrics: z.object({
         story: z.number(),
         strengths: z.number(),
-        hidden: z.number(),
         growth: z.number(),
         drivers: z.number(),
     }),

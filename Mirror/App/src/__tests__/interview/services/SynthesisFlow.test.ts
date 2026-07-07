@@ -131,7 +131,7 @@ function makeSynthesisFakeLLM(opts: SynthesisFakeLLMOpts = {}): LLMClient {
 // ── Helpers ───────────────────────────────────────────────────────────────
 
 function seedInterview(store: ReturnType<typeof useInterviewStore>) {
-    const coverage: CoverageMap = { story: 0.8, strengths: 0.7, hidden: 0.6, growth: 0.5, drivers: 0.9 };
+    const coverage: CoverageMap = { story: 0.8, strengths: 0.7, growth: 0.5, drivers: 0.9 };
     return store.saveInterview({
         status: "synthesizing",
         messages: [

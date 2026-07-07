@@ -21,7 +21,7 @@ import {
 
 function fakeAnalysis(overrides?: Partial<TurnAnalysis>): TurnAnalysis {
     return {
-        coverage: { story: 0.4, strengths: 0.2, hidden: 0.1, growth: 0, drivers: 0.1 },
+        coverage: { story: 0.4, strengths: 0.2, growth: 0, drivers: 0.1 },
         probe_signal: "strong",
         next_action: "advance",
         next_facet: "strengths",
@@ -123,7 +123,7 @@ describe("InterviewFlow", () => {
             const fakeLLM = makeFakeLLM({
                 probe: { context: "Solid example.", question: "Follow-up question?" },
                 analysisResult: fakeAnalysis({
-                    coverage: { story: 0.6, strengths: 0.3, hidden: 0.2, growth: 0.1, drivers: 0.2 },
+                    coverage: { story: 0.6, strengths: 0.3, growth: 0.1, drivers: 0.2 },
                     next_facet: "story",
                 }),
             });
@@ -197,7 +197,7 @@ describe("InterviewFlow", () => {
             const fakeLLM = makeFakeLLM({
                 probe: { question: "this should never be asked" },
                 analysisResult: fakeAnalysis({
-                    coverage: { story: 0.9, strengths: 0.9, hidden: 0.9, growth: 0.9, drivers: 0.9 },
+                    coverage: { story: 0.9, strengths: 0.9, growth: 0.9, drivers: 0.9 },
                     next_facet: "story",
                 }),
             });
@@ -232,7 +232,7 @@ describe("InterviewFlow", () => {
             const fakeLLM = makeFakeLLM({
                 probe: { question: "this should never be asked past the cap" },
                 analysisResult: fakeAnalysis({
-                    coverage: { story: 0.3, strengths: 0.3, hidden: 0.3, growth: 0.3, drivers: 0.3 },
+                    coverage: { story: 0.3, strengths: 0.3, growth: 0.3, drivers: 0.3 },
                 }),
             });
 
@@ -263,7 +263,7 @@ describe("InterviewFlow", () => {
             await beginInterview(fakeLLM, store, "Brief");
 
             // Set coverage so growth is the lowest
-            await store.setCoverage({ story: 0.8, strengths: 0.7, hidden: 0.6, growth: 0.2, drivers: 0.5 });
+            await store.setCoverage({ story: 0.8, strengths: 0.7, growth: 0.2, drivers: 0.5 });
 
             await probeMore(fakeLLM, store);
 

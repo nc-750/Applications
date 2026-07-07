@@ -43,15 +43,15 @@ describe("transcriptOf", () => {
 
 describe("mergeCoverage", () => {
     it("returns max of each facet when both have values", () => {
-        const prior: CoverageMap = { story: 0.2, strengths: 0.3, hidden: 0.1, growth: 0.0, drivers: 0.5 };
-        const incoming: CoverageMap = { story: 0.8, strengths: 0.1, hidden: 0.9, growth: 0.3, drivers: 0.2 };
+        const prior: CoverageMap = { story: 0.2, strengths: 0.3, growth: 0.0, drivers: 0.5 };
+        const incoming: CoverageMap = { story: 0.8, strengths: 0.1, growth: 0.3, drivers: 0.2 };
         const result = mergeCoverage(prior, incoming);
-        expect(result).toEqual({ story: 0.8, strengths: 0.3, hidden: 0.9, growth: 0.3, drivers: 0.5 });
+        expect(result).toEqual({ story: 0.8, strengths: 0.3, growth: 0.3, drivers: 0.5 });
     });
 
     it("is monotonic — never decreases a facet below prior", () => {
-        const prior: CoverageMap = { story: 0.5, strengths: 0.5, hidden: 0.5, growth: 0.5, drivers: 0.5 };
-        const incoming: CoverageMap = { story: 0.0, strengths: 0.0, hidden: 0.0, growth: 0.0, drivers: 0.0 };
+        const prior: CoverageMap = { story: 0.5, strengths: 0.5, growth: 0.5, drivers: 0.5 };
+        const incoming: CoverageMap = { story: 0.0, strengths: 0.0, growth: 0.0, drivers: 0.0 };
         const result = mergeCoverage(prior, incoming);
         expect(result).toEqual(prior);
     });
@@ -61,10 +61,10 @@ describe("mergeCoverage", () => {
         expect(result).toEqual(emptyCoverage());
     });
 
-    it("returns all five facets in output", () => {
+    it("returns all four facets in output", () => {
         const result = mergeCoverage(emptyCoverage(), emptyCoverage());
         expect(Object.keys(result).sort()).toEqual([
-            "drivers", "growth", "hidden", "story", "strengths",
+            "drivers", "growth", "story", "strengths",
         ]);
     });
 });
@@ -73,12 +73,12 @@ describe("mergeCoverage", () => {
 
 describe("canConclude", () => {
     it("returns true when all facets >= 0.75", () => {
-        const coverage: CoverageMap = { story: 0.8, strengths: 0.9, hidden: 0.75, growth: 0.8, drivers: 0.75 };
+        const coverage: CoverageMap = { story: 0.8, strengths: 0.9, growth: 0.8, drivers: 0.75 };
         expect(canConclude(coverage)).toBe(true);
     });
 
     it("returns false when any facet is below 0.75", () => {
-        const coverage: CoverageMap = { story: 0.8, strengths: 0.9, hidden: 0.74, growth: 0.8, drivers: 0.8 };
+        const coverage: CoverageMap = { story: 0.8, strengths: 0.9, growth: 0.74, drivers: 0.8 };
         expect(canConclude(coverage)).toBe(false);
     });
 
@@ -87,7 +87,7 @@ describe("canConclude", () => {
     });
 
     it("returns true for exactly-at-threshold coverage (0.75 on all)", () => {
-        const coverage: CoverageMap = { story: 0.75, strengths: 0.75, hidden: 0.75, growth: 0.75, drivers: 0.75 };
+        const coverage: CoverageMap = { story: 0.75, strengths: 0.75, growth: 0.75, drivers: 0.75 };
         expect(canConclude(coverage)).toBe(true);
     });
 });
