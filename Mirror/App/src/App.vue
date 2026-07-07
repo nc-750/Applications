@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRoute } from 'vue-router';
+import { onMounted, ref } from "vue";
 
 import { 
   Band,
@@ -14,8 +13,6 @@ import FeedbackModalCell from "./feedback/components/FeedbackModalCell.vue";
 
 const appVersion = __APP_VERSION__;
 const settingsStore = useSettingsStore();
-
-const route = useRoute()
 
 const isFeedbackModalOpen = ref(false);
 
